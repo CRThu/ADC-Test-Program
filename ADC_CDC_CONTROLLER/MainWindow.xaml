@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
         xmlns:local="clr-namespace:ADC_CDC_CONTROLLER"
+        xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:Chr="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
-    <Grid>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="402" Margin="10,10,0,0" VerticalAlignment="Top" Width="775">
+        Title="MainWindow" Height="467.5" Width="820.833" Loaded="Window_Loaded">
+    <Grid Margin="0,0,5,1">
+        <TabControl x:Name="tabControl" Margin="10">
             <TabItem Header="TabItem">
                 <Grid Background="#FFE5E5E5">
                     <Label x:Name="label" Content="COM" HorizontalAlignment="Left" Margin="15,20,0,0" VerticalAlignment="Top"/>
@@ -17,47 +20,48 @@
                     <Button x:Name="serialPortDisconnectButton" Content="Disconnect" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="76" Click="SerialPortDisconnectButton_Click"/>
                     <Label x:Name="serialPortStatusLabel" Content="Disconnected" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top"/>
                     <Label Content="OPEN" HorizontalAlignment="Left" Margin="21,110,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="serialPortCommInfoTextBox" HorizontalAlignment="Left" Height="355" Margin="355,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="404" VerticalScrollBarVisibility="Auto"/>
+                    <TextBox x:Name="serialPortCommInfoTextBox" Margin="355,10,10,10" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
                     <Label Content="DATW" HorizontalAlignment="Left" Margin="21,140,0,0" VerticalAlignment="Top"/>
                     <Label Content="DATR" HorizontalAlignment="Left" Margin="21,170,0,0" VerticalAlignment="Top"/>
                     <Label Content="REGW" HorizontalAlignment="Left" Margin="21,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="REGR" HorizontalAlignment="Left" Margin="21,230,0,0" VerticalAlignment="Top"/>
-                    <Label Content="RUN1" HorizontalAlignment="Left" Margin="21,277,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="cmdRUN1AndSaveButton" Content="RUN1&amp;SAVE" HorizontalAlignment="Left" Margin="244,314,0,0" VerticalAlignment="Top" Width="106" Click="CmdRUN1AndSaveButton_Click" IsEnabled="False"/>
+                    <Label Content="TASK1" HorizontalAlignment="Left" Margin="21,277,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="cmdTASK1COMMButton" Content="TASK1.COMM" HorizontalAlignment="Left" Margin="244,314,0,0" VerticalAlignment="Top" Width="106" Click="CmdTASK1COMMButton_Click"/>
                     <Button x:Name="cmdOPENButton" Content="OPEN" HorizontalAlignment="Left" Margin="274,113,0,0" VerticalAlignment="Top" Width="76" Click="CmdOPENButton_Click"/>
                     <Button x:Name="cmdDATWButton" Content="DATW" HorizontalAlignment="Left" Margin="274,143,0,0" VerticalAlignment="Top" Width="76" Click="CmdDATWButton_Click"/>
                     <Button x:Name="cmdDATRButton" Content="DATR" HorizontalAlignment="Left" Margin="274,173,0,0" VerticalAlignment="Top" Width="76" Click="CmdDATRButton_Click"/>
                     <Button x:Name="cmdREGWButton" Content="REGW" HorizontalAlignment="Left" Margin="274,203,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGWButton_Click"/>
                     <Button x:Name="cmdREGRButton" Content="REGR" HorizontalAlignment="Left" Margin="274,233,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGRButton_Click"/>
-                    <Button x:Name="cmdRUN1Button" Content="RUN1" HorizontalAlignment="Left" Margin="274,280,0,0" VerticalAlignment="Top" Width="76" Click="CmdRUN1Button_Click"/>
+                    <Button x:Name="cmdTASK1RUNButton" Content="TASK1.RUN" HorizontalAlignment="Left" Margin="244,280,0,0" VerticalAlignment="Top" Width="106" Click="CmdTASK1RUNButton_Click"/>
                     <TextBox x:Name="cmdDATWTextBox1" HorizontalAlignment="Left" Height="23" Margin="98,142,0,0" TextWrapping="Wrap" Text="45" VerticalAlignment="Top" Width="33" MaxLength="2" input:InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="cmdREGRTextBox1" HorizontalAlignment="Left" Height="23" Margin="98,231,0,0" TextWrapping="Wrap" Text="31" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="cmdREGWTextBox1" HorizontalAlignment="Left" Height="23" Margin="98,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="31"/>
                     <TextBox x:Name="cmdREGWTextBox2" HorizontalAlignment="Left" Height="23" Margin="154,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" MaxLength="6" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="5FFFFF"/>
-                    <TextBox x:Name="cmdRUN1TextBox1" HorizontalAlignment="Left" Height="23" Margin="98,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114" MaxLength="20" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="256"/>
+                    <TextBox x:Name="cmdTASK1RUNTextBox1" HorizontalAlignment="Left" Height="23" Margin="98,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="114" MaxLength="20" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="64"/>
                     <Label Content="HEX INPUT" HorizontalAlignment="Left" Margin="144,93,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="75,230,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="75,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="131,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="75,141,0,0" VerticalAlignment="Top"/>
-                    <ProgressBar HorizontalAlignment="Left" Height="10" Margin="21,318,0,0" VerticalAlignment="Top" Width="197"/>
-                    <Button x:Name="cmdLoadFromFileButton" Content="LOAD CMDs" HorizontalAlignment="Left" Margin="265,343,0,0" VerticalAlignment="Top" Width="85" Click="CmdLoadFromFileButton_Click"/>
-                    <TextBox x:Name="cmdLoadFromFileTextBox" HorizontalAlignment="Left" Height="23" Margin="46,342,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="98"/>
+                    <Button x:Name="cmdLoadFromFileButton" Content="LOAD CMDs" HorizontalAlignment="Left" Margin="265,348,0,0" VerticalAlignment="Top" Width="85" Click="CmdLoadFromFileButton_Click"/>
+                    <TextBox x:Name="cmdLoadFromFileTextBox" HorizontalAlignment="Left" Height="23" Margin="46,347,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="98"/>
                     <Label Content="DEC INPUT" HorizontalAlignment="Left" Margin="144,254,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="rxBufSizeTextBox" HorizontalAlignment="Left" Height="23" Margin="290,64,0,0" TextWrapping="Wrap" Text="4096" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="RX__BUF__SIZE" HorizontalAlignment="Left" Margin="201,63,0,0" VerticalAlignment="Top" Width="89"/>
                     <Label Content="COMM" HorizontalAlignment="Left" Margin="80,93,0,0" VerticalAlignment="Top"/>
                     <Label Content="TASK" HorizontalAlignment="Left" Margin="86,254,0,0" VerticalAlignment="Top"/>
-                    <Label Content="File" HorizontalAlignment="Left" Margin="16,340,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Interval" HorizontalAlignment="Left" Margin="144,340,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="cmdIntervalTextBox" HorizontalAlignment="Left" Height="23" Margin="197,342,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="38" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <Label Content="ms" HorizontalAlignment="Left" Margin="235,340,0,0" VerticalAlignment="Top"/>
+                    <Label Content="File" HorizontalAlignment="Left" Margin="16,345,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Interval" HorizontalAlignment="Left" Margin="144,345,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="cmdIntervalTextBox" HorizontalAlignment="Left" Height="23" Margin="197,347,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="38" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="235,345,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="cmdTASK1PACKButton" Content="TASK1.PACK" HorizontalAlignment="Left" Margin="106,314,0,0" VerticalAlignment="Top" Width="106" Click="CmdTASK1PACKButton_Click"/>
+                    <TextBox x:Name="packetSizeTextBox" HorizontalAlignment="Left" Height="23" Margin="21,312,0,0" TextWrapping="Wrap" Text="256" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 </Grid>
             </TabItem>
             <TabItem Header="TabItem">
                 <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                    </Grid.ColumnDefinitions>
+                    <Button x:Name="tmpUpdate" Content="Button" HorizontalAlignment="Left" Margin="98,283,0,0" VerticalAlignment="Top" Width="76" Click="tmpUpdate_Click"/>
+                    <TextBox x:Name="tmpCode" HorizontalAlignment="Left" Height="238" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="256"/>
                 </Grid>
             </TabItem>
         </TabControl>
