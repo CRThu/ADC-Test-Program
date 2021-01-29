@@ -23,7 +23,8 @@ namespace ADC_CDC_CONTROLLER
         bool isBinData = false;
         List<byte> ADC_Data_Stroage_Raw = new List<byte>();
         List<int> ADC_Data_Stroage_Code = new List<int>();
-        int pack_size;
+        int BytesPerCode;
+        int AdcDataSize;
 
         const string CMD_OPEN_STR = "OPEN;";
         const string CMD_DATW_STR = "DATW;";
@@ -89,6 +90,7 @@ namespace ADC_CDC_CONTROLLER
                 MessageBox.Show("COM has been closed!");
         }
 
+        // myPort.ReceivedBytesThreshold
         private void MyPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             try
@@ -124,17 +126,18 @@ namespace ADC_CDC_CONTROLLER
                 }
                 else
                 {
-                    // 判断BytesToRead
-                    string str ="";
-                    byte[] recvDataPackage = new byte[pack_size];
-                    int data_len = myPort.Read(recvDataPackage, 0, pack_size);
+                    /*
+                    string str = "";
+                    byte[] recvDataPackage = new byte[packet_size];
+                    myPort.ReadTimeout=500;
+                    int data_len = myPort.Read(recvDataPackage, 0, packet_size);
                     ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
-                    str += ("[WPF]: Read "+ data_len + " Bytes in Packet.\n");
+                    str += ("[WPF]: Read " + data_len + "/"+ packet_size + " Bytes in Packet.\n");
                     str += ToHexStrFromByte(recvDataPackage);
                     str += "\n";
                     SerialPortCommInfoTextBox_Update(false, str);
-
                     isBinData = false;
+                    */
                 }
             }
             catch (Exception ex)
@@ -184,10 +187,48 @@ namespace ADC_CDC_CONTROLLER
         }
         private void CmdTASK1PACKButton_Click(object sender, RoutedEventArgs e)
         {
-            isBinData = true;
-            pack_size = Convert.ToInt32(packetSizeTextBox.Text);
-            string TxString = CMD_TASK1PACK_STR;
-            SerialPortStringSendFunc(TxString);
+            try
+            {
+                // TODO: Change Value Name of isBinData
+                isBinData = true;
+                AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
+                BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+
+                string TxString = CMD_TASK1PACK_STR;
+                SerialPortStringSendFunc(TxString);
+
+                string str = "";
+                int recvDataPackageSize = AdcDataSize * BytesPerCode;
+                byte[] recvDataPackage = new byte[recvDataPackageSize];
+
+                // TIMEOUT when no bytes
+                myPort.ReadTimeout = 500;
+                // TIMEOUT when transmission
+                // Stop Program and Keep UI alive.
+                Thread t = new Thread(o => Thread.Sleep(500));
+                t.Start(this);
+                while (t.IsAlive)
+                {
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+
+                    if (myPort.BytesToRead < recvDataPackageSize)
+                        ;
+                    else
+                        t.Abort();
+                }
+                int data_len = myPort.Read(recvDataPackage, 0, recvDataPackageSize);
+                ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
+                str += ("[WPF]: Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
+                str += ToHexStrFromByte(recvDataPackage);
+                str += "\n";
+                SerialPortCommInfoTextBox_Update(false, str);
+
+                isBinData = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
         private void CmdLoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
@@ -195,7 +236,6 @@ namespace ADC_CDC_CONTROLLER
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Open Commands File...";
             openFileDialog.Filter = "Text File|*.txt";
-            openFileDialog.FileName = string.Empty;
             if (openFileDialog.ShowDialog() == false)
                 return;
             string txtFile = openFileDialog.FileName;
@@ -215,43 +255,31 @@ namespace ADC_CDC_CONTROLLER
             }
             string[] txtArray = txt.ToArray();
 
-            for (int i = 0; i < txtArray.Length; i++)
-            {
-                int comment_symbol_index = txtArray[i].IndexOf("#");
-                if (comment_symbol_index < 0)
-                    continue;
-                txtArray[i] = txtArray[i].Substring(0, comment_symbol_index);
-            }
-            // delete empty elememts
-            txtArray = txtArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-            // Commands
-            for (int i = 0; i < txtArray.Length; i++)
-            {
-                int sleepTime=0;
-                if (txtArray[i].Contains("<delay>") && txtArray[i].Contains("</delay>"))
-                {
-                    // GUI Delay
-                    sleepTime = Convert.ToInt32(MidStrEx(txtArray[i], "<delay>","</delay>"));
-                    MessageBox.Show(sleepTime.ToString());
-                }
-                else
-                {
-                    // Tramsit Command
-                    SerialPortStringSendFunc(txtArray[i]);
-                    sleepTime = Convert.ToInt32(cmdIntervalTextBox.Text);
-                    //Thread.Sleep(Convert.ToInt32(cmdIntervalTextBox.Text));
-                }
-                // Stop Program and Keep UI alive.
-                Thread t = new Thread(o => Thread.Sleep(sleepTime));
-                t.Start(this);
-                while (t.IsAlive)
-                {
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
-                }
-            }
-
+            // AutoRun
+            AutoRunCmds(txtArray);
         }
+        private void WriteCmdsFromTextBoxButton_Click(object sender, RoutedEventArgs e)
+        {
+            // AutoRun
+            AutoRunCmds(writeCmdsTextBox.Text.Split(new char[] { '\r', '\n' }));
+        }
+
+        private void SaveCmdsToFileButton_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            // Save File Dialog
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = "Save Commands File...";
+            saveFileDialog.Filter = "Text File|*.txt";
+            if (saveFileDialog.ShowDialog() == false)
+                return;
+            FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create);
+
+            fs.Write(System.Text.Encoding.Default.GetBytes(writeCmdsTextBox.Text), 0, writeCmdsTextBox.Text.Length);
+
+            fs.Flush();
+            fs.Close();
+        }
+
         private void SerialPortStringSendFunc(string str)
         {
             try
@@ -282,7 +310,7 @@ namespace ADC_CDC_CONTROLLER
                     //str_buf += isTx ? "Tx: " : "Rx: ";
                     str_buf += isTx ? "[WPF]: " : "";
                     str_buf += str[i];
-                    str_buf += "\r\n";
+                    str_buf += isTx ? "\n" : "";
                 }
                 serialPortCommInfoTextBox.Text += str_buf;
                 serialPortCommInfoTextBox.ScrollToEnd();
@@ -343,13 +371,64 @@ namespace ADC_CDC_CONTROLLER
 
         private void tmpUpdate_Click(object sender, RoutedEventArgs e)
         {
+            ADC_Data_Stroage_Code.Clear();
             for (int i = 0; i < ADC_Data_Stroage_Raw.Count / 4; i++)
-                ADC_Data_Stroage_Code.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), i*4));
+                ADC_Data_Stroage_Code.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), i * 4));
             tmpCode.Text = "";
             for (int i = 0; i < ADC_Data_Stroage_Code.Count; i++)
             {
                 tmpCode.Text += ADC_Data_Stroage_Code[i];
                 tmpCode.Text += "\n";
+            }
+        }
+
+        private void AutoRunCmds(string[] txtArray)
+        {
+            // Comments
+            for (int i = 0; i < txtArray.Length; i++)
+            {
+                int comment_symbol_index = txtArray[i].IndexOf("#");
+                if (comment_symbol_index < 0)
+                    continue;
+                txtArray[i] = txtArray[i].Substring(0, comment_symbol_index);
+            }
+            // Delete empty elememts
+            txtArray = txtArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+            // AutoRunCommands
+            for (int i = 0; i < txtArray.Length; i++)
+            {
+                int sleepTime = Convert.ToInt32(cmdIntervalTextBox.Text);
+                if (txtArray[i].Contains("<delay>") && txtArray[i].Contains("</delay>"))
+                {
+                    // GUI Delay
+                    sleepTime = Convert.ToInt32(MidStrEx(txtArray[i], "<delay>", "</delay>"));
+                }
+                else if (txtArray[i].Contains("<msgBox>") && txtArray[i].Contains("</msgBox>"))
+                {
+                    // MessageBox
+                    string msgBoxStr = MidStrEx(txtArray[i], "<msgBox>", "</msgBox>");
+                    MessageBox.Show(msgBoxStr);
+                }
+                else if (txtArray[i].Contains("<log>") && txtArray[i].Contains("</log>"))
+                {
+                    // Log Print
+                    string logStr = MidStrEx(txtArray[i], "<log>", "</log>");
+                    SerialPortCommInfoTextBox_Update(true, logStr);
+                }
+                else
+                {
+                    // Tramsit Command
+                    SerialPortStringSendFunc(txtArray[i]);
+                    //Thread.Sleep(sleepTime);
+                }
+                // Stop Program and Keep UI alive.
+                Thread t = new Thread(o => Thread.Sleep(sleepTime));
+                t.Start(this);
+                while (t.IsAlive)
+                {
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                }
             }
         }
 
