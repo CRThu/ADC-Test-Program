@@ -31,6 +31,7 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_DATR_STR = "DATR;";
         const string CMD_REGW_STR = "REGW;";
         const string CMD_REGR_STR = "REGR;";
+        const string CMD_REGM_STR = "REGM;";
         const string CMD_TASK1RUN_STR = "TASK1.RUN;";
         const string CMD_TASK1COMM_STR = "TASK1.COMM;";
         const string CMD_TASK1PACK_STR = "TASK1.PACK;";
@@ -42,6 +43,11 @@ namespace ADC_CDC_CONTROLLER
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            InitAdcSettings();
+            AdcPrimarySettingsListBox.ItemsSource = AdcSettings.Select(t => t.ConfigName).ToList();
+            AdcPrimarySettingsListBox.SelectedIndex = 0;
+            UpdateAdcSecondarySettingsListBox();
+
             string[] portList = System.IO.Ports.SerialPort.GetPortNames();
             for (int i = 0; i < portList.Length; ++i)
             {
@@ -175,6 +181,25 @@ namespace ADC_CDC_CONTROLLER
             string TxString = CMD_REGR_STR + cmdREGRTextBox1.Text + ";";
             SerialPortStringSendFunc(TxString);
         }
+
+        private void CmdREGMButton_Click(object sender, RoutedEventArgs e)
+        {
+            string[] regBitsModifyPosStr = cmdREGMTextBox2.Text.Split(new char[] { ':' });
+            int[] regBitsModifyPos = new int[] {
+                Convert.ToInt32(regBitsModifyPosStr[0] ),
+                Convert.ToInt32(regBitsModifyPosStr[1])};
+            int regBitsMSB = Math.Max(regBitsModifyPos[0], regBitsModifyPos[1]);
+            int regBitsLSB = Math.Min(regBitsModifyPos[0], regBitsModifyPos[1]);
+            int regBitsLen = regBitsMSB - regBitsLSB + 1;
+            // Modify REG21[10:0]=0x180
+            //  REGM;21;0;11;180;
+            string TxString = CMD_REGM_STR
+                + cmdREGMTextBox1.Text + ";"
+                 + regBitsLSB + ";" + regBitsLen + ";"
+                 + cmdREGMTextBox3.Text + ";";
+            SerialPortStringSendFunc(TxString);
+        }
+
         private void CmdTASK1RUNButton_Click(object sender, RoutedEventArgs e)
         {
             string TxString = CMD_TASK1RUN_STR + cmdTASK1RUNTextBox1.Text + ";";
@@ -212,7 +237,7 @@ namespace ADC_CDC_CONTROLLER
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 
                     if (myPort.BytesToRead < recvDataPackageSize)
-                        ;
+                        ;//TODO
                     else
                         t.Abort();
                 }
