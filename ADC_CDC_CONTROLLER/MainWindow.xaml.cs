@@ -21,6 +21,8 @@ namespace ADC_CDC_CONTROLLER
     {
         SerialPort myPort = new SerialPort();
         bool isBinData = false;
+        bool isWaitingSignal = false;
+        string ReceivedSignalStr = "";
         List<byte> ADC_Data_Stroage_Raw = new List<byte>();
         List<int> ADC_Data_Stroage_Code = new List<int>();
         int BytesPerCode;
@@ -110,8 +112,16 @@ namespace ADC_CDC_CONTROLLER
 
                         myPort.Read(recvData, 0, _bytesToRead);
                         string recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
-
-                        if (recvDataStr.IndexOf("<dat>") >= 0)
+                        
+                        if(isWaitingSignal)
+                        {
+                            if (recvDataStr.IndexOf("[COMMAND]") >= 0)
+                            {
+                                ReceivedSignalStr = recvDataStr;
+                                isWaitingSignal = false;
+                            }
+                        }
+                        else if (recvDataStr.IndexOf("<dat>") >= 0)
                         {
                             int hex_start = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("<dat>")) + "<dat>".Length;
                             int hex_end = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("</dat>")) - 1;
@@ -300,7 +310,6 @@ namespace ADC_CDC_CONTROLLER
             FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create);
 
             fs.Write(System.Text.Encoding.Default.GetBytes(writeCmdsTextBox.Text), 0, writeCmdsTextBox.Text.Length);
-
             fs.Flush();
             fs.Close();
         }
@@ -409,53 +418,72 @@ namespace ADC_CDC_CONTROLLER
 
         private void AutoRunCmds(string[] txtArray)
         {
-            // Comments
-            for (int i = 0; i < txtArray.Length; i++)
+            try
             {
-                int comment_symbol_index = txtArray[i].IndexOf("#");
-                if (comment_symbol_index < 0)
-                    continue;
-                txtArray[i] = txtArray[i].Substring(0, comment_symbol_index);
-            }
-            // Delete empty elememts
-            txtArray = txtArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                // Comments
+                for (int i = 0; i < txtArray.Length; i++)
+                {
+                    int comment_symbol_index = txtArray[i].IndexOf("#");
+                    if (comment_symbol_index < 0)
+                        continue;
+                    txtArray[i] = txtArray[i].Substring(0, comment_symbol_index);
+                }
+                // Delete empty elememts
+                txtArray = txtArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            // AutoRunCommands
-            for (int i = 0; i < txtArray.Length; i++)
+                // AutoRunCommands
+                for (int i = 0; i < txtArray.Length; i++)
+                {
+                    int sleepTime = Convert.ToInt32(cmdIntervalTextBox.Text);
+                    if (txtArray[i].Contains("<delay>") && txtArray[i].Contains("</delay>"))
+                    {
+                        // GUI Delay
+                        sleepTime = Convert.ToInt32(MidStrEx(txtArray[i], "<delay>", "</delay>"));
+                    }
+                    else if (txtArray[i].Contains("<msgBox>") && txtArray[i].Contains("</msgBox>"))
+                    {
+                        // MessageBox
+                        string msgBoxStr = MidStrEx(txtArray[i], "<msgBox>", "</msgBox>");
+                        MessageBox.Show(msgBoxStr);
+                    }
+                    else if (txtArray[i].Contains("<log>") && txtArray[i].Contains("</log>"))
+                    {
+                        // Log Print
+                        string logStr = MidStrEx(txtArray[i], "<log>", "</log>");
+                        SerialPortCommInfoTextBox_Update(true, logStr);
+                    }
+                    else if (txtArray[i].Contains("<waitCmd/>"))
+                    {
+                        // Wait For [COMMAND]: xxx
+                        isWaitingSignal = true;
+                        SerialPortCommInfoTextBox_Update(true, "Waiting For Signal");
+                        while (isWaitingSignal)
+                        {
+                            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                        }
+                        // Receive Signal
+                        string str = ReceivedSignalStr.Replace(" ", "").Split(new char[] {':'})[1];
+                        SerialPortCommInfoTextBox_Update(true, "Get Signal:" + str + ".");
+                    }
+                    else
+                    {
+                        // Tramsit Command
+                        SerialPortStringSendFunc(txtArray[i]);
+                        //Thread.Sleep(sleepTime);
+                    }
+                    // Stop Program and Keep UI alive.
+                    Thread t = new Thread(o => Thread.Sleep(sleepTime));
+                    t.Start(this);
+                    while (t.IsAlive)
+                    {
+                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                int sleepTime = Convert.ToInt32(cmdIntervalTextBox.Text);
-                if (txtArray[i].Contains("<delay>") && txtArray[i].Contains("</delay>"))
-                {
-                    // GUI Delay
-                    sleepTime = Convert.ToInt32(MidStrEx(txtArray[i], "<delay>", "</delay>"));
-                }
-                else if (txtArray[i].Contains("<msgBox>") && txtArray[i].Contains("</msgBox>"))
-                {
-                    // MessageBox
-                    string msgBoxStr = MidStrEx(txtArray[i], "<msgBox>", "</msgBox>");
-                    MessageBox.Show(msgBoxStr);
-                }
-                else if (txtArray[i].Contains("<log>") && txtArray[i].Contains("</log>"))
-                {
-                    // Log Print
-                    string logStr = MidStrEx(txtArray[i], "<log>", "</log>");
-                    SerialPortCommInfoTextBox_Update(true, logStr);
-                }
-                else
-                {
-                    // Tramsit Command
-                    SerialPortStringSendFunc(txtArray[i]);
-                    //Thread.Sleep(sleepTime);
-                }
-                // Stop Program and Keep UI alive.
-                Thread t = new Thread(o => Thread.Sleep(sleepTime));
-                t.Start(this);
-                while (t.IsAlive)
-                {
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
-                }
+                MessageBox.Show(ex.ToString());
             }
         }
-
     }
 }
