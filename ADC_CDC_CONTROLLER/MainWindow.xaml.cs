@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using static ADC_CDC_CONTROLLER.Util;
 
 // MSCHART 已经引用
 // TODO:图表 https://github.com/Microsoft/InteractiveDataDisplay.WPF
@@ -20,7 +21,8 @@ namespace ADC_CDC_CONTROLLER
     public partial class MainWindow : Window
     {
         SerialPort myPort = new SerialPort();
-        bool isBinData = false;
+        bool isDataReceivedRefused = false;
+        string recvDataStr;
         bool isWaitingSignal = false;
         string ReceivedSignalStr = "";
         List<byte> ADC_Data_Stroage_Raw = new List<byte>();
@@ -36,6 +38,7 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_REGM_STR = "REGM;";
         const string CMD_TASK1RUN_STR = "TASK1.RUN;";
         const string CMD_TASK1COMM_STR = "TASK1.COMM;";
+        const string CMD_TASK1COMMNEW_STR = "TASK1.COMMNEW;";
         const string CMD_TASK1PACK_STR = "TASK1.PACK;";
 
         public MainWindow()
@@ -67,8 +70,9 @@ namespace ADC_CDC_CONTROLLER
                 myPort.PortName = serialPortComboBox1.SelectedItem.ToString();
                 myPort.BaudRate = 9600;
                 myPort.DataBits = 8;
-                myPort.NewLine = "\r\n";
+                myPort.NewLine = "\n";
                 myPort.ReadBufferSize = Convert.ToInt32(rxBufSizeTextBox.Text);
+                myPort.ReadTimeout = Convert.ToInt32(rxTimeOutTextBox.Text);
                 myPort.Open();
                 serialPortStatusLabel.Content = myPort.IsOpen ? "Connected" : "Disconnected";
             }
@@ -103,7 +107,8 @@ namespace ADC_CDC_CONTROLLER
         {
             try
             {
-                if (!isBinData)
+                // Refuse DataReceived Process
+                if (!isDataReceivedRefused)
                 {
                     int _bytesToRead = myPort.BytesToRead;
                     if (_bytesToRead > 0)
@@ -111,7 +116,8 @@ namespace ADC_CDC_CONTROLLER
                         byte[] recvData = new byte[_bytesToRead];
 
                         myPort.Read(recvData, 0, _bytesToRead);
-                        string recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
+                        // TODO 重构
+                        recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
                         
                         if(isWaitingSignal)
                         {
@@ -121,7 +127,7 @@ namespace ADC_CDC_CONTROLLER
                                 isWaitingSignal = false;
                             }
                         }
-                        else if (recvDataStr.IndexOf("<dat>") >= 0)
+                        if (recvDataStr.IndexOf("<dat>") >= 0)
                         {
                             int hex_start = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("<dat>")) + "<dat>".Length;
                             int hex_end = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("</dat>")) - 1;
@@ -139,21 +145,6 @@ namespace ADC_CDC_CONTROLLER
 
                         SerialPortCommInfoTextBox_Update(false, recvDataStr);
                     }
-                }
-                else
-                {
-                    /*
-                    string str = "";
-                    byte[] recvDataPackage = new byte[packet_size];
-                    myPort.ReadTimeout=500;
-                    int data_len = myPort.Read(recvDataPackage, 0, packet_size);
-                    ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
-                    str += ("[WPF]: Read " + data_len + "/"+ packet_size + " Bytes in Packet.\n");
-                    str += ToHexStrFromByte(recvDataPackage);
-                    str += "\n";
-                    SerialPortCommInfoTextBox_Update(false, str);
-                    isBinData = false;
-                    */
                 }
             }
             catch (Exception ex)
@@ -215,20 +206,21 @@ namespace ADC_CDC_CONTROLLER
             string TxString = CMD_TASK1RUN_STR + cmdTASK1RUNTextBox1.Text + ";";
             SerialPortStringSendFunc(TxString);
         }
+
         private void CmdTASK1COMMButton_Click(object sender, RoutedEventArgs e)
         {
             string TxString = CMD_TASK1COMM_STR;
             SerialPortStringSendFunc(TxString);
         }
+
         private void CmdTASK1PACKButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // TODO: Change Value Name of isBinData
-                isBinData = true;
                 AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
                 BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
 
+                isDataReceivedRefused = true;
                 string TxString = CMD_TASK1PACK_STR;
                 SerialPortStringSendFunc(TxString);
 
@@ -237,10 +229,10 @@ namespace ADC_CDC_CONTROLLER
                 byte[] recvDataPackage = new byte[recvDataPackageSize];
 
                 // TIMEOUT when no bytes
-                myPort.ReadTimeout = 500;
+                int timeout_user = Convert.ToInt32(rxTimeOutTextBox.Text);
                 // TIMEOUT when transmission
                 // Stop Program and Keep UI alive.
-                Thread t = new Thread(o => Thread.Sleep(500));
+                Thread t = new Thread(o => Thread.Sleep(timeout_user));
                 t.Start(this);
                 while (t.IsAlive)
                 {
@@ -258,7 +250,7 @@ namespace ADC_CDC_CONTROLLER
                 str += "\n";
                 SerialPortCommInfoTextBox_Update(false, str);
 
-                isBinData = false;
+                isDataReceivedRefused = false;
             }
             catch (Exception ex)
             {
@@ -350,70 +342,20 @@ namespace ADC_CDC_CONTROLLER
                 serialPortCommInfoTextBox.ScrollToEnd();
             }));
         }
-        public static string ToHexStrFromByte(byte[] byteDatas)
-        {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < byteDatas.Length; i++)
-            {
-                builder.Append(string.Format("{0:X2} ", byteDatas[i]));
-            }
-            return builder.ToString().Trim();
-        }
-
-        public int GetIndexOf(byte[] b, byte[] bb)
-        {
-            if (b == null || bb == null || b.Length == 0 || bb.Length == 0 || b.Length < bb.Length)
-                return -1;
-            int i, j;
-            for (i = 0; i < b.Length - bb.Length + 1; i++)
-            {
-                if (b[i] == bb[0])
-                {
-                    for (j = 1; j < bb.Length; j++)
-                    {
-                        if (b[i + j] != bb[j])
-                            break;
-                    }
-                    if (j == bb.Length)
-                        return i;
-                }
-            }
-            return -1;
-        }
-
-        public static string MidStrEx(string sourse, string startstr, string endstr)
-        {
-            string result = string.Empty;
-            int startindex, endindex;
-            try
-            {
-                startindex = sourse.IndexOf(startstr);
-                if (startindex == -1)
-                    return result;
-                string tmpstr = sourse.Substring(startindex + startstr.Length);
-                endindex = tmpstr.IndexOf(endstr);
-                if (endindex == -1)
-                    return result;
-                result = tmpstr.Remove(endindex);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            return result;
-        }
 
         private void tmpUpdate_Click(object sender, RoutedEventArgs e)
         {
             ADC_Data_Stroage_Code.Clear();
             for (int i = 0; i < ADC_Data_Stroage_Raw.Count / 4; i++)
                 ADC_Data_Stroage_Code.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), i * 4));
-            tmpCode.Text = "";
+
+            string data_str = "";
             for (int i = 0; i < ADC_Data_Stroage_Code.Count; i++)
             {
-                tmpCode.Text += ADC_Data_Stroage_Code[i];
-                tmpCode.Text += "\n";
+                data_str += ADC_Data_Stroage_Code[i].ToString();
+                data_str += "\n";
             }
+            tmpCode.Text = data_str;
         }
 
         private void AutoRunCmds(string[] txtArray)
@@ -462,8 +404,16 @@ namespace ADC_CDC_CONTROLLER
                             Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
                         }
                         // Receive Signal
-                        string str = ReceivedSignalStr.Replace(" ", "").Split(new char[] {':'})[1];
-                        SerialPortCommInfoTextBox_Update(true, "Get Signal:" + str + ".");
+                        string str = ReceivedSignalStr.Replace(" ", "").Split(new char[] { ':' })[1];
+                        SerialPortCommInfoTextBox_Update(true, "Get Signal:" + str);
+                    }
+                    else if (txtArray[i].Contains("TASK1.PACK"))
+                    {
+                        CmdTASK1PACKButton_Click(null, null);
+                    }
+                    else if (txtArray[i].Contains("<storage/>"))
+                    {
+                        // TODO
                     }
                     else
                     {
@@ -471,12 +421,15 @@ namespace ADC_CDC_CONTROLLER
                         SerialPortStringSendFunc(txtArray[i]);
                         //Thread.Sleep(sleepTime);
                     }
-                    // Stop Program and Keep UI alive.
-                    Thread t = new Thread(o => Thread.Sleep(sleepTime));
-                    t.Start(this);
-                    while (t.IsAlive)
+                    if (sleepTime > 0)
                     {
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                        // Stop Program and Keep UI alive.
+                        Thread t = new Thread(o => Thread.Sleep(sleepTime));
+                        t.Start(this);
+                        while (t.IsAlive)
+                        {
+                            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                        }
                     }
                 }
             }
@@ -485,5 +438,6 @@ namespace ADC_CDC_CONTROLLER
                 MessageBox.Show(ex.ToString());
             }
         }
+
     }
 }

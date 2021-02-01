@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -46,8 +47,10 @@ namespace ADC_CDC_CONTROLLER
 
             AdcSettingsInfoTextBox.Text += SettingsInfoStr;
             AdcSettingsInfoTextBox.Text += "[WPF]: Status: Writing Commands." + System.Environment.NewLine;
+            AdcSettingsInfoTextBox.ScrollToEnd();
             AutoRunCmds(CommandsStr.ToArray());
             AdcSettingsInfoTextBox.Text += "[WPF]: Status: Completed." + System.Environment.NewLine;
+            AdcSettingsInfoTextBox.ScrollToEnd();
         }
 
         private void AdcSettingCreateTasksFileButton_Click(object sender, RoutedEventArgs e)
@@ -64,7 +67,7 @@ namespace ADC_CDC_CONTROLLER
             TasksFileName = openFileDialog.FileName;
         }
 
-        private void AdcSettingFileAppendTaskButton_Click(object sender, RoutedEventArgs e)
+        private void AdcSettingFileAppendTasksButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -86,12 +89,14 @@ namespace ADC_CDC_CONTROLLER
                 WriteFileStr += "### TASK.END ###" + Environment.NewLine;
                 WriteFileStr += Environment.NewLine;
 
-                // TODO multi selection
-                // TODO print to status textbox
+                AdcSettingsInfoTextBox.Text += "[WPF]: Status: Writing Tasks." + System.Environment.NewLine;
+                AdcSettingsInfoTextBox.ScrollToEnd();
                 FileStream fs = new FileStream(TasksFileName, FileMode.Append, FileAccess.Write);
                 fs.Write(System.Text.Encoding.Default.GetBytes(WriteFileStr), 0, WriteFileStr.Length);
                 fs.Flush();
                 fs.Close();
+                AdcSettingsInfoTextBox.Text += "[WPF]: Status: Writing Tasks Completed." + System.Environment.NewLine;
+                AdcSettingsInfoTextBox.ScrollToEnd();
             }
             catch (Exception ex)
             {
@@ -162,10 +167,12 @@ namespace ADC_CDC_CONTROLLER
                         }
                     },
                     new AdcPrimarySettingClass
-                    (
-                        "PGA",
-                        "1",
-                        new List<AdcSecondarySettingStruct>
+                    {
+                        ConfigName = "PGA",
+                        ConfigDescription ="PGA",
+                        DefaultSecondaryConfigName = "1",
+                        CurrentSecondaryConfigName = "1",
+                        Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "1", ConfigDescription = "[Secondary]: PGA = 1, ±2.5V", ConfigCommand = "REGM;19;0;3;0;"},
                            new AdcSecondarySettingStruct { ConfigName = "2", ConfigDescription = "[Secondary]: PGA = 2, ±1.25V", ConfigCommand = "REGM;19;0;3;1;"},
@@ -176,12 +183,14 @@ namespace ADC_CDC_CONTROLLER
                            new AdcSecondarySettingStruct { ConfigName = "64", ConfigDescription = "[Secondary]: PGA = 64, ±39.06mV", ConfigCommand = "REGM;19;0;3;6;"},
                            new AdcSecondarySettingStruct { ConfigName = "128", ConfigDescription = "[Secondary]: PGA = 128, ±19.53mV", ConfigCommand = "REGM;19;0;3;7;"}
                         }
-                    ),
+                    },
                     new AdcPrimarySettingClass
-                    (
-                        "Filter",
-                        "Sinc4",
-                        new List<AdcSecondarySettingStruct>
+                    {
+                        ConfigName = "Filter",
+                        ConfigDescription = "Filter",
+                        DefaultSecondaryConfigName = "Sinc4",
+                        CurrentSecondaryConfigName = "Sinc4",
+                        Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "Sinc4", ConfigDescription = "[Secondary]: Filter = 000", ConfigCommand = "REGM;21;21;3;0;"},
                            new AdcSecondarySettingStruct { ConfigName = "Sinc3", ConfigDescription = "[Secondary]: Filter = 010", ConfigCommand = "REGM;21;21;3;2;"},
@@ -189,12 +198,14 @@ namespace ADC_CDC_CONTROLLER
                            new AdcSecondarySettingStruct { ConfigName = "Sinc3+Sinc1", ConfigDescription = "[Secondary]: Filter = 101", ConfigCommand = "REGM;21;21;3;5;"},
                            new AdcSecondarySettingStruct { ConfigName = "Post Filter", ConfigDescription = "[Secondary]: Filter = 111", ConfigCommand = "REGM;21;21;3;7;"},
                         }
-                    ),
+                    },
                     new AdcPrimarySettingClass
-                    (
-                        "Speed (SincX Filter)",
-                        "384",
-                        new List<AdcSecondarySettingStruct>
+                    {
+                        ConfigName = "Speed (SincX Filter)",
+                        ConfigDescription = "Speed (SincX Filter)",
+                        DefaultSecondaryConfigName = "384",
+                        CurrentSecondaryConfigName = "384",
+                        Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "1", ConfigDescription = "[Secondary]: No Description", ConfigCommand = "REGM;21;0;11;1;"},
                            new AdcSecondarySettingStruct { ConfigName = "2", ConfigDescription = "[Secondary]: No Description", ConfigCommand = "REGM;21;0;11;2;"},
@@ -225,19 +236,21 @@ namespace ADC_CDC_CONTROLLER
                            new AdcSecondarySettingStruct { ConfigName = "1920", ConfigDescription = "[Secondary]: No Description", ConfigCommand = "REGM;21;0;11;780;"},
                            new AdcSecondarySettingStruct { ConfigName = "2047", ConfigDescription = "[Secondary]: No Description", ConfigCommand = "REGM;21;0;11;7FF;"},
                         }
-                    ),
+                    },
                     new AdcPrimarySettingClass
-                    (
-                        "Speed (Post Filter)",
-                        "25 SPS",
-                        new List<AdcSecondarySettingStruct>
+                    {
+                        ConfigName = "Speed (Post Filter)",
+                        ConfigDescription = "Speed (Post Filter)",
+                        DefaultSecondaryConfigName = "25 SPS",
+                        CurrentSecondaryConfigName = "25 SPS",
+                        Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "16.67 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 010", ConfigCommand = "REGM;21;17;3;2;"},
                            new AdcSecondarySettingStruct { ConfigName = "20 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 011", ConfigCommand = "REGM;21;17;3;3;"},
                            new AdcSecondarySettingStruct { ConfigName = "25 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 101", ConfigCommand = "REGM;21;17;3;5;"},
                            new AdcSecondarySettingStruct { ConfigName = "27.27 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 110", ConfigCommand = "REGM;21;17;3;6;"}
                         }
-                    )
+                    }
                 };
             AdcSettings.AddRange(adcSettingsFunctionStruct);
         }
