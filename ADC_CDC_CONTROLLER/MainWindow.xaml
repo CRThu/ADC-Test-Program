@@ -71,6 +71,8 @@
                     <Label Content="0x" HorizontalAlignment="Left" Margin="194,259,0,0" VerticalAlignment="Top"/>
                     <Label Content="TIMEOUT" HorizontalAlignment="Left" Margin="212,45,0,0" VerticalAlignment="Top" Width="89"/>
                     <TextBox x:Name="rxTimeOutTextBox" HorizontalAlignment="Left" Height="23" Margin="307,46,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <CheckBox x:Name="tmpPACKcheckBox" Content="PACK Delay" HorizontalAlignment="Left" Margin="21,506,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="tmpPACK2checkBox" Content="PACK ReadData" HorizontalAlignment="Left" Margin="126,506,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="ADC Settings">

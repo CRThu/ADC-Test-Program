@@ -228,6 +228,7 @@ namespace ADC_CDC_CONTROLLER
                 int recvDataPackageSize = AdcDataSize * BytesPerCode;
                 byte[] recvDataPackage = new byte[recvDataPackageSize];
 
+                // NEW SOLUTION:https://stackoverflow.com/questions/16439897/serialport-readbyte-int32-int32-is-not-blocking-but-i-want-it-to-how-do
                 // TIMEOUT when no bytes
                 int timeout_user = Convert.ToInt32(rxTimeOutTextBox.Text);
                 // TIMEOUT when transmission
@@ -238,12 +239,20 @@ namespace ADC_CDC_CONTROLLER
                 {
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 
-                    if (myPort.BytesToRead < recvDataPackageSize)
-                        ;//TODO
-                    else
+                    if (myPort.BytesToRead >= recvDataPackageSize)
                         t.Abort();
                 }
-                int data_len = myPort.Read(recvDataPackage, 0, recvDataPackageSize);
+                // TEST HERE
+                if(tmpPACKcheckBox.IsChecked == true)
+                    Thread.Sleep(10);
+                int data_len;
+                if (tmpPACK2checkBox.IsChecked == false)
+                    data_len = myPort.Read(recvDataPackage, 0, recvDataPackageSize);
+                else
+                {
+                    data_len = recvDataPackageSize;
+                    ReadData(recvDataPackage, recvDataPackageSize, timeout_user);
+                }
                 ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
                 str += ("[WPF]: Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
                 str += ToHexStrFromByte(recvDataPackage);
@@ -256,6 +265,25 @@ namespace ADC_CDC_CONTROLLER
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+        public bool ReadData(byte[] responseBytes, int bytesExpected, int timeOut)
+        {
+            try
+            {
+                myPort.ReadTimeout = timeOut;
+                int offset = 0, bytesRead;
+                while (bytesExpected > 0 &&
+                  (bytesRead = myPort.Read(responseBytes, offset, bytesExpected)) > 0)
+                {
+                    offset += bytesRead;
+                    bytesExpected -= bytesRead;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            return bytesExpected == 0;
         }
         private void CmdLoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
