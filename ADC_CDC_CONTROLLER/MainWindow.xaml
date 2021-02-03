@@ -9,7 +9,7 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:Chr="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
-        Title="ADC Test Program by carrot" Height="607.167" Width="871.333" Loaded="Window_Loaded">
+        Title="ADC Test Program by carrot" Height="637.167" Width="871.333" Loaded="Window_Loaded">
     <Grid Margin="0,0,5,1">
         <TabControl x:Name="tabControl" Margin="10">
             <TabItem Header="UART/VCP Communication">
@@ -19,7 +19,7 @@
                     <Button x:Name="serialPortConnectButton" Content="Connect" HorizontalAlignment="Left" Margin="21,61,0,0" VerticalAlignment="Top" Width="76" Click="SerialPortConnectButton_Click"/>
                     <Button x:Name="serialPortDisconnectButton" Content="Disconnect" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="76" Click="SerialPortDisconnectButton_Click"/>
                     <Label x:Name="serialPortStatusLabel" Content="Disconnected" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top"/>
-                    <Label Content="OPEN" HorizontalAlignment="Left" Margin="16,110,0,0" VerticalAlignment="Top"/>
+                    <Label Content="OPEN&amp;RESET" HorizontalAlignment="Left" Margin="16,110,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="serialPortCommInfoTextBox" Margin="382,10,10,10" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
                     <Label Content="DATW" HorizontalAlignment="Left" Margin="16,140,0,0" VerticalAlignment="Top"/>
                     <Label Content="DATR" HorizontalAlignment="Left" Margin="16,170,0,0" VerticalAlignment="Top"/>
@@ -38,7 +38,7 @@
                     <TextBox x:Name="cmdREGWTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="31"/>
                     <TextBox x:Name="cmdREGWTextBox2" HorizontalAlignment="Left" Height="23" Margin="154,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" MaxLength="6" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="5FFFFF"/>
                     <TextBox x:Name="cmdTASK1RUNTextBox1" HorizontalAlignment="Left" Height="23" Margin="96,311,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="159" MaxLength="20" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="64"/>
-                    <Label Content="HEX INPUT" HorizontalAlignment="Left" Margin="144,93,0,0" VerticalAlignment="Top"/>
+                    <Label Content="HEX INPUT" HorizontalAlignment="Left" Margin="144,85,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="70,230,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="70,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="131,200,0,0" VerticalAlignment="Top"/>
@@ -48,7 +48,7 @@
                     <Label Content="DEC INPUT" HorizontalAlignment="Left" Margin="144,287,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="rxBufSizeTextBox" HorizontalAlignment="Left" Height="23" Margin="307,72,0,0" TextWrapping="Wrap" Text="65536" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="RX__BUF__SIZE" HorizontalAlignment="Left" Margin="212,71,0,0" VerticalAlignment="Top" Width="89"/>
-                    <Label Content="COMM" HorizontalAlignment="Left" Margin="80,93,0,0" VerticalAlignment="Top"/>
+                    <Label Content="COMM" HorizontalAlignment="Left" Margin="86,85,0,0" VerticalAlignment="Top"/>
                     <Label Content="TASK" HorizontalAlignment="Left" Margin="86,287,0,0" VerticalAlignment="Top"/>
                     <Label Content="File" HorizontalAlignment="Left" Margin="16,380,0,0" VerticalAlignment="Top"/>
                     <Label Content="Interval" HorizontalAlignment="Left" Margin="144,380,0,0" VerticalAlignment="Top"/>
@@ -71,8 +71,7 @@
                     <Label Content="0x" HorizontalAlignment="Left" Margin="194,259,0,0" VerticalAlignment="Top"/>
                     <Label Content="TIMEOUT" HorizontalAlignment="Left" Margin="212,45,0,0" VerticalAlignment="Top" Width="89"/>
                     <TextBox x:Name="rxTimeOutTextBox" HorizontalAlignment="Left" Height="23" Margin="307,46,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <CheckBox x:Name="tmpPACKcheckBox" Content="PACK Delay" HorizontalAlignment="Left" Margin="21,506,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="tmpPACK2checkBox" Content="PACK ReadData" HorizontalAlignment="Left" Margin="126,506,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="cmdRESETButton" Content="RESET" HorizontalAlignment="Left" Margin="186,113,0,0" VerticalAlignment="Top" Width="76" Click="cmdRESETButton_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="ADC Settings">
@@ -84,39 +83,41 @@
                     <Label x:Name="label1_Copy" Content="Addr" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label1_Copy1" Content="- 0x" HorizontalAlignment="Left" Margin="135,39,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label1_Copy2" Content="0x" HorizontalAlignment="Left" Margin="54,39,0,0" VerticalAlignment="Top"/>
-                    <ListView x:Name="listView" HorizontalAlignment="Left" Height="441" Margin="10,69,0,0" VerticalAlignment="Top" Width="208">
+                    <ListView x:Name="listView" HorizontalAlignment="Left" Height="322" Margin="10,69,0,0" VerticalAlignment="Top" Width="208">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn/>
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <ListBox x:Name="AdcPrimarySettingsListBox" HorizontalAlignment="Left" Height="186" Margin="232,41,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="AdcPrimarySettingsListBox_SelectionChanged"/>
-                    <ListBox x:Name="AdcSecondarySettingsListBox" HorizontalAlignment="Left" Height="186" Margin="374,41,0,0" VerticalAlignment="Top" Width="138" SelectionMode="Extended" SelectionChanged="AdcSecondarySettingsListBox_SelectionChanged">
+                    <ListBox x:Name="AdcPrimarySettingsListBox" HorizontalAlignment="Left" Height="186" Margin="232,34,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="AdcPrimarySettingsListBox_SelectionChanged"/>
+                    <ListBox x:Name="AdcSecondarySettingsListBox" HorizontalAlignment="Left" Height="186" Margin="374,34,0,0" VerticalAlignment="Top" Width="138" SelectionMode="Extended" SelectionChanged="AdcSecondarySettingsListBox_SelectionChanged">
 
                     </ListBox>
-                    <Label Content="Settings" HorizontalAlignment="Left" Margin="232,11,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Settings" HorizontalAlignment="Left" Margin="232,8,0,0" VerticalAlignment="Top"/>
                     <Label Content="SelectedCommand" HorizontalAlignment="Left" Margin="232,229,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="AdcSelectedSettingCommandTextBox" HorizontalAlignment="Left" Height="24" Margin="356,231,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156"/>
                     <TextBox x:Name="AdcSelectedSettingDescriptionTextBox" HorizontalAlignment="Left" Height="42" Margin="232,259,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280"/>
                     <Button x:Name="AdcSettingSetConfigNowButton" Content="Set Config Now" HorizontalAlignment="Left" Margin="232,395,0,0" VerticalAlignment="Top" Width="110" Click="AdcSettingSetConfigNowButton_Click"/>
-                    <Button x:Name="AdcSettingFileAppendTasksButton" Content="Append Task" HorizontalAlignment="Left" Margin="402,448,0,0" VerticalAlignment="Top" Width="110" Click="AdcSettingFileAppendTasksButton_Click"/>
+                    <Button x:Name="AdcSettingFileAppendTasksButton" Content="Append" HorizontalAlignment="Left" Margin="458,448,0,0" VerticalAlignment="Top" Width="54" Click="AdcSettingFileAppendTasksButton_Click" Height="79"/>
                     <Button x:Name="AdcSettingCreateTasksFileButton" Content="Create Tasks File" HorizontalAlignment="Left" Margin="402,421,0,0" VerticalAlignment="Top" Width="110" Click="AdcSettingCreateTasksFileButton_Click"/>
-                    <TextBox x:Name="AdcSettingTasksFileNameTextBox" HorizontalAlignment="Left" Height="24" Margin="269,419,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="128"/>
-                    <Label Content="File" HorizontalAlignment="Left" Margin="228,419,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="AdcSettingTasksFileNameTextBox" HorizontalAlignment="Left" Height="24" Margin="66,419,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="331"/>
+                    <Label Content="File" HorizontalAlignment="Left" Margin="18,426,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="AdcAllSelectedSettingsTextBox" HorizontalAlignment="Left" Height="84" Margin="232,307,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" VerticalScrollBarVisibility="Auto"/>
                     <Button x:Name="AdcSettingGetConfigNowButton" Content="Get Config Now" HorizontalAlignment="Left" Margin="402,395,0,0" VerticalAlignment="Top" Width="110" IsEnabled="False"/>
                     <TextBox x:Name="AdcSettingsInfoTextBox" Margin="528,14,10,9.5" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
-                    <TextBox x:Name="AdcSettingTaskAddonCmdsTextBox" HorizontalAlignment="Left" Height="62" Margin="269,448,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="128" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Text="TASK1.RUN;256;&#xD;&#xA;&lt;waitCmd/&gt;&#xD;&#xA;TASK1.PACK;"/>
-                    <Label Content="Addon" HorizontalAlignment="Left" Margin="220,448,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="AdcSettingTaskAddonCmdsCheckBox" Content="" HorizontalAlignment="Left" Margin="237,478,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    <Button x:Name="AdcSettingOpenCmdsFileButton" Content="Open Tasks File" HorizontalAlignment="Left" Margin="402,490,0,0" VerticalAlignment="Top" Width="110" Click="AdcSettingOpenCmdsFileButton_Click"/>
+                    <TextBox x:Name="AdcSettingTaskAddonCmdsTextBox" HorizontalAlignment="Left" Margin="66,448,0,9.5" TextWrapping="Wrap" Width="387" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Text="TASK1.RUN;256;&#xA;&lt;waitCmd/&gt;&#xA;TASK1.PACK;256;4;1000;&#xD;&#xA;&lt;storeDic&gt;%PGA%&lt;/storeDic&gt;&#xD;&#xA;&lt;storeFile&gt;%file_test%.txt&lt;/storeFile&gt;"/>
+                    <Label Content="Addon" HorizontalAlignment="Left" Margin="12,450,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="AdcSettingTaskAddonCmdsCheckBox" Content="" HorizontalAlignment="Left" Margin="28,480,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <Button x:Name="AdcSettingOpenCmdsFileButton" Content="View" HorizontalAlignment="Left" Margin="458,532,0,0" VerticalAlignment="Top" Width="54" Click="AdcSettingOpenCmdsFileButton_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Data">
                 <Grid Background="#FFE5E5E5">
-                    <Button x:Name="tmpUpdate" Content="Button" HorizontalAlignment="Left" Margin="629,306,0,0" VerticalAlignment="Top" Width="76" Click="tmpUpdate_Click"/>
-                    <TextBox x:Name="tmpCode" HorizontalAlignment="Left" Height="246" Margin="604,38,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="148" VerticalScrollBarVisibility="Auto"/>
+                    <Button x:Name="tmpUpdate" Content="Button" HorizontalAlignment="Left" Margin="236,322,0,0" VerticalAlignment="Top" Width="76" Click="tmpUpdate_Click"/>
+                    <TextBox x:Name="tmpCode" HorizontalAlignment="Left" Height="246" Margin="153,38,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="238" VerticalScrollBarVisibility="Auto"/>
+                    <ListBox x:Name="tmpCodeDicListBox" HorizontalAlignment="Left" Height="186" Margin="10,38,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="tmpCodeDicListBox_SelectionChanged"/>
+                    <Button x:Name="tmpUpdateList" Content="Button" HorizontalAlignment="Left" Margin="40,322,0,0" VerticalAlignment="Top" Width="76" Click="tmpUpdateList_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>

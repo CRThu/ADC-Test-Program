@@ -26,11 +26,10 @@ namespace ADC_CDC_CONTROLLER
         bool isWaitingSignal = false;
         string ReceivedSignalStr = "";
         List<byte> ADC_Data_Stroage_Raw = new List<byte>();
-        List<int> ADC_Data_Stroage_Code = new List<int>();
-        int BytesPerCode;
-        int AdcDataSize;
+        Dictionary<string, List<int>> AdcDataStorageDictionary = new Dictionary<string, List<int>>();
 
         const string CMD_OPEN_STR = "OPEN;";
+        const string CMD_RESET_STR = "RESET;";
         const string CMD_DATW_STR = "DATW;";
         const string CMD_DATR_STR = "DATR;";
         const string CMD_REGW_STR = "REGW;";
@@ -118,8 +117,8 @@ namespace ADC_CDC_CONTROLLER
                         myPort.Read(recvData, 0, _bytesToRead);
                         // TODO 重构
                         recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
-                        
-                        if(isWaitingSignal)
+
+                        if (isWaitingSignal)
                         {
                             if (recvDataStr.IndexOf("[COMMAND]") >= 0)
                             {
@@ -159,6 +158,11 @@ namespace ADC_CDC_CONTROLLER
             SerialPortStringSendFunc(TxString);
         }
 
+        private void cmdRESETButton_Click(object sender, RoutedEventArgs e)
+        {
+            string TxString = CMD_RESET_STR;
+            SerialPortStringSendFunc(TxString);
+        }
         private void CmdDATWButton_Click(object sender, RoutedEventArgs e)
         {
             string TxString = CMD_DATW_STR + cmdDATWTextBox1.Text + ";";
@@ -209,31 +213,35 @@ namespace ADC_CDC_CONTROLLER
 
         private void CmdTASK1COMMButton_Click(object sender, RoutedEventArgs e)
         {
-            string TxString = CMD_TASK1COMM_STR;
+            int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
+            string TxString = CMD_TASK1COMM_STR + AdcDataSize + ";";
             SerialPortStringSendFunc(TxString);
         }
 
         private void CmdTASK1PACKButton_Click(object sender, RoutedEventArgs e)
         {
+            int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
+            int BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+            int timeout = Convert.ToInt32(rxTimeOutTextBox.Text);
+            Task1PACKReceive(AdcDataSize, BytesPerCode, timeout);
+        }
+        private void Task1PACKReceive(int adcDataSize, int bytesPerCode, int timeout)
+        {
             try
             {
-                AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
-                BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+                int recvDataPackageSize = adcDataSize * bytesPerCode;
 
                 isDataReceivedRefused = true;
-                string TxString = CMD_TASK1PACK_STR;
+                string TxString = CMD_TASK1PACK_STR + adcDataSize + ";" + bytesPerCode + ";" + timeout + ";";
                 SerialPortStringSendFunc(TxString);
 
                 string str = "";
-                int recvDataPackageSize = AdcDataSize * BytesPerCode;
                 byte[] recvDataPackage = new byte[recvDataPackageSize];
 
                 // NEW SOLUTION:https://stackoverflow.com/questions/16439897/serialport-readbyte-int32-int32-is-not-blocking-but-i-want-it-to-how-do
-                // TIMEOUT when no bytes
-                int timeout_user = Convert.ToInt32(rxTimeOutTextBox.Text);
-                // TIMEOUT when transmission
                 // Stop Program and Keep UI alive.
-                Thread t = new Thread(o => Thread.Sleep(timeout_user));
+                /*
+                Thread t = new Thread(o => Thread.Sleep(timeout));
                 t.Start(this);
                 while (t.IsAlive)
                 {
@@ -242,17 +250,9 @@ namespace ADC_CDC_CONTROLLER
                     if (myPort.BytesToRead >= recvDataPackageSize)
                         t.Abort();
                 }
-                // TEST HERE
-                if(tmpPACKcheckBox.IsChecked == true)
-                    Thread.Sleep(10);
-                int data_len;
-                if (tmpPACK2checkBox.IsChecked == false)
-                    data_len = myPort.Read(recvDataPackage, 0, recvDataPackageSize);
-                else
-                {
-                    data_len = recvDataPackageSize;
-                    ReadData(recvDataPackage, recvDataPackageSize, timeout_user);
-                }
+                */
+                int data_len = ReadDataBlock(recvDataPackage, recvDataPackageSize, timeout);
+
                 ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
                 str += ("[WPF]: Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
                 str += ToHexStrFromByte(recvDataPackage);
@@ -260,18 +260,21 @@ namespace ADC_CDC_CONTROLLER
                 SerialPortCommInfoTextBox_Update(false, str);
 
                 isDataReceivedRefused = false;
+
+                if (myPort.BytesToRead > 0)
+                    MyPort_DataReceived(null, null);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
         }
-        public bool ReadData(byte[] responseBytes, int bytesExpected, int timeOut)
+        public int ReadDataBlock(byte[] responseBytes, int bytesExpected, int timeOut)
         {
+            int offset = 0, bytesRead;
+            myPort.ReadTimeout = timeOut;
             try
             {
-                myPort.ReadTimeout = timeOut;
-                int offset = 0, bytesRead;
                 while (bytesExpected > 0 &&
                   (bytesRead = myPort.Read(responseBytes, offset, bytesExpected)) > 0)
                 {
@@ -283,7 +286,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 MessageBox.Show(ex.ToString());
             }
-            return bytesExpected == 0;
+            return offset;
         }
         private void CmdLoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
@@ -311,7 +314,8 @@ namespace ADC_CDC_CONTROLLER
             string[] txtArray = txt.ToArray();
 
             // AutoRun
-            AutoRunCmds(txtArray);
+            //AutoRunCmds(txtArray);
+            AutoRunCmds(txtArray, Path.GetDirectoryName(openFileDialog.FileName));
         }
         private void WriteCmdsFromTextBoxButton_Click(object sender, RoutedEventArgs e)
         {
@@ -373,7 +377,8 @@ namespace ADC_CDC_CONTROLLER
 
         private void tmpUpdate_Click(object sender, RoutedEventArgs e)
         {
-            ADC_Data_Stroage_Code.Clear();
+            List<int> ADC_Data_Stroage_Code = new List<int>();
+
             for (int i = 0; i < ADC_Data_Stroage_Raw.Count / 4; i++)
                 ADC_Data_Stroage_Code.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), i * 4));
 
@@ -385,8 +390,31 @@ namespace ADC_CDC_CONTROLLER
             }
             tmpCode.Text = data_str;
         }
+        private void tmpUpdateList_Click(object sender, RoutedEventArgs e)
+        {
+            tmpCodeDicListBox.Items.Clear();
+            foreach (var kv in AdcDataStorageDictionary)
+                tmpCodeDicListBox.Items.Add(kv.Key);
+        }
+        private void tmpCodeDicListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (tmpCodeDicListBox.SelectedItem == null)
+                return;
+
+            string data_str = "";
+            for (int i = 0; i < AdcDataStorageDictionary[(string)tmpCodeDicListBox.SelectedItem].Count; i++)
+            {
+                data_str += AdcDataStorageDictionary[(string)tmpCodeDicListBox.SelectedItem][i].ToString();
+                data_str += "\n";
+            }
+            tmpCode.Text = data_str;
+        }
 
         private void AutoRunCmds(string[] txtArray)
+        {
+            AutoRunCmds(txtArray, "./");
+        }
+        private void AutoRunCmds(string[] txtArray, string taskFileDir)
         {
             try
             {
@@ -409,6 +437,7 @@ namespace ADC_CDC_CONTROLLER
                     {
                         // GUI Delay
                         sleepTime = Convert.ToInt32(MidStrEx(txtArray[i], "<delay>", "</delay>"));
+                        SerialPortCommInfoTextBox_Update(true, "Delay " + sleepTime + " ms...");
                     }
                     else if (txtArray[i].Contains("<msgBox>") && txtArray[i].Contains("</msgBox>"))
                     {
@@ -437,11 +466,45 @@ namespace ADC_CDC_CONTROLLER
                     }
                     else if (txtArray[i].Contains("TASK1.PACK"))
                     {
-                        CmdTASK1PACKButton_Click(null, null);
+                        string[] param = txtArray[i].Split(new char[] { ';' });
+                        int AdcDataSize = Convert.ToInt32(param[1]);
+                        int BytesPerCode = Convert.ToInt32(param[2]);
+                        int timeout = Convert.ToInt32(param[3]);
+                        Task1PACKReceive(AdcDataSize, BytesPerCode, timeout);
                     }
-                    else if (txtArray[i].Contains("<storage/>"))
+                    else if (txtArray[i].Contains("<storeDic>") && txtArray[i].Contains("</storeDic>"))
                     {
-                        // TODO
+                        List<int> AdcDataStroageCode = new List<int>();
+
+                        for (int j = 0; j < ADC_Data_Stroage_Raw.Count / 4; j++)
+                            AdcDataStroageCode.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), j * 4));
+
+                        string dicKeyStr = MidStrEx(txtArray[i], "<storeDic>", "</storeDic>");
+                        if (!AdcDataStorageDictionary.ContainsKey(dicKeyStr))
+                            AdcDataStorageDictionary.Add(dicKeyStr, AdcDataStroageCode);
+                        else
+                            AdcDataStorageDictionary[dicKeyStr] = AdcDataStroageCode;
+                        SerialPortCommInfoTextBox_Update(true, "Stored data to dictionary:<Key.Name=" + dicKeyStr + ", Value.Size=" + AdcDataStroageCode.Count + ">");
+                    }
+                    else if (txtArray[i].Contains("<storeFile>") && txtArray[i].Contains("</storeFile>"))
+                    {
+                        List<int> AdcDataStroageCode = new List<int>();
+
+                        for (int j = 0; j < ADC_Data_Stroage_Raw.Count / 4; j++)
+                            AdcDataStroageCode.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), j * 4));
+
+                        string fileNameStr = MidStrEx(txtArray[i], "<storeFile>", "</storeFile>");
+                        // WriteFile
+                        FileStream fs = new FileStream(taskFileDir +@"\"+ fileNameStr, FileMode.Create);
+                        foreach (int code in AdcDataStroageCode)
+                        {
+                            byte[] writeFileBytes = System.Text.Encoding.Default.GetBytes(code.ToString() + Environment.NewLine);
+                            fs.Write(writeFileBytes, 0, writeFileBytes.Length);
+                        }
+                        fs.Flush();
+                        fs.Close();
+
+                        SerialPortCommInfoTextBox_Update(true, "Stored data to path:" + taskFileDir + @"\" + fileNameStr);
                     }
                     else
                     {

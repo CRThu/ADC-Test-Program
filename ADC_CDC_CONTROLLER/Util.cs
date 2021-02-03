@@ -9,6 +9,7 @@ namespace ADC_CDC_CONTROLLER
 {
     static class Util
     {
+
         public static string MidStrEx(string sourse, string startstr, string endstr)
         {
             string result = string.Empty;
@@ -23,6 +24,32 @@ namespace ADC_CDC_CONTROLLER
                 if (endindex == -1)
                     return result;
                 result = tmpstr.Remove(endindex);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            return result;
+        }
+        public static List<string> MidStrExAll(string sourse, string startstr, string endstr)
+        {
+            List<string> result = new List<string>();
+            int startindex, endindex;
+            int offsetIndex = 0;
+            try
+            {
+                while (offsetIndex < sourse.Length)
+                {
+                    startindex = sourse.IndexOf(startstr, offsetIndex);
+                    if (startindex == -1)
+                        return result;
+                    string tmpstr = sourse.Substring(startindex + startstr.Length);
+                    endindex = tmpstr.IndexOf(endstr);
+                    if (endindex == -1)
+                        return result;
+                    result.Add(tmpstr.Remove(endindex));
+                    offsetIndex = endindex;
+                }
             }
             catch (Exception ex)
             {

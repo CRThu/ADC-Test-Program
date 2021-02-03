@@ -71,20 +71,37 @@ namespace ADC_CDC_CONTROLLER
         {
             try
             {
+                // Prase %PGA% %Speed%
+                Dictionary<string, string> configNamePraseKv = new Dictionary<string, string>();
+                foreach (AdcPrimarySettingClass i in AdcSettings)
+                    configNamePraseKv.Add(i.ConfigName, i.CurrentSecondaryConfigName);
+
+                // Write Tasks
                 string WriteFileStr = "";
                 WriteFileStr += "### TASK.START ###" + Environment.NewLine;
-                WriteFileStr += "# TASK.GENTIME="+ DateTime.Now.ToString() + Environment.NewLine;
+                WriteFileStr += "# TASK.GENTIME=" + DateTime.Now.ToString() + Environment.NewLine;
                 foreach (AdcPrimarySettingClass i in AdcSettings)
                     WriteFileStr += "# TASK.CONFIG." + i.ConfigName + "=" + i.CurrentSecondaryConfigName + Environment.NewLine;
+                WriteFileStr += "### TASK.REG ###" + Environment.NewLine;
                 foreach (AdcPrimarySettingClass i in AdcSettings)
                     WriteFileStr += i.Configs.First(item => item.ConfigName == i.CurrentSecondaryConfigName).ConfigCommand + Environment.NewLine;
-                
+                WriteFileStr += "### TASK.ADDON ###" + Environment.NewLine;
                 if (AdcSettingTaskAddonCmdsCheckBox.IsChecked == true)
                 {
                     string[] AddonCmdsStrs = AdcSettingTaskAddonCmdsTextBox.Text.Split(new char[] { '\r', '\n' })
                         .Where(s => !string.IsNullOrEmpty(s)).ToArray();
-                    foreach(string AddonCmdsStr in AddonCmdsStrs)
+                    // Replace
+                    for (int i = 0; i < AddonCmdsStrs.Length; i++)
+                    {
+                        string AddonCmdsStr = AddonCmdsStrs[i];
+                        foreach (KeyValuePair<string, string> kv in configNamePraseKv)
+                        {
+                            int index = AddonCmdsStr.IndexOf("%" + kv.Key + "%");
+                            if (index != -1)
+                                AddonCmdsStr = AddonCmdsStr.Replace("%" + kv.Key + "%", kv.Value);
+                        }
                         WriteFileStr += AddonCmdsStr + Environment.NewLine;
+                    }
                 }
                 WriteFileStr += "### TASK.END ###" + Environment.NewLine;
                 WriteFileStr += Environment.NewLine;
