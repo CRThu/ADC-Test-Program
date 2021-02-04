@@ -37,11 +37,11 @@ namespace ADC_CDC_CONTROLLER
             List<string> CommandsStr = new List<string>();
             foreach (AdcPrimarySettingClass i in AdcSettings)
             {
-                CommandsStr.Add(i.Configs.First(item => item.ConfigName == i.CurrentSecondaryConfigName).ConfigCommand);
+                CommandsStr.Add(i.Configs.First(item => item.ConfigName == i.CurrentSecondaryConfigNames[0]).ConfigCommand);
                 SettingsInfoStr += "[WPF]: ";
                 SettingsInfoStr += i.ConfigName;
                 SettingsInfoStr += ": ";
-                SettingsInfoStr += i.CurrentSecondaryConfigName;
+                SettingsInfoStr += i.CurrentSecondaryConfigNames[0];
                 SettingsInfoStr += System.Environment.NewLine;
             }
 
@@ -71,40 +71,95 @@ namespace ADC_CDC_CONTROLLER
         {
             try
             {
-                // Prase %PGA% %Speed%
-                Dictionary<string, string> configNamePraseKv = new Dictionary<string, string>();
-                foreach (AdcPrimarySettingClass i in AdcSettings)
-                    configNamePraseKv.Add(i.ConfigName, i.CurrentSecondaryConfigName);
-
-                // Write Tasks
                 string WriteFileStr = "";
-                WriteFileStr += "### TASK.START ###" + Environment.NewLine;
-                WriteFileStr += "# TASK.GENTIME=" + DateTime.Now.ToString() + Environment.NewLine;
-                foreach (AdcPrimarySettingClass i in AdcSettings)
-                    WriteFileStr += "# TASK.CONFIG." + i.ConfigName + "=" + i.CurrentSecondaryConfigName + Environment.NewLine;
-                WriteFileStr += "### TASK.REG ###" + Environment.NewLine;
-                foreach (AdcPrimarySettingClass i in AdcSettings)
-                    WriteFileStr += i.Configs.First(item => item.ConfigName == i.CurrentSecondaryConfigName).ConfigCommand + Environment.NewLine;
-                WriteFileStr += "### TASK.ADDON ###" + Environment.NewLine;
-                if (AdcSettingTaskAddonCmdsCheckBox.IsChecked == true)
+
+                // iterator for multiTasks Generating
+                int[] iterCurrentConfigIndex = new int[AdcSettings.Count];
+                int[] iterCurrentConfigCnt = AdcSettings.Select(item => item.CurrentSecondaryConfigNames.Count).ToArray();
+                int iterTaskCnt = 1;
+
+                foreach (var cnt in iterCurrentConfigCnt)
+                    iterTaskCnt *= cnt;
+
+                AdcSettingsInfoTextBox.Text += "[WPF]: Status: Program is generating " + iterTaskCnt + " Tasks." + System.Environment.NewLine;
+                AdcSettingsInfoTextBox.ScrollToEnd();
+
+                // iter Index Start At Zero
+                for (int i = 0; i < iterCurrentConfigIndex.Length; i++)
+                    iterCurrentConfigIndex[i] = 0;
+                /*
+                // iterator Verify
+                for (int t = 0; t < iterCurrentConfigIndex.Length; t++)
+                    AdcSettingsInfoTextBox.Text += iterCurrentConfigCnt[t].ToString() + " ";
+                AdcSettingsInfoTextBox.Text += System.Environment.NewLine;
+                */
+
+                for (int iter = 0; iter < iterTaskCnt; iter++)
                 {
-                    string[] AddonCmdsStrs = AdcSettingTaskAddonCmdsTextBox.Text.Split(new char[] { '\r', '\n' })
-                        .Where(s => !string.IsNullOrEmpty(s)).ToArray();
-                    // Replace
-                    for (int i = 0; i < AddonCmdsStrs.Length; i++)
+                    // Update Value Index
+                    if (iter != 0)
+                        iterCurrentConfigIndex[0]++;
+                    for (int i = 0; i < iterCurrentConfigIndex.Length; i++)
                     {
-                        string AddonCmdsStr = AddonCmdsStrs[i];
-                        foreach (KeyValuePair<string, string> kv in configNamePraseKv)
+                        if (iterCurrentConfigIndex[i] >= iterCurrentConfigCnt[i])
                         {
-                            int index = AddonCmdsStr.IndexOf("%" + kv.Key + "%");
-                            if (index != -1)
-                                AddonCmdsStr = AddonCmdsStr.Replace("%" + kv.Key + "%", kv.Value);
+                            iterCurrentConfigIndex[i] = 0;
+                            if (i + 1 < iterCurrentConfigIndex.Length)
+                                iterCurrentConfigIndex[i + 1]++;
                         }
-                        WriteFileStr += AddonCmdsStr + Environment.NewLine;
                     }
+
+                    /*
+                    // iterator Verify
+                    for (int t = 0; t < iterCurrentConfigIndex.Length; t++)
+                        AdcSettingsInfoTextBox.Text += iterCurrentConfigIndex[t].ToString() + " ";
+                    AdcSettingsInfoTextBox.Text += System.Environment.NewLine;
+                    */
+
+                    // Task Gen Values
+                    // Prase Configs
+                    Dictionary<string, string> configNamePraseKv = new Dictionary<string, string>();
+                    for (int i = 0; i < AdcSettings.Count; i++)
+                        configNamePraseKv.Add(AdcSettings[i].ConfigName, AdcSettings[i].CurrentSecondaryConfigNames[iterCurrentConfigIndex[i]]);
+                    //configNamePraseKv.Add(AdcSettings[i].ConfigName, AdcSettings[i].CurrentSecondaryConfigNames[0]);
+
+                    
+                    // iterator Verify
+                    for (int t = 0; t < AdcSettings.Count; t++)
+                        AdcSettingsInfoTextBox.Text += AdcSettings[t].ConfigName + ":" + AdcSettings[t].CurrentSecondaryConfigNames[iterCurrentConfigIndex[t]] + '\t';
+                    AdcSettingsInfoTextBox.Text += System.Environment.NewLine;
+                    
+
+                    // Write Tasks
+                    WriteFileStr += "### TASK.START ###" + Environment.NewLine;
+                    WriteFileStr += "# TASK.ITERATOR=" + iter + "/"+iterTaskCnt + Environment.NewLine;
+                    WriteFileStr += "# TASK.GENTIME=" + DateTime.Now.ToString() + Environment.NewLine;
+                    foreach (var kv in configNamePraseKv)
+                        WriteFileStr += "# TASK.CONFIG." + kv.Key + "=" + kv.Value + Environment.NewLine;
+                    WriteFileStr += "### TASK.REG ###" + Environment.NewLine;
+                    foreach (var kv in configNamePraseKv)
+                        WriteFileStr += AdcSettings.First(item => item.ConfigName == kv.Key).Configs.First(item => item.ConfigName == kv.Value).ConfigCommand + Environment.NewLine;
+                    WriteFileStr += "### TASK.ADDON ###" + Environment.NewLine;
+                    if (AdcSettingTaskAddonCmdsCheckBox.IsChecked == true)
+                    {
+                        string[] AddonCmdsStrs = AdcSettingTaskAddonCmdsTextBox.Text.Split(new char[] { '\r', '\n' })
+                            .Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                        // Replace
+                        for (int i = 0; i < AddonCmdsStrs.Length; i++)
+                        {
+                            string AddonCmdsStr = AddonCmdsStrs[i];
+                            foreach (KeyValuePair<string, string> kv in configNamePraseKv)
+                            {
+                                int index = AddonCmdsStr.IndexOf("%" + kv.Key + "%");
+                                if (index != -1)
+                                    AddonCmdsStr = AddonCmdsStr.Replace("%" + kv.Key + "%", kv.Value);
+                            }
+                            WriteFileStr += AddonCmdsStr + Environment.NewLine;
+                        }
+                    }
+                    WriteFileStr += "### TASK.END ###" + Environment.NewLine;
+                    WriteFileStr += Environment.NewLine;
                 }
-                WriteFileStr += "### TASK.END ###" + Environment.NewLine;
-                WriteFileStr += Environment.NewLine;
 
                 AdcSettingsInfoTextBox.Text += "[WPF]: Status: Writing Tasks." + System.Environment.NewLine;
                 AdcSettingsInfoTextBox.ScrollToEnd();
@@ -139,7 +194,8 @@ namespace ADC_CDC_CONTROLLER
                 return;
 
             AdcSecondarySettingsListBox.ItemsSource = AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].Configs.Select(t => t.ConfigName).ToList();
-            AdcSecondarySettingsListBox.SelectedItem = AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].CurrentSecondaryConfigName;
+            foreach (string ConfigName in AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].CurrentSecondaryConfigNames)
+                AdcSecondarySettingsListBox.SelectedItems.Add(ConfigName);
         }
 
         private void UpdateAdcSettingCommand()
@@ -147,7 +203,7 @@ namespace ADC_CDC_CONTROLLER
             if (AdcPrimarySettingsListBox.SelectedIndex == -1 || AdcSecondarySettingsListBox.SelectedIndex == -1)
                 return;
 
-            AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].CurrentSecondaryConfigName = (string)AdcSecondarySettingsListBox.SelectedItem;
+            AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].CurrentSecondaryConfigNames = AdcSecondarySettingsListBox.SelectedItems.Cast<string>().ToList();
 
             AdcSelectedSettingCommandTextBox.Text = AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].Configs[AdcSecondarySettingsListBox.SelectedIndex].ConfigCommand;
             AdcSelectedSettingDescriptionTextBox.Text = AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].ConfigDescription
@@ -158,7 +214,9 @@ namespace ADC_CDC_CONTROLLER
             {
                 SettingsStr += i.ConfigName;
                 SettingsStr += ": ";
-                SettingsStr += i.CurrentSecondaryConfigName;
+                foreach (string ConfigName in i.CurrentSecondaryConfigNames)
+                    SettingsStr += ConfigName + "; ";
+                //SettingsStr += i.CurrentSecondaryConfigNames;
                 SettingsStr += System.Environment.NewLine;
             }
             AdcAllSelectedSettingsTextBox.Text = SettingsStr;
@@ -175,7 +233,7 @@ namespace ADC_CDC_CONTROLLER
                         ConfigName = "Power Mode",
                         ConfigDescription = "Power Mode",
                         DefaultSecondaryConfigName = "Low Power",
-                        CurrentSecondaryConfigName = "Low Power",
+                        CurrentSecondaryConfigNames = new List<string>(){"Low Power"},
                         Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "Low Power", ConfigDescription = "[Secondary]: POWER_MODE = 00", ConfigCommand = "REGM;01;6;2;0;"},
@@ -188,7 +246,7 @@ namespace ADC_CDC_CONTROLLER
                         ConfigName = "PGA",
                         ConfigDescription ="PGA",
                         DefaultSecondaryConfigName = "1",
-                        CurrentSecondaryConfigName = "1",
+                        CurrentSecondaryConfigNames = new List<string>(){"1"},
                         Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "1", ConfigDescription = "[Secondary]: PGA = 1, ±2.5V", ConfigCommand = "REGM;19;0;3;0;"},
@@ -200,13 +258,14 @@ namespace ADC_CDC_CONTROLLER
                            new AdcSecondarySettingStruct { ConfigName = "64", ConfigDescription = "[Secondary]: PGA = 64, ±39.06mV", ConfigCommand = "REGM;19;0;3;6;"},
                            new AdcSecondarySettingStruct { ConfigName = "128", ConfigDescription = "[Secondary]: PGA = 128, ±19.53mV", ConfigCommand = "REGM;19;0;3;7;"}
                         }
-                    },
+                    }
+                    ,
                     new AdcPrimarySettingClass
                     {
                         ConfigName = "Filter",
                         ConfigDescription = "Filter",
                         DefaultSecondaryConfigName = "Sinc4",
-                        CurrentSecondaryConfigName = "Sinc4",
+                        CurrentSecondaryConfigNames = new List<string>(){"Sinc4"},
                         Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "Sinc4", ConfigDescription = "[Secondary]: Filter = 000", ConfigCommand = "REGM;21;21;3;0;"},
@@ -221,7 +280,7 @@ namespace ADC_CDC_CONTROLLER
                         ConfigName = "Speed (SincX Filter)",
                         ConfigDescription = "Speed (SincX Filter)",
                         DefaultSecondaryConfigName = "384",
-                        CurrentSecondaryConfigName = "384",
+                        CurrentSecondaryConfigNames = new List<string>(){"384"},
                         Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "1", ConfigDescription = "[Secondary]: No Description", ConfigCommand = "REGM;21;0;11;1;"},
@@ -259,7 +318,7 @@ namespace ADC_CDC_CONTROLLER
                         ConfigName = "Speed (Post Filter)",
                         ConfigDescription = "Speed (Post Filter)",
                         DefaultSecondaryConfigName = "25 SPS",
-                        CurrentSecondaryConfigName = "25 SPS",
+                        CurrentSecondaryConfigNames = new List<string>(){"25 SPS"},
                         Configs = new List<AdcSecondarySettingStruct>
                         {
                            new AdcSecondarySettingStruct { ConfigName = "16.67 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 010", ConfigCommand = "REGM;21;17;3;2;"},
@@ -277,7 +336,7 @@ namespace ADC_CDC_CONTROLLER
             public string ConfigName;
             public string ConfigDescription;
             public string DefaultSecondaryConfigName;
-            public string CurrentSecondaryConfigName;
+            public List<string> CurrentSecondaryConfigNames;
             public List<AdcSecondarySettingStruct> Configs;
 
             public AdcPrimarySettingClass()
@@ -285,9 +344,10 @@ namespace ADC_CDC_CONTROLLER
                 ConfigName = "";
                 ConfigDescription = "[Primary]: No Description";
                 DefaultSecondaryConfigName = "";
-                CurrentSecondaryConfigName = "";
+                CurrentSecondaryConfigNames = new List<string>();
                 Configs = new List<AdcSecondarySettingStruct>();
             }
+            /*
             public AdcPrimarySettingClass(string ConfigName, string DefaultSecondaryConfigName, List<AdcSecondarySettingStruct> Configs)
             {
                 this.ConfigName = ConfigName;
@@ -304,6 +364,7 @@ namespace ADC_CDC_CONTROLLER
                 this.CurrentSecondaryConfigName = CurrentSecondaryConfigName;
                 this.Configs = Configs;
             }
+            */
         }
         public struct AdcSecondarySettingStruct
         {

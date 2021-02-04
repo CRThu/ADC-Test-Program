@@ -232,7 +232,7 @@ namespace ADC_CDC_CONTROLLER
                 int recvDataPackageSize = adcDataSize * bytesPerCode;
 
                 isDataReceivedRefused = true;
-                string TxString = CMD_TASK1PACK_STR + adcDataSize + ";" + bytesPerCode + ";" + timeout + ";";
+                string TxString = CMD_TASK1PACK_STR + adcDataSize + ";";
                 SerialPortStringSendFunc(TxString);
 
                 string str = "";
@@ -254,10 +254,9 @@ namespace ADC_CDC_CONTROLLER
                 int data_len = ReadDataBlock(recvDataPackage, recvDataPackageSize, timeout);
 
                 ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
-                str += ("[WPF]: Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
+                str += ("Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
                 str += ToHexStrFromByte(recvDataPackage);
-                str += "\n";
-                SerialPortCommInfoTextBox_Update(false, str);
+                SerialPortCommInfoTextBox_Update(true, str);
 
                 isDataReceivedRefused = false;
 
@@ -530,5 +529,8 @@ namespace ADC_CDC_CONTROLLER
             }
         }
 
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }
