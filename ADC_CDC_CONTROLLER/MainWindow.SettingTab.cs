@@ -59,12 +59,16 @@ namespace ADC_CDC_CONTROLLER
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Title = "Open Commands File...",
-                Filter = "Text File|*.txt"
+                Filter = "Text File|*.txt",
+                InitialDirectory = Directory.GetCurrentDirectory(),
+                CheckFileExists = false
             };
             if (openFileDialog.ShowDialog() == false)
                 return;
             AdcSettingTasksFileNameTextBox.Text = openFileDialog.SafeFileName;
             TasksFileName = openFileDialog.FileName;
+            if (!File.Exists(TasksFileName))
+                File.Create(TasksFileName).Close();
         }
 
         private void AdcSettingFileAppendTasksButton_Click(object sender, RoutedEventArgs e)
@@ -132,7 +136,7 @@ namespace ADC_CDC_CONTROLLER
 
                     // Write Tasks
                     WriteFileStr += "### TASK.START ###" + Environment.NewLine;
-                    WriteFileStr += "# TASK.ITERATOR=" + iter + "/"+iterTaskCnt + Environment.NewLine;
+                    WriteFileStr += "# TASK.ITERATOR=" + (iter+1) + "/"+iterTaskCnt + Environment.NewLine;
                     WriteFileStr += "# TASK.GENTIME=" + DateTime.Now.ToString() + Environment.NewLine;
                     foreach (var kv in configNamePraseKv)
                         WriteFileStr += "# TASK.CONFIG." + kv.Key + "=" + kv.Value + Environment.NewLine;
@@ -321,10 +325,10 @@ namespace ADC_CDC_CONTROLLER
                         CurrentSecondaryConfigNames = new List<string>(){"25 SPS"},
                         Configs = new List<AdcSecondarySettingStruct>
                         {
-                           new AdcSecondarySettingStruct { ConfigName = "16.67 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 010", ConfigCommand = "REGM;21;17;3;2;"},
-                           new AdcSecondarySettingStruct { ConfigName = "20 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 011", ConfigCommand = "REGM;21;17;3;3;"},
-                           new AdcSecondarySettingStruct { ConfigName = "25 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 101", ConfigCommand = "REGM;21;17;3;5;"},
-                           new AdcSecondarySettingStruct { ConfigName = "27.27 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 110", ConfigCommand = "REGM;21;17;3;6;"}
+                           new AdcSecondarySettingStruct { ConfigName = "27.27 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 010", ConfigCommand = "REGM;21;17;3;2;"},
+                           new AdcSecondarySettingStruct { ConfigName = "25 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 011", ConfigCommand = "REGM;21;17;3;3;"},
+                           new AdcSecondarySettingStruct { ConfigName = "20 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 101", ConfigCommand = "REGM;21;17;3;5;"},
+                           new AdcSecondarySettingStruct { ConfigName = "16.67 SPS", ConfigDescription = "[Secondary]: POST_FILTER = 110", ConfigCommand = "REGM;21;17;3;6;"}
                         }
                     }
                 };

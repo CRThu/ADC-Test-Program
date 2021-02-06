@@ -35,6 +35,7 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_REGW_STR = "REGW;";
         const string CMD_REGR_STR = "REGR;";
         const string CMD_REGM_STR = "REGM;";
+        const string CMD_REGQ_STR = "REGQ;";
         const string CMD_TASK1RUN_STR = "TASK1.RUN;";
         const string CMD_TASK1COMM_STR = "TASK1.COMM;";
         const string CMD_TASK1COMMNEW_STR = "TASK1.COMMNEW;";
@@ -204,6 +205,22 @@ namespace ADC_CDC_CONTROLLER
                  + cmdREGMTextBox3.Text + ";";
             SerialPortStringSendFunc(TxString);
         }
+        private void CmdREGQButton_Click(object sender, RoutedEventArgs e)
+        {
+            string[] regBitsModifyPosStr = cmdREGMTextBox2.Text.Split(new char[] { ':' });
+            int[] regBitsModifyPos = new int[] {
+                Convert.ToInt32(regBitsModifyPosStr[0] ),
+                Convert.ToInt32(regBitsModifyPosStr[1])};
+            int regBitsMSB = Math.Max(regBitsModifyPos[0], regBitsModifyPos[1]);
+            int regBitsLSB = Math.Min(regBitsModifyPos[0], regBitsModifyPos[1]);
+            int regBitsLen = regBitsMSB - regBitsLSB + 1;
+            // Modify REG21[10:0]=0x180
+            //  REGM;21;0;11;180;
+            string TxString = CMD_REGQ_STR
+                + cmdREGMTextBox1.Text + ";"
+                 + regBitsLSB + ";" + regBitsLen + ";";
+            SerialPortStringSendFunc(TxString);
+        }
 
         private void CmdTASK1RUNButton_Click(object sender, RoutedEventArgs e)
         {
@@ -290,9 +307,12 @@ namespace ADC_CDC_CONTROLLER
         private void CmdLoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
             // Open File Dialog
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "Open Commands File...";
-            openFileDialog.Filter = "Text File|*.txt";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Open Commands File...",
+                Filter = "Text File|*.txt",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
             if (openFileDialog.ShowDialog() == false)
                 return;
             string txtFile = openFileDialog.FileName;
@@ -325,9 +345,13 @@ namespace ADC_CDC_CONTROLLER
         private void SaveCmdsToFileButton_Copy_Click(object sender, RoutedEventArgs e)
         {
             // Save File Dialog
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Title = "Save Commands File...";
-            saveFileDialog.Filter = "Text File|*.txt";
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Commands File...",
+                Filter = "Text File|*.txt",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
+
             if (saveFileDialog.ShowDialog() == false)
                 return;
             FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create);
@@ -494,7 +518,13 @@ namespace ADC_CDC_CONTROLLER
 
                         string fileNameStr = MidStrEx(txtArray[i], "<storeFile>", "</storeFile>");
                         // WriteFile
-                        FileStream fs = new FileStream(taskFileDir +@"\"+ fileNameStr, FileMode.Create);
+                        string fullPathStr = Path.GetFullPath(taskFileDir + @"\" + fileNameStr);
+                        if (!Directory.Exists(Path.GetDirectoryName(fullPathStr)))
+                        {
+                            var di=Directory.CreateDirectory(Path.GetDirectoryName(fullPathStr));
+                            SerialPortCommInfoTextBox_Update(true, "Create Dierectory:" + Path.GetDirectoryName(fullPathStr));
+                        }
+                        FileStream fs = new FileStream(fullPathStr, FileMode.Create);
                         foreach (int code in AdcDataStroageCode)
                         {
                             byte[] writeFileBytes = System.Text.Encoding.Default.GetBytes(code.ToString() + Environment.NewLine);
@@ -503,7 +533,7 @@ namespace ADC_CDC_CONTROLLER
                         fs.Flush();
                         fs.Close();
 
-                        SerialPortCommInfoTextBox_Update(true, "Stored data to path:" + taskFileDir + @"\" + fileNameStr);
+                        SerialPortCommInfoTextBox_Update(true, "Stored data to path:" + fullPathStr);
                     }
                     else
                     {
@@ -529,8 +559,5 @@ namespace ADC_CDC_CONTROLLER
             }
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-        }
     }
 }
