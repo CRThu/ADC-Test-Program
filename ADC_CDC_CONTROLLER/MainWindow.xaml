@@ -10,6 +10,7 @@
         xmlns:Chr="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
         Title="ADC Test Program by carrot" Height="637.167" Width="871.333" Loaded="Window_Loaded">
+
     <Grid Margin="0,0,5,1">
         <TabControl x:Name="tabControl" Margin="10">
             <TabItem Header="Debug">
@@ -49,7 +50,7 @@
                     <Label Content="0x" HorizontalAlignment="Left" Margin="70,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="131,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="70,141,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="cmdLoadFromFileButton" Content="LOAD CMDs" HorizontalAlignment="Left" Margin="271,412,0,0" VerticalAlignment="Top" Width="90" Click="CmdLoadFromFileButton_Click" RenderTransformOrigin="0.496,0.825"/>
+                    <Button x:Name="cmdLoadFromFileButton" Content="LOAD CMDs" HorizontalAlignment="Left" Margin="271,412,0,0" VerticalAlignment="Top" Width="90" Click="CmdLoadFromFileButton_Click"/>
                     <TextBox x:Name="cmdLoadFromFileTextBox" HorizontalAlignment="Left" Height="22" Margin="46,412,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="98"/>
                     <Label Content="DEC INPUT" HorizontalAlignment="Left" Margin="144,316,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="rxBufSizeTextBox" HorizontalAlignment="Left" Height="23" Margin="307,72,0,0" TextWrapping="Wrap" Text="65536" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -64,8 +65,8 @@
                     <TextBox x:Name="bytesPerCodeTextBox" HorizontalAlignment="Left" Height="22" Margin="110,376,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="44" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="BytesPerCode" HorizontalAlignment="Left" Margin="16,374,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="writeCmdsTextBox" HorizontalAlignment="Left" Height="68" Margin="21,448,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                    <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Left" Margin="271,448,0,0" VerticalAlignment="Top" Width="90" RenderTransformOrigin="0.496,0.825" Height="44" Click="WriteCmdsFromTextBoxButton_Click"/>
-                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,498,0,0" VerticalAlignment="Top" Width="90" RenderTransformOrigin="0.496,0.825" Height="18" Click="SaveCmdsToFileButton_Copy_Click"/>
+                    <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Left" Margin="271,448,0,0" VerticalAlignment="Top" Width="90" Height="44" Click="WriteCmdsFromTextBoxButton_Click"/>
+                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,498,0,0" VerticalAlignment="Top" Width="90" Height="18" Click="SaveCmdsToFileButton_Copy_Click"/>
                     <Label Content="REGM" HorizontalAlignment="Left" Margin="16,259,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="cmdREGMButton" Content="REGM" HorizontalAlignment="Left" Margin="285,262,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGMButton_Click"/>
                     <TextBox x:Name="cmdREGMTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,260,0,0" TextWrapping="Wrap" Text="21" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -139,11 +140,30 @@
                     </LinearGradientBrush>
                 </TabItem.Background>
                 <Grid Background="#FFEDFFFA">
-                    <Button x:Name="taskTabLoadTaskFileButton" Content="Load Task File" HorizontalAlignment="Left" Margin="250,13,0,0" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.496,0.825" Click="TaskTabLoadTaskFileButton_Click"/>
+                    <Button x:Name="taskTabLoadTaskFileButton" Content="Load Task File" HorizontalAlignment="Left" Margin="250,13,0,0" VerticalAlignment="Top" Width="100" Click="TaskTabLoadTaskFileButton_Click"/>
                     <TextBox x:Name="taskTabTaskFileTextBox" HorizontalAlignment="Left" Height="24" Margin="74,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="171"/>
                     <Label Content="Task File" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <ListView x:Name="taskTabTaskTxtListView" HorizontalAlignment="Left" Height="464" Margin="10,88,0,0" VerticalAlignment="Top" Width="340">
+                    <ListView x:Name="taskTabTaskTxtListView" ItemsSource="{Binding}" HorizontalAlignment="Left" Height="464" Margin="10,88,0,0" VerticalAlignment="Top" Width="438" >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Lines" Width="50" DisplayMemberBinding ="{Binding Lines}" />
+                                <GridViewColumn Header="Commands" DisplayMemberBinding="{Binding Commands}" />
+                            </GridView>
+                        </ListView.View>
                     </ListView>
+                    <Label Content="Line Count : " HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top"/>
+                    <Label Content="/" HorizontalAlignment="Left" Margin="145,35,0,0" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="99,37,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="41" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label x:Name="taskTabFileLineCountLabel" Content="0" HorizontalAlignment="Left" Margin="165,35,0,0" VerticalAlignment="Top" Width="41" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <Button Content="Run At Selected Line" HorizontalAlignment="Left" Margin="211,39,0,0" VerticalAlignment="Top" Width="139" IsEnabled="False"/>
+                    <Label Content="Task Count : " HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top"/>
+                    <Label Content="/" HorizontalAlignment="Left" Margin="145,59,0,0" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="99,61,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="41" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label x:Name="taskTabFileTaskCountLabel" Content="0" HorizontalAlignment="Left" Margin="165,59,0,0" VerticalAlignment="Top" Width="41" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <Button Content="Run At Selected Task" HorizontalAlignment="Left" Margin="211,63,0,0" VerticalAlignment="Top" Width="139" IsEnabled="False"/>
+                    <Button x:Name="taskTabTaskRunButton" Content="Run" HorizontalAlignment="Left" Margin="355,13,0,0" VerticalAlignment="Top" Width="93" Height="45" Click="TaskTabTaskRunButton_Click"/>
+                    <Button x:Name="taskTabTaskPauseButton" Content="Pause" HorizontalAlignment="Left" Margin="355,63,0,0" VerticalAlignment="Top" Width="93" Height="19" Click="TaskTabTaskPauseButton_Click" IsEnabled="False"/>
+                    <TextBox x:Name="taskTabLoggerTextBox" HorizontalAlignment="Left" Height="542" Margin="453,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="373" Text="TODO"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Data">

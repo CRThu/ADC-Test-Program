@@ -20,34 +20,81 @@ namespace ADC_CDC_CONTROLLER
     public partial class MainWindow : Window
     {
         string TaskTabTaskFileName;
-        List<string> taskTabTaskTxtList = new List<string>();
+        // Convert to ObservableCollection<T>
+        DataTable taskTabTaskTxtList = new DataTable();
+        int taskTabFileLineCount = 0;
+        int taskTabFileTaskCount = 0;
 
         private void TaskTabLoadTaskFileButton_Click(object sender, RoutedEventArgs e)
         {
-            // Open File Dialog
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            try
             {
-                Title = "Open Tasks File...",
-                Filter = "Text File|*.txt",
-                InitialDirectory = Directory.GetCurrentDirectory(),
-            };
-            if (openFileDialog.ShowDialog() == false)
-                return;
-            taskTabTaskFileTextBox.Text = openFileDialog.SafeFileName;
-            TaskTabTaskFileName = openFileDialog.FileName;
-
-            // Open File
-            using (StreamReader sr = new StreamReader(TaskTabTaskFileName, Encoding.Default))
-            {
-                int lineCount = 0;
-                while (sr.Peek() > 0)
+                // Open File Dialog
+                OpenFileDialog openFileDialog = new OpenFileDialog
                 {
-                    lineCount++;
-                    string temp = sr.ReadLine();
-                    taskTabTaskTxtList.Add(temp);
+                    Title = "Open Tasks File...",
+                    Filter = "Text File|*.txt",
+                    InitialDirectory = Directory.GetCurrentDirectory(),
+                };
+                if (openFileDialog.ShowDialog() == false)
+                    return;
+                taskTabTaskFileTextBox.Text = openFileDialog.SafeFileName;
+                TaskTabTaskFileName = openFileDialog.FileName;
+
+                // Open File
+                taskTabTaskTxtList.Clear();
+                taskTabFileLineCount = 0;
+                taskTabFileTaskCount = 0;
+                using (StreamReader sr = new StreamReader(TaskTabTaskFileName, Encoding.Default))
+                {
+                    while (sr.Peek() > 0)
+                    {
+                        taskTabFileLineCount++;
+                        string lineTxt = sr.ReadLine();
+                        taskTabTaskTxtList.Rows.Add(taskTabFileLineCount, lineTxt);
+                        if (lineTxt.Contains("### TASK.START ###") | lineTxt.Contains("### TASK.END ###"))
+                            taskTabFileTaskCount++;
+                    }
+                    if (taskTabFileTaskCount % 2 != 0)
+                        throw new FileFormatException("\"### TASK.START ###\" or \"### TASK.END ###\" is Not Found.");
+                    taskTabFileTaskCount /= 2;
+                }
+                taskTabFileLineCountLabel.Content = taskTabFileLineCount;
+                taskTabFileTaskCountLabel.Content = taskTabFileTaskCount;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void TaskTabTaskRunButton_Click(object sender, RoutedEventArgs e)
+        {
+            string[] ary = Array.ConvertAll(taskTabTaskTxtList.Rows.Cast<DataRow>().ToArray(), r => r["Commands"].ToString());
+            TaskTabAutoRunCmds(ary, Path.GetDirectoryName(TaskTabTaskFileName));
+        }
+
+        private void TaskTabTaskPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void TaskTabAutoRunCmds(string[] txtArray, string taskFileDir)
+        {
+            try
+            {
+                txtArray = CmdFileDeleteComments(txtArray);
+
+                // AutoRunCommands
+                int sleepTime = Convert.ToInt32(cmdIntervalTextBox.Text);
+                for (int i = 0; i < txtArray.Length; i++)
+                {
+                    AutoRunPraseCmd(txtArray[i], taskFileDir, sleepTime);
                 }
             }
-            taskTabTaskTxtListView.ItemsSource = taskTabTaskTxtList;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }
