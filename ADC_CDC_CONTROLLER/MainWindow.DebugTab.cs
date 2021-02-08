@@ -27,12 +27,9 @@ namespace ADC_CDC_CONTROLLER
         string recvDataStr;
         bool isWaitingSignal = false;
         string ReceivedSignalStr = "";
+        int bytesPerCode;
 
-        AdcDataStorage AdcDataStorage = new AdcDataStorage();
-
-        // Will Be Removed
-        List<byte> ADC_Data_Stroage_Raw = new List<byte>();
-        Dictionary<string, List<int>> AdcDataStorageDictionary = new Dictionary<string, List<int>>();
+        AdcDataStorage adcDataStorage = new AdcDataStorage();
 
         const string CMD_OPEN_STR = "OPEN;";
         const string CMD_RESET_STR = "RESET;";
@@ -53,6 +50,9 @@ namespace ADC_CDC_CONTROLLER
             taskTabTaskTxtList.Columns.Add("Lines");
             taskTabTaskTxtList.Columns.Add("Commands");
             taskTabTaskTxtListView.DataContext = taskTabTaskTxtList;
+
+            bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -147,7 +147,7 @@ namespace ADC_CDC_CONTROLLER
                             //recvDataStr_tmp += recvDataStr.Substring(hex_start, hex_end-hex_start+1);
                             byte[] hex_bytes = recvData.Skip(hex_start).Take(hex_end - hex_start + 1).ToArray();
                             recvDataStr_tmp += ToHexStrFromByte(hex_bytes);
-                            ADC_Data_Stroage_Raw = new List<byte>(hex_bytes);
+                            adcDataStorage.WriteTmpAdcSamples(hex_bytes.ToList(), bytesPerCode);
                             recvDataStr_tmp += recvDataStr.Substring(hex_end + 1, recvDataStr.Length - hex_end - 1);
                             recvDataStr = recvDataStr_tmp;
                         }
@@ -239,6 +239,7 @@ namespace ADC_CDC_CONTROLLER
 
         private void CmdTASK1COMMButton_Click(object sender, RoutedEventArgs e)
         {
+            bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
             int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
             string TxString = CMD_TASK1COMM_STR + AdcDataSize + ";";
             SerialPortStringSendFunc(TxString);
@@ -279,7 +280,8 @@ namespace ADC_CDC_CONTROLLER
                 */
                 int data_len = ReadDataBlock(recvDataPackage, recvDataPackageSize, timeout);
 
-                ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
+                //ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
+                adcDataStorage.WriteTmpAdcSamples(recvDataPackage.ToList(), bytesPerCode);
                 str += ("Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
                 str += ToHexStrFromByte(recvDataPackage);
                 SerialPortLoggerTextBox_Update(true, str);
@@ -404,49 +406,16 @@ namespace ADC_CDC_CONTROLLER
             }));
         }
 
-        private void tmpUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            List<int> ADC_Data_Stroage_Code = new List<int>();
-
-            for (int i = 0; i < ADC_Data_Stroage_Raw.Count / 4; i++)
-                ADC_Data_Stroage_Code.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), i * 4));
-
-            string data_str = "";
-            for (int i = 0; i < ADC_Data_Stroage_Code.Count; i++)
-            {
-                data_str += ADC_Data_Stroage_Code[i].ToString();
-                data_str += "\n";
-            }
-            tmpCode.Text = data_str;
-        }
-        private void tmpUpdateList_Click(object sender, RoutedEventArgs e)
-        {
-            tmpCodeDicListBox.Items.Clear();
-            foreach (var kv in AdcDataStorageDictionary)
-                tmpCodeDicListBox.Items.Add(kv.Key);
-        }
-        private void tmpCodeDicListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (tmpCodeDicListBox.SelectedItem == null)
-                return;
-
-            string data_str = "";
-            for (int i = 0; i < AdcDataStorageDictionary[(string)tmpCodeDicListBox.SelectedItem].Count; i++)
-            {
-                data_str += AdcDataStorageDictionary[(string)tmpCodeDicListBox.SelectedItem][i].ToString();
-                data_str += "\n";
-            }
-            tmpCode.Text = data_str;
-        }
-
         private void AutoRunCmds(string[] txtArray)
         {
             DebugTabAutoRunCmds(txtArray, "./");
         }
+
         private void DebugTabAutoRunCmds(string[] txtArray, string taskFileDir)
         {
             AutoRunCmds(txtArray, taskFileDir);
         }
+
         private void AutoRunCmds(string[] txtArray, string taskFileDir)
         {
             try
@@ -524,49 +493,27 @@ namespace ADC_CDC_CONTROLLER
             }
             else if (command.Contains("<storeDic>") && command.Contains("</storeDic>"))
             {
-                List<int> AdcDataStroageCode = new List<int>();
-
-                for (int j = 0; j < ADC_Data_Stroage_Raw.Count / 4; j++)
-                    AdcDataStroageCode.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), j * 4));
-
                 string dicKeyStr = MidStrEx(command, "<storeDic>", "</storeDic>");
-                if (!AdcDataStorageDictionary.ContainsKey(dicKeyStr))
-                    AdcDataStorageDictionary.Add(dicKeyStr, AdcDataStroageCode);
-                else
-                    AdcDataStorageDictionary[dicKeyStr] = AdcDataStroageCode;
-                SerialPortLoggerTextBox_Update(true, "Stored data to dictionary:<Key.Name=" + dicKeyStr + ", Value.Size=" + AdcDataStroageCode.Count + ">");
+                int size = adcDataStorage.WriteTmpAdcSamplesToDataStorage(dicKeyStr);
+                SerialPortLoggerTextBox_Update(true, "Stored data to dictionary:<Key.Name=" + dicKeyStr + ", Value.Size=" + size + ">");
             }
             else if (command.Contains("<storeFile>") && command.Contains("</storeFile>"))
             {
-                List<int> AdcDataStroageCode = new List<int>();
-
-                for (int j = 0; j < ADC_Data_Stroage_Raw.Count / 4; j++)
-                    AdcDataStroageCode.Add(System.BitConverter.ToInt32(ADC_Data_Stroage_Raw.ToArray(), j * 4));
-
                 string fileNameStr = MidStrEx(command, "<storeFile>", "</storeFile>");
                 // WriteFile
                 string fullPathStr = Path.GetFullPath(taskFileDir + @"\" + fileNameStr);
                 if (!Directory.Exists(Path.GetDirectoryName(fullPathStr)))
                 {
                     var di = Directory.CreateDirectory(Path.GetDirectoryName(fullPathStr));
-                    SerialPortLoggerTextBox_Update(true, "Create Dierectory:" + Path.GetDirectoryName(fullPathStr));
+                    SerialPortLoggerTextBox_Update(true, "Create Directory:" + Path.GetDirectoryName(fullPathStr));
                 }
-                FileStream fs = new FileStream(fullPathStr, FileMode.Create);
-                foreach (int code in AdcDataStroageCode)
-                {
-                    byte[] writeFileBytes = System.Text.Encoding.Default.GetBytes(code.ToString() + Environment.NewLine);
-                    fs.Write(writeFileBytes, 0, writeFileBytes.Length);
-                }
-                fs.Flush();
-                fs.Close();
-
+                adcDataStorage.StoretmpAdcSamplesToFile(fullPathStr, AdcDataStorage.FileStroageExtension.Csv);
                 SerialPortLoggerTextBox_Update(true, "Stored data to path:" + fullPathStr);
             }
             else
             {
                 // Tramsit Command
                 SerialPortStringSendFunc(command);
-                //Thread.Sleep(sleepTime);
             }
             if (intervalTime > 0)
             {

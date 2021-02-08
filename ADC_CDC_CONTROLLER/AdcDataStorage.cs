@@ -11,6 +11,7 @@ namespace ADC_CDC_CONTROLLER
     class AdcDataStorage
     {
         private List<ulong> tmpAdcSamples;
+        // Replace string to settings
         private Dictionary<string, List<ulong>> AdcSamplesStorage;
         public enum FileStroageExtension
         {
@@ -24,7 +25,7 @@ namespace ADC_CDC_CONTROLLER
                 return AdcSamplesStorage.Count;
             }
         }
-        public string[] AllAdcSamplesStorageKeys
+        public string[] AdcSamplesStorageKeys
         {
             get
             {
@@ -42,33 +43,53 @@ namespace ADC_CDC_CONTROLLER
         {
             tmpAdcSamples = ConvertBytesToCodes(byteList, bytesPerCode);
         }
-        public void WriteTmpAdcSamplesToDataStorage(string name)
+        public int WriteTmpAdcSamplesToDataStorage(string name)
         {
-            AdcSamplesStorage.Add(name, tmpAdcSamples);
+            return WriteToDataStorage(name, tmpAdcSamples);
         }
-        public void WriteToDataStorage(string name, List<ulong> samples)
+        public int WriteToDataStorage(string name, List<ulong> samples)
         {
-            AdcSamplesStorage.Add(name, samples);
+            if (!AdcSamplesStorage.ContainsKey(name))
+                AdcSamplesStorage.Add(name, samples);
+            else
+                AdcSamplesStorage[name] = samples;
+
+            return samples.Count;
+        }
+        public List<ulong> ReadTmpAdcSamples()
+        {
+            return tmpAdcSamples;
         }
         public List<ulong> ReadDataStorage(string key)
         {
             return AdcSamplesStorage[key];
         }
+        public void StoretmpAdcSamplesToFile(string path, FileStroageExtension ext)
+        {
+            Dictionary<string, List<ulong>> keyValuePairs = new Dictionary<string, List<ulong>>
+            {
+                { "tmpAdcSamples", tmpAdcSamples }
+            };
+
+            if (ext == FileStroageExtension.Csv)
+                StoreDataToCsv(path, keyValuePairs);
+        }
         public void StoreAllDataToFile(string path, FileStroageExtension ext)
         {
             if (ext == FileStroageExtension.Csv)
-                StoreDataToCsv(path);
+                StoreDataToCsv(path, AdcSamplesStorage);
         }
-        private void StoreDataToCsv(string path)
+        private void StoreDataToCsv(string path, Dictionary<string, List<ulong>> data)
         {
             // Fomart
-            // NAME1,1,1,1,1,
-            // NAME2,1,1,1,1,1,1,
-            // NAME3,1,1,1,1,1,1,1,1,
+            // SETTINGX must not contain ','
+            // SETTING1,1,1,1,1,
+            // SETTING2,1,1,1,1,1,1,
+            // SETTING3,1,1,1,1,1,1,1,1,
             FileStream fs = new FileStream(path, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
-            foreach (var kvp in AdcSamplesStorage)
+            foreach (var kvp in data)
             {
                 sw.Write(kvp.Key + ",");
                 foreach (var code in kvp.Value)
@@ -122,11 +143,13 @@ namespace ADC_CDC_CONTROLLER
         public List<double> ConvertVoltages(List<ulong> codeList, bool isBipolar, double vRef, double gain, int adcBits)
         {
             if (isBipolar)
-                // 2^(N-1) * [(A_IN * Gain / V_REF) + 1]
-                return codeList.ConvertAll(code => Math.Pow(2, adcBits - 1) * (code * gain / vRef + 1));
+                // Code = 2^(N-1) * [(A_IN * Gain / V_REF) + 1]
+                // A_IN = [Code / 2^(N-1) - 1] * V_REF / Gain
+                return codeList.ConvertAll(code => (code / Math.Pow(2, adcBits - 1) - 1) * vRef / gain);
             else
-                // (2^N * A_IN * Gain) / V_REF
-                return codeList.ConvertAll(code => (Math.Pow(2, adcBits) * code * gain) / vRef);
+                // Code = (2^N * A_IN * Gain) / V_REF
+                // A_IN = Code * V_REF / 2^N / Gain
+                return codeList.ConvertAll(code => (code * vRef / Math.Pow(2, adcBits) / gain));
         }
     }
 }
