@@ -60,7 +60,7 @@ namespace ADC_CDC_CONTROLLER
             if (saveFileDialog.ShowDialog() == false)
                 return;
 
-            adcDataStorage.StoreAllDataToFile(saveFileDialog.FileName, AdcDataStorage.FileStroageExtension.Csv);
+            adcDataStorage.StoreAllDataToFile(saveFileDialog.FileName, DataStroageExtension.Csv);
         }
 
         private void dataTabLoadStorageButton_Click(object sender, RoutedEventArgs e)
@@ -74,7 +74,7 @@ namespace ADC_CDC_CONTROLLER
             };
             if (openFileDialog.ShowDialog() == false)
                 return;
-            adcDataStorage.LoadAllDataFromFile(openFileDialog.FileName, AdcDataStorage.FileStroageExtension.Csv);
+            adcDataStorage.LoadAllDataFromFile(openFileDialog.FileName, DataStroageExtension.Csv);
             DataTabUpdateListBoxButton_Click(null, null);
         }
     }

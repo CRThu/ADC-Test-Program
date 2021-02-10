@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace ADC_CDC_CONTROLLER
 {
+    public enum DataStroageExtension
+    {
+        Csv
+    }
+
     class AdcDataStorage
     {
         private List<ulong> tmpAdcSamples;
         // Replace string to settings
         private Dictionary<string, List<ulong>> AdcSamplesStorage;
-        public enum FileStroageExtension
-        {
-            Csv
-        }
 
         public int AdcSamplesCount
         {
@@ -64,19 +65,19 @@ namespace ADC_CDC_CONTROLLER
         {
             return AdcSamplesStorage[key];
         }
-        public void StoretmpAdcSamplesToFile(string path, FileStroageExtension ext)
+        public void StoretmpAdcSamplesToFile(string path, DataStroageExtension ext)
         {
             Dictionary<string, List<ulong>> keyValuePairs = new Dictionary<string, List<ulong>>
             {
                 { "tmpAdcSamples", tmpAdcSamples }
             };
 
-            if (ext == FileStroageExtension.Csv)
+            if (ext == DataStroageExtension.Csv)
                 StoreDataToCsv(path, keyValuePairs);
         }
-        public void StoreAllDataToFile(string path, FileStroageExtension ext)
+        public void StoreAllDataToFile(string path, DataStroageExtension ext)
         {
-            if (ext == FileStroageExtension.Csv)
+            if (ext == DataStroageExtension.Csv)
                 StoreDataToCsv(path, AdcSamplesStorage);
         }
         private void StoreDataToCsv(string path, Dictionary<string, List<ulong>> data)
@@ -99,9 +100,9 @@ namespace ADC_CDC_CONTROLLER
             sw.Flush();
             sw.Close();
         }
-        public void LoadAllDataFromFile(string path, FileStroageExtension ext)
+        public void LoadAllDataFromFile(string path, DataStroageExtension ext)
         {
-            if (ext == FileStroageExtension.Csv)
+            if (ext == DataStroageExtension.Csv)
                 LoadAllDataFromCsv(path);
         }
         private void LoadAllDataFromCsv(string path)
