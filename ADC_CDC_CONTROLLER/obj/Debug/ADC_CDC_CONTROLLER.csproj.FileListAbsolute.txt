@@ -28,3 +28,5 @@ D:\GitHub\ADC-Test-Program\ADC_CDC_CONTROLLER\obj\Debug\ADC_CDC_CONTROLLER.cspro
 D:\GitHub\ADC-Test-Program\ADC_CDC_CONTROLLER\obj\Debug\ADC_CDC_CONTROLLER.exe
 D:\GitHub\ADC-Test-Program\ADC_CDC_CONTROLLER\obj\Debug\ADC_CDC_CONTROLLER.pdb
 D:\GitHub\ADC-Test-Program\ADC_CDC_CONTROLLER\obj\Debug\ADC_CDC_CONTROLLER.csprojAssemblyReference.cache
+D:\GitHub\ADC-Test-Program\ADC_CDC_CONTROLLER\obj\Debug\XmlEditor.g.cs
+D:\GitHub\ADC-Test-Program\ADC_CDC_CONTROLLER\obj\Debug\XmlEditor.baml

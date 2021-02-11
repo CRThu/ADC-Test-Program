@@ -13,8 +13,10 @@ namespace ADC_CDC_CONTROLLER
 
     class AdcConfigs
     {
+        public string AdcId;
         public string AdcName;
         public string AdcVersion;
+        public int AdcBits;
         public List<AdcConfig> Configs;
 
         public void LoadConfigs(string path, ConfigStroageExtension ext)

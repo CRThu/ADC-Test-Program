@@ -110,9 +110,9 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <ListBox x:Name="AdcPrimarySettingsListBox" HorizontalAlignment="Left" Height="214" Margin="232,34,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="AdcPrimarySettingsListBox_SelectionChanged"/>
-                    <ListBox x:Name="AdcSecondarySettingsListBox" HorizontalAlignment="Left" Height="214" Margin="374,34,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="AdcSecondarySettingsListBox_SelectionChanged" SelectionMode="Extended"/>
-                    <Label Content="Settings" HorizontalAlignment="Left" Margin="232,10,0,0" VerticalAlignment="Top"/>
+                    <ListBox x:Name="AdcPrimarySettingsListBox" HorizontalAlignment="Left" Height="179" Margin="232,69,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="AdcPrimarySettingsListBox_SelectionChanged"/>
+                    <ListBox x:Name="AdcSecondarySettingsListBox" HorizontalAlignment="Left" Height="179" Margin="374,69,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="AdcSecondarySettingsListBox_SelectionChanged" SelectionMode="Extended"/>
+                    <Label Content="Configs" HorizontalAlignment="Left" Margin="232,39,0,0" VerticalAlignment="Top"/>
                     <Label Content="SelectedCommand" HorizontalAlignment="Left" Margin="232,253,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="AdcSelectedSettingCommandTextBox" HorizontalAlignment="Left" Height="24" Margin="356,254,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156"/>
                     <TextBox x:Name="AdcSelectedSettingDescriptionTextBox" HorizontalAlignment="Left" Height="42" Margin="232,283,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280"/>
@@ -128,8 +128,10 @@
                     <Label Content="Addon" HorizontalAlignment="Left" Margin="12,450,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="AdcSettingTaskAddonCmdsCheckBox" Content="" HorizontalAlignment="Left" Margin="28,480,0,0" VerticalAlignment="Top" IsChecked="True"/>
                     <Button x:Name="AdcSettingOpenCmdsFileButton" Content="View" HorizontalAlignment="Left" Margin="402,532,0,0" VerticalAlignment="Top" Width="110" Click="AdcSettingOpenCmdsFileButton_Click"/>
-                    <Label Content="Use Ctrl/Shift to append multiTasks" HorizontalAlignment="Left" Margin="305,9,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Use Ctrl/Shift to append multiTasks" HorizontalAlignment="Left" Margin="298,39,0,0" VerticalAlignment="Top"/>
                     <Label Content="Configs" HorizontalAlignment="Left" Margin="12,330,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="settingTabXmlEditorButton" Content="XML Editor" HorizontalAlignment="Left" Margin="424,14,0,0" VerticalAlignment="Top" Width="88" Click="SettingTabXmlEditorButton_Click"/>
+                    <Button x:Name="settingTabLoadXmlButton" Content="Load XML" HorizontalAlignment="Left" Margin="232,14,0,0" VerticalAlignment="Top" Width="88"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Task" >

@@ -20,6 +20,12 @@ namespace ADC_CDC_CONTROLLER
         List<AdcPrimarySettingClass> AdcSettings = new List<AdcPrimarySettingClass>();
         string TasksFileName;
 
+        private void SettingTabXmlEditorButton_Click(object sender, RoutedEventArgs e)
+        {
+            XmlEditor xmlEditor = new XmlEditor();
+            xmlEditor.ShowDialog();
+        }
+
         private void AdcPrimarySettingsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             UpdateAdcSecondarySettingsListBox();
