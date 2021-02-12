@@ -56,17 +56,52 @@
                 <description>PGA = 16, ±156.25mV</description>
                 <command>REGM;19;0;3;4;</command>
             </item>
+            <item>
+                <name>32</name>
+                <description>PGA = 32, ±78.125mV</description>
+                <command>REGM;19;0;3;5;</command>
+            </item>
+            <item>
+                <name>64</name>
+                <description>PGA = 64, ±39.06mV</description>
+                <command>REGM;19;0;3;6;</command>
+            </item>
+            <item>
+                <name>128</name>
+                <description>PGA = 128, ±19.53mV</description>
+                <command>REGM;19;0;3;7;</command>
+            </item>
         </items>
     </config>
     <config>
-        <name></name>
-        <description></description>
-        <default></default>
+        <name>Filter</name>
+        <description>Filter</description>
+        <default>Sinc4</default>
         <items>
             <item>
-                <name></name>
-                <description></description>
-                <command></command>
+                <name>Sinc4</name>
+                <description>Filter = 000</description>
+                <command>REGM;21;21;3;0;</command>
+            </item>
+            <item>
+                <name>Sinc3</name>
+                <description>Filter = 010</description>
+                <command>REGM;21;21;3;2;</command>
+            </item>
+            <item>
+                <name>Sinc4+Sinc1</name>
+                <description>Filter = 100</description>
+                <command>REGM;21;21;3;4;</command>
+            </item>
+            <item>
+                <name>Sinc3+Sinc1</name>
+                <description>Filter = 101</description>
+                <command>REGM;21;21;3;5;</command>
+            </item>
+            <item>
+                <name>Post Filter</name>
+                <description>Filter = 111</description>
+                <command>REGM;21;21;3;7;</command>
             </item>
         </items>
     </config>

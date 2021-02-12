@@ -5,12 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ADC_CDC_CONTROLLER"
         mc:Ignorable="d"
-        Title="XmlEditor" Height="279" Width="455.5" Loaded="Window_Loaded">
+        Title="XmlEditor" Height="348" Width="455.5" Loaded="Window_Loaded">
     <Grid>
         <Button x:Name="xmlEditerLoadXmlButton" Content="Load XML" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="84" Click="XmlEditerLoadXmlButton_Click"/>
         <Button x:Name="xmlEditerSaveXmlButton" Content="Save XML" HorizontalAlignment="Left" Margin="99,10,0,0" VerticalAlignment="Top" Width="84" Click="XmlEditerSaveXmlButton_Click"/>
         <TextBox x:Name="xmlEditerXmlPathTextBox" HorizontalAlignment="Left" Height="23" Margin="188,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="252"/>
-        <TreeView x:Name="xmlEditorXmlTreeView" HorizontalAlignment="Left" Height="208" Margin="10,34,0,0" VerticalAlignment="Top" Width="430"/>
-
+        <TreeView x:Name="xmlEditorXmlTreeView" ItemsSource="{Binding}" Margin="10,34,10.5,9.5">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown" Handler="TreeViewItem_PreviewMouseRightButtonDown"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <Grid>
+                        <TextBlock Text="{Binding ItemName, Mode=TwoWay}"/>
+                        <TextBox Text="{Binding ItemName, Mode=TwoWay}" Visibility="{Binding Visibility, Mode=TwoWay}" LostFocus="TextBox_LostFocus"/>
+                    </Grid>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.ContextMenu>
+                <ContextMenu x:Name="ContextMenu_EditNode">
+                    <MenuItem x:Name="xmlEditorRenameNodeMenuItem" Header="Rename Node" Click="XmlEditorRenameNodeMenuItem_Click"/>
+                    <MenuItem x:Name="xmlEditorCreateConfigNodesMenuItem" Header="Create Config Nodes" Click="XmlEditorCreateConfigNodesMenuItem_Click"/>
+                    <MenuItem x:Name="xmlEditorCreateConfigItemNodesMenuItem" Header="Create Config Item Nodes" Click="xmlEditorCreateConfigItemNodesMenuItem_Click"/>
+                    <MenuItem x:Name="xmlEditorDeleteNodeMenuItem" Header="Delete Node"/>
+                </ContextMenu>
+            </TreeView.ContextMenu>
+        </TreeView>
     </Grid>
 </Window>
