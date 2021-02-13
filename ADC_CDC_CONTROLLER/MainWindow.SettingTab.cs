@@ -22,8 +22,15 @@ namespace ADC_CDC_CONTROLLER
 
         private void SettingTabXmlEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            XmlEditor xmlEditor = new XmlEditor();
-            xmlEditor.ShowDialog();
+            try
+            {
+                XmlEditor xmlEditor = new XmlEditor();
+                xmlEditor.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void AdcPrimarySettingsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

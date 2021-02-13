@@ -40,8 +40,23 @@ namespace ADC_CDC_CONTROLLER
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Visibility"));
             }
         }
-
-        public ObservableCollection<XmlTreeNode> Children { get; set; }
+        // TODO
+        // BUGS IN PARENT
+        public XmlTreeNode Parent { get; set; }
+        private ObservableCollection<XmlTreeNode> children;
+        public ObservableCollection<XmlTreeNode> Children
+        {
+            get
+            {
+                return children;
+            }
+            set
+            {
+                children = value;
+                foreach (var child in children)
+                    child.Parent = this;
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,6 +66,7 @@ namespace ADC_CDC_CONTROLLER
             IsExpanded = true;
             Visibility = Visibility.Collapsed;
             ItemName = "[NODE]";
+            Parent = null;
             Children = new ObservableCollection<XmlTreeNode>();
         }
 

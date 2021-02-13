@@ -28,7 +28,7 @@
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                     <Grid>
                         <TextBlock Text="{Binding ItemName, Mode=TwoWay}"/>
-                        <TextBox Text="{Binding ItemName, Mode=TwoWay}" Visibility="{Binding Visibility, Mode=TwoWay}" LostFocus="TextBox_LostFocus"/>
+                        <TextBox Text="{Binding ItemName, Mode=TwoWay}" Visibility="{Binding Visibility, Mode=TwoWay}" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown"/>
                     </Grid>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
@@ -36,8 +36,8 @@
                 <ContextMenu x:Name="ContextMenu_EditNode">
                     <MenuItem x:Name="xmlEditorRenameNodeMenuItem" Header="Rename Node" Click="XmlEditorRenameNodeMenuItem_Click"/>
                     <MenuItem x:Name="xmlEditorCreateConfigNodesMenuItem" Header="Create Config Nodes" Click="XmlEditorCreateConfigNodesMenuItem_Click"/>
-                    <MenuItem x:Name="xmlEditorCreateConfigItemNodesMenuItem" Header="Create Config Item Nodes" Click="xmlEditorCreateConfigItemNodesMenuItem_Click"/>
-                    <MenuItem x:Name="xmlEditorDeleteNodeMenuItem" Header="Delete Node"/>
+                    <MenuItem x:Name="xmlEditorCreateConfigItemNodesMenuItem" Header="Create Config Item Nodes" Click="XmlEditorCreateConfigItemNodesMenuItem_Click"/>
+                    <MenuItem x:Name="xmlEditorDeleteNodeMenuItem" Header="Delete Node" Click="XmlEditorDeleteNodeMenuItem_Click"/>
                 </ContextMenu>
             </TreeView.ContextMenu>
         </TreeView>

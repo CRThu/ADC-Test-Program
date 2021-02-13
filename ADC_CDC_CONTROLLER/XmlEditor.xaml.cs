@@ -67,24 +67,47 @@ namespace ADC_CDC_CONTROLLER
 
         private void XmlEditorRenameNodeMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            selectTreeViewTextBox = xmlEditorXmlTreeView.SelectedItem;
-            ((XmlTreeNode)selectTreeViewTextBox).Visibility = Visibility.Visible;
+            ((XmlTreeNode)xmlEditorXmlTreeView.SelectedItem).Visibility = Visibility.Visible;
         }
 
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            ((XmlTreeNode)selectTreeViewTextBox).Visibility = Visibility.Collapsed;
+            ((XmlTreeNode)xmlEditorXmlTreeView.SelectedItem).Visibility = Visibility.Collapsed;
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ((XmlTreeNode)xmlEditorXmlTreeView.SelectedItem).Visibility = Visibility.Collapsed;
+            }
         }
 
         private void XmlEditorCreateConfigNodesMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (xmlEditorXmlTreeView.SelectedItem == null)
+                throw new KeyNotFoundException();
+
             XmlTreeNodeList.Where(node => node.ItemName.Equals("adc")).First().XmlAddAdcConfig();
         }
 
-        private void xmlEditorCreateConfigItemNodesMenuItem_Click(object sender, RoutedEventArgs e)
+        private void XmlEditorCreateConfigItemNodesMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            // TODO
-            ((XmlTreeNode)xmlEditorXmlTreeView.SelectedItem).Children.Add(new XmlTreeNode() { ItemName = "test" });
+            if (xmlEditorXmlTreeView.SelectedItem == null)
+                throw new KeyNotFoundException();
+
+            ((XmlTreeNode)xmlEditorXmlTreeView.SelectedItem).XmlAddAdcConfigItem();
+        }
+
+        private void XmlEditorDeleteNodeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xmlEditorXmlTreeView.SelectedItem == null)
+                throw new KeyNotFoundException();
+
+            // TODO TEST PARENT
+            // BUGS IN PARENT
+            XmlTreeNode xmlTreeNode = (XmlTreeNode)xmlEditorXmlTreeView.SelectedItem;
+            xmlTreeNode.Parent.Children.Remove(xmlTreeNode.Parent.Children.Where(node => node.ItemName.Equals(xmlTreeNode.ItemName)).First());
         }
     }
 }
