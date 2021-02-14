@@ -15,9 +15,12 @@ namespace ADC_CDC_CONTROLLER
 
     class AdcDataStorage
     {
-        private List<ulong> tmpAdcSamples;
+        // TODO ADD INFO
+        public string tmpAdcSampleInfo;
+        public List<ulong> tmpAdcSample;
         // Replace string to settings
-        private Dictionary<string, List<ulong>> AdcSamplesStorage;
+        public Dictionary<string, string> AdcSamplesInfo;
+        public Dictionary<string, List<ulong>> AdcSamplesStorage;
 
         public int AdcSamplesCount
         {
@@ -36,17 +39,20 @@ namespace ADC_CDC_CONTROLLER
 
         public AdcDataStorage()
         {
-            tmpAdcSamples = new List<ulong>();
+            tmpAdcSampleInfo = "";
+            tmpAdcSample = new List<ulong>();
+            AdcSamplesInfo = new Dictionary<string, string>();
             AdcSamplesStorage = new Dictionary<string, List<ulong>>();
         }
 
-        public void WriteTmpAdcSamples(List<byte> byteList, int bytesPerCode)
+        public void WriteTmpAdcSamples(string info, List<byte> byteList, int bytesPerCode)
         {
-            tmpAdcSamples = ConvertBytesToCodes(byteList, bytesPerCode);
+            tmpAdcSampleInfo = info;
+            tmpAdcSample = ConvertBytesToCodes(byteList, bytesPerCode);
         }
         public int WriteTmpAdcSamplesToDataStorage(string name)
         {
-            return WriteToDataStorage(name, tmpAdcSamples);
+            return WriteToDataStorage(name, tmpAdcSample);
         }
         public int WriteToDataStorage(string name, List<ulong> samples)
         {
@@ -59,7 +65,7 @@ namespace ADC_CDC_CONTROLLER
         }
         public List<ulong> ReadTmpAdcSamples()
         {
-            return tmpAdcSamples;
+            return tmpAdcSample;
         }
         public List<ulong> ReadDataStorage(string key)
         {
@@ -69,7 +75,7 @@ namespace ADC_CDC_CONTROLLER
         {
             Dictionary<string, List<ulong>> keyValuePairs = new Dictionary<string, List<ulong>>
             {
-                { "tmpAdcSamples", tmpAdcSamples }
+                { "tmpAdcSamples", tmpAdcSample }
             };
 
             if (ext == DataStroageExtension.Csv)

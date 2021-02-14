@@ -29,6 +29,7 @@ namespace ADC_CDC_CONTROLLER
         string ReceivedSignalStr = "";
         int bytesPerCode;
 
+        Dictionary<string, string> adcCurrentSampleSetting = new Dictionary<string, string>();
         AdcDataStorage adcDataStorage = new AdcDataStorage();
 
         const string CMD_OPEN_STR = "OPEN;";
@@ -458,8 +459,15 @@ namespace ADC_CDC_CONTROLLER
             {
                 string[] param = command.Split(new char[] { ';' });
                 int AdcDataSize = Convert.ToInt32(param[1]);
-                int BytesPerCode = Convert.ToInt32(param[2]);
-                int timeout = Convert.ToInt32(param[3]);
+                int BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+                int timeout = Convert.ToInt32(rxTimeOutTextBox.Text);
+                // TASK1.PACK;256;
+                if (param.Length > 3)
+                {
+                    // TASK1.PACK;256;4;1000;
+                    BytesPerCode = Convert.ToInt32(param[2]);
+                    timeout = Convert.ToInt32(param[3]);
+                }
                 Task1PACKReceive(AdcDataSize, BytesPerCode, timeout);
             }
             else if (command.Contains("<storeDic>") && command.Contains("</storeDic>"))
@@ -480,6 +488,21 @@ namespace ADC_CDC_CONTROLLER
                 }
                 adcDataStorage.StoretmpAdcSamplesToFile(fullPathStr, DataStroageExtension.Csv);
                 SerialPortLoggerTextBox_Update(true, "Stored data to path:" + fullPathStr);
+            }
+            else if(command.Contains("<setAnalysisParams>") && command.Contains("</setAnalysisParams>"))
+            {
+                adcCurrentSampleSetting.Clear();
+                string dataParams = MidStrEx(command, "<setAnalysisParams>", "</setAnalysisParams>");
+                string[] dataParamsArray = dataParams.Split(new char[] { ';' });
+                // <setAnalysisParams>a;1;b;2;c;3;d;4;</setAnalysisParams>
+                string log = "Set Analysis Params: {";
+                for (int i = 0; i < dataParamsArray.Length - 1; i += 2)
+                {
+                    adcCurrentSampleSetting.Add(dataParamsArray[i], dataParamsArray[i + 1]);
+                    log += " [" + dataParamsArray[i] + "," + dataParamsArray[i + 1] + "]";
+                }
+                log += " }";
+                SerialPortLoggerTextBox_Update(true, log);
             }
             else
             {
