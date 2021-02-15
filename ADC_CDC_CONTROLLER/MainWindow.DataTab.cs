@@ -31,11 +31,20 @@ namespace ADC_CDC_CONTROLLER
             if (dataTabAdcSamplesListBox.SelectedItem == null)
                 return;
 
+            string currentSettingInfo;
             List<ulong> currentList;
             if (dataTabAdcSamplesListBox.SelectedItem.Equals("tmpAdcSamples"))
+            {
                 currentList = adcDataStorage.ReadTmpAdcSamples();
+                currentSettingInfo = adcDataStorage.tmpAdcSampleInfo;
+            }
             else
+            {
                 currentList = adcDataStorage.ReadDataStorage((string)dataTabAdcSamplesListBox.SelectedItem);
+                currentSettingInfo = adcDataStorage.AdcSamplesInfo[(string)dataTabAdcSamplesListBox.SelectedItem];
+            }
+            dataTabStorageSettingInfoTextBox.Text = currentSettingInfo;
+
             string data_str = "";
             foreach (var data in currentList)
                 data_str += data.ToString() + Environment.NewLine;

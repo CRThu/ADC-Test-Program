@@ -52,10 +52,16 @@ namespace ADC_CDC_CONTROLLER
         }
         public int WriteTmpAdcSamplesToDataStorage(string name)
         {
-            return WriteToDataStorage(name, tmpAdcSample);
+            return WriteToDataStorage(name, tmpAdcSampleInfo, tmpAdcSample);
         }
-        public int WriteToDataStorage(string name, List<ulong> samples)
+        public int WriteToDataStorage(string name, string info, List<ulong> samples)
         {
+
+            if (!AdcSamplesInfo.ContainsKey(name))
+                AdcSamplesInfo.Add(name, info);
+            else
+                AdcSamplesInfo[name] = info;
+
             if (!AdcSamplesStorage.ContainsKey(name))
                 AdcSamplesStorage.Add(name, samples);
             else
@@ -73,32 +79,38 @@ namespace ADC_CDC_CONTROLLER
         }
         public void StoretmpAdcSamplesToFile(string path, DataStroageExtension ext)
         {
-            Dictionary<string, List<ulong>> keyValuePairs = new Dictionary<string, List<ulong>>
+            Dictionary<string, string> tmpSamplesInfoKvp = new Dictionary<string, string>
+            {
+                {"tmpAdcSamples",tmpAdcSampleInfo }
+            };
+            Dictionary<string, List<ulong>> tmpAdcSamplesDataKvp = new Dictionary<string, List<ulong>>
             {
                 { "tmpAdcSamples", tmpAdcSample }
             };
 
             if (ext == DataStroageExtension.Csv)
-                StoreDataToCsv(path, keyValuePairs);
+                StoreDataToCsv(path, tmpSamplesInfoKvp, tmpAdcSamplesDataKvp);
         }
         public void StoreAllDataToFile(string path, DataStroageExtension ext)
         {
             if (ext == DataStroageExtension.Csv)
-                StoreDataToCsv(path, AdcSamplesStorage);
+                StoreDataToCsv(path,AdcSamplesInfo, AdcSamplesStorage);
         }
-        private void StoreDataToCsv(string path, Dictionary<string, List<ulong>> data)
+        private void StoreDataToCsv(string path, Dictionary<string, string> info, Dictionary<string, List<ulong>> data)
         {
             // Fomart
-            // SETTINGX must not contain ','
-            // SETTING1,1,1,1,1,
-            // SETTING2,1,1,1,1,1,1,
-            // SETTING3,1,1,1,1,1,1,1,1,
+            // NAME,INFO must not contain ','
+            // NAME1,INFO1,1,1,1,1,
+            // NAME2,INFO2,1,1,1,1,1,1,
+            // NAME3,INFO3,1,1,1,1,1,1,1,1,
+            
             FileStream fs = new FileStream(path, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
             foreach (var kvp in data)
             {
                 sw.Write(kvp.Key + ",");
+                sw.Write(info[kvp.Key] + ",");
                 foreach (var code in kvp.Value)
                     sw.Write(code + ",");
                 sw.WriteLine();
@@ -113,6 +125,8 @@ namespace ADC_CDC_CONTROLLER
         }
         private void LoadAllDataFromCsv(string path)
         {
+            AdcSamplesStorage.Clear();
+            AdcSamplesInfo.Clear();
             using (StreamReader sr = new StreamReader(path))
             {
                 while (sr.Peek() > 0)
@@ -120,9 +134,11 @@ namespace ADC_CDC_CONTROLLER
                     string line = sr.ReadLine();
                     List<string> elements = line.Split(new char[] { ',' }).Where(str => !string.IsNullOrEmpty(str)).ToList();
                     string key = elements[0];
-                    elements.RemoveAt(0);
+                    string info = elements[1];
+                    elements.RemoveRange(0,2);
                     ulong[] value = elements.Select(code => Convert.ToUInt64(code)).ToArray();
                     AdcSamplesStorage.Add(key, value.ToList());
+                    AdcSamplesInfo.Add(key, info);
                 }
             }
         }

@@ -21,7 +21,6 @@ namespace ADC_CDC_CONTROLLER
     public partial class XmlEditor : Window
     {
         public ObservableCollection<XmlTreeNode> XmlTreeNodeList = XmlTreeNode.XmlAdcInfoInit();
-        private object selectTreeViewTextBox;
 
         public XmlEditor()
         {
