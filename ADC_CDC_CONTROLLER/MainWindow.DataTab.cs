@@ -17,7 +17,6 @@ namespace ADC_CDC_CONTROLLER
         private void DataTabUpdateListBoxButton_Click(object sender, RoutedEventArgs e)
         {
             dataTabAdcSamplesListBox.Items.Clear();
-            dataTabAdcSamplesListBox.Items.Add("tmpAdcSamples");
             foreach (var key in adcDataStorage.AdcSamplesStorageKeys)
                 dataTabAdcSamplesListBox.Items.Add(key);
 
@@ -31,18 +30,9 @@ namespace ADC_CDC_CONTROLLER
             if (dataTabAdcSamplesListBox.SelectedItem == null)
                 return;
 
-            string currentSettingInfo;
-            List<ulong> currentList;
-            if (dataTabAdcSamplesListBox.SelectedItem.Equals("tmpAdcSamples"))
-            {
-                currentList = adcDataStorage.ReadTmpAdcSamples();
-                currentSettingInfo = adcDataStorage.tmpAdcSampleInfo;
-            }
-            else
-            {
-                currentList = adcDataStorage.ReadDataStorage((string)dataTabAdcSamplesListBox.SelectedItem);
-                currentSettingInfo = adcDataStorage.AdcSamplesInfo[(string)dataTabAdcSamplesListBox.SelectedItem];
-            }
+            List<ulong>  currentList = adcDataStorage.ReadDataStorage((string)dataTabAdcSamplesListBox.SelectedItem);
+            string currentSettingInfo = adcDataStorage.AdcSamplesSettingInfo[(string)dataTabAdcSamplesListBox.SelectedItem];
+
             dataTabStorageSettingInfoTextBox.Text = currentSettingInfo;
 
             string data_str = "";

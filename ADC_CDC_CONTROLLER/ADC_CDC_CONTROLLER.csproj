@@ -59,7 +59,8 @@
     </ApplicationDefinition>
     <Compile Include="AdcDataStorage.cs" />
     <Compile Include="AdcConfig.cs" />
-    <Compile Include="AdcConfigs.cs" />
+    <Compile Include="AdcConfigCollection.cs" />
+    <Compile Include="AdcSampleData.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -114,6 +115,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

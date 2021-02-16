@@ -11,7 +11,7 @@ namespace ADC_CDC_CONTROLLER
         Xml
     }
 
-    class AdcConfigs
+    class AdcConfigCollection
     {
         public string AdcId;
         public string AdcName;
@@ -40,13 +40,21 @@ namespace ADC_CDC_CONTROLLER
 
         }
 
-        public AdcConfigs()
+        public AdcConfigCollection()
         {
+            AdcId = "";
+            AdcName = "";
+            AdcVersion = "";
+            AdcBits = 0;
             Configs = new List<AdcConfig>();
         }
         
-        public AdcConfigs(List<AdcConfig> configs)
+        public AdcConfigCollection(List<AdcConfig> configs)
         {
+            AdcId = "";
+            AdcName = "";
+            AdcVersion = "";
+            AdcBits = 0;
             Configs = configs;
         }
     }

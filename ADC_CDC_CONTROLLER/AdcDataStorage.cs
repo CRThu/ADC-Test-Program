@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -15,11 +15,10 @@ namespace ADC_CDC_CONTROLLER
 
     class AdcDataStorage
     {
-        // TODO ADD INFO
-        public string tmpAdcSampleInfo;
-        public List<ulong> tmpAdcSample;
+        public const string tmpAdcSample = "tmpAdcSample";
+
         // Replace string to settings
-        public Dictionary<string, string> AdcSamplesInfo;
+        public Dictionary<string, string> AdcSamplesSettingInfo;
         public Dictionary<string, List<ulong>> AdcSamplesStorage;
 
         public int AdcSamplesCount
@@ -37,30 +36,39 @@ namespace ADC_CDC_CONTROLLER
             }
         }
 
+        private void TmpAdcSampleInit()
+        {
+            AdcSamplesSettingInfo.Add(tmpAdcSample, "");
+            AdcSamplesStorage.Add(tmpAdcSample, new List<ulong>());
+        }
+
         public AdcDataStorage()
         {
-            tmpAdcSampleInfo = "";
-            tmpAdcSample = new List<ulong>();
-            AdcSamplesInfo = new Dictionary<string, string>();
+            AdcSamplesSettingInfo = new Dictionary<string, string>();
             AdcSamplesStorage = new Dictionary<string, List<ulong>>();
+            TmpAdcSampleInit();
         }
 
         public void WriteTmpAdcSamples(string info, List<byte> byteList, int bytesPerCode)
         {
-            tmpAdcSampleInfo = info;
-            tmpAdcSample = ConvertBytesToCodes(byteList, bytesPerCode);
+            AdcSamplesSettingInfo[tmpAdcSample] = info;
+            AdcSamplesStorage[tmpAdcSample] = ConvertBytesToCodes(byteList, bytesPerCode);
         }
+
         public int WriteTmpAdcSamplesToDataStorage(string name)
         {
-            return WriteToDataStorage(name, tmpAdcSampleInfo, tmpAdcSample);
+            return WriteToDataStorage(name, AdcSamplesSettingInfo[tmpAdcSample], AdcSamplesStorage[tmpAdcSample]);
         }
+        
         public int WriteToDataStorage(string name, string info, List<ulong> samples)
         {
+            if (name.Equals(tmpAdcSample))
+                throw new AccessViolationException();
 
-            if (!AdcSamplesInfo.ContainsKey(name))
-                AdcSamplesInfo.Add(name, info);
+            if (!AdcSamplesSettingInfo.ContainsKey(name))
+                AdcSamplesSettingInfo.Add(name, info);
             else
-                AdcSamplesInfo[name] = info;
+                AdcSamplesSettingInfo[name] = info;
 
             if (!AdcSamplesStorage.ContainsKey(name))
                 AdcSamplesStorage.Add(name, samples);
@@ -71,30 +79,33 @@ namespace ADC_CDC_CONTROLLER
         }
         public List<ulong> ReadTmpAdcSamples()
         {
-            return tmpAdcSample;
+            return AdcSamplesStorage[tmpAdcSample];
         }
         public List<ulong> ReadDataStorage(string key)
         {
             return AdcSamplesStorage[key];
         }
+
         public void StoretmpAdcSamplesToFile(string path, DataStroageExtension ext)
         {
-            Dictionary<string, string> tmpSamplesInfoKvp = new Dictionary<string, string>
-            {
-                {"tmpAdcSamples",tmpAdcSampleInfo }
+            KeyValuePair<string, string> tmpAdcSampleSettingInfoKvp = AdcSamplesSettingInfo.Where(info => info.Key.Equals(tmpAdcSample)).First();
+            Dictionary<string, string> tmpAdcSampleSettingInfoDic = new Dictionary<string, string>
+            { 
+                {tmpAdcSampleSettingInfoKvp.Key,tmpAdcSampleSettingInfoKvp.Value } 
             };
-            Dictionary<string, List<ulong>> tmpAdcSamplesDataKvp = new Dictionary<string, List<ulong>>
+            KeyValuePair<string, List<ulong>> tmpAdcSampleStorageKvp = AdcSamplesStorage.Where(info => info.Key.Equals(tmpAdcSample)).First();
+            Dictionary<string, List<ulong>> tmpAdcSampleStorageDic = new Dictionary<string, List<ulong>>
             {
-                { "tmpAdcSamples", tmpAdcSample }
+                {tmpAdcSampleStorageKvp.Key,tmpAdcSampleStorageKvp.Value }
             };
 
             if (ext == DataStroageExtension.Csv)
-                StoreDataToCsv(path, tmpSamplesInfoKvp, tmpAdcSamplesDataKvp);
+                StoreDataToCsv(path, tmpAdcSampleSettingInfoDic, tmpAdcSampleStorageDic);
         }
         public void StoreAllDataToFile(string path, DataStroageExtension ext)
         {
             if (ext == DataStroageExtension.Csv)
-                StoreDataToCsv(path,AdcSamplesInfo, AdcSamplesStorage);
+                StoreDataToCsv(path,AdcSamplesSettingInfo, AdcSamplesStorage);
         }
         private void StoreDataToCsv(string path, Dictionary<string, string> info, Dictionary<string, List<ulong>> data)
         {
@@ -126,7 +137,7 @@ namespace ADC_CDC_CONTROLLER
         private void LoadAllDataFromCsv(string path)
         {
             AdcSamplesStorage.Clear();
-            AdcSamplesInfo.Clear();
+            AdcSamplesSettingInfo.Clear();
             using (StreamReader sr = new StreamReader(path))
             {
                 while (sr.Peek() > 0)
@@ -138,7 +149,7 @@ namespace ADC_CDC_CONTROLLER
                     elements.RemoveRange(0,2);
                     ulong[] value = elements.Select(code => Convert.ToUInt64(code)).ToArray();
                     AdcSamplesStorage.Add(key, value.ToList());
-                    AdcSamplesInfo.Add(key, info);
+                    AdcSamplesSettingInfo.Add(key, info);
                 }
             }
         }
