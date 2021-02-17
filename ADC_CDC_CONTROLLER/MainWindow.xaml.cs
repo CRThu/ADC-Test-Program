@@ -39,5 +39,6 @@ namespace ADC_CDC_CONTROLLER
             if (portList.Length > 0)
                 serialPortComboBox1.SelectedIndex = 0;
         }
+
     }
 }

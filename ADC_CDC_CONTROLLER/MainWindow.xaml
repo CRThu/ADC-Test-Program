@@ -186,10 +186,10 @@
                     <Label Content="Voltage(PGA=1)" HorizontalAlignment="Left" Margin="624,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="dataTabVoltageTextBox" HorizontalAlignment="Left" Height="246" Margin="624,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" VerticalScrollBarVisibility="Auto"/>
                     <TextBox x:Name="dataTabStorageSettingInfoTextBox" HorizontalAlignment="Left" Height="246" Margin="235,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" VerticalScrollBarVisibility="Auto"/>
-                    <Label Content="Setting Info" HorizontalAlignment="Left" Margin="235,10,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Config Info" HorizontalAlignment="Left" Margin="235,10,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Static Test" >
+            <TabItem Header="Noise Test" >
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                         <GradientStop Color="#FFF0F0F0" Offset="0"/>
@@ -197,6 +197,23 @@
                     </LinearGradientBrush>
                 </TabItem.Background>
                 <Grid Background="#FFEDFFFA">
+                    <Label Content="Config Info" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <ListBox x:Name="noiseTestTabPrimaryConfigInfoListBox" HorizontalAlignment="Left" Height="180" Margin="10,40,0,0" VerticalAlignment="Top" Width="138" SelectionChanged="NoiseTestTabPrimaryConfigInfoListBox_SelectionChanged"/>
+                    <ListBox x:Name="noiseTestTabSecondaryConfigInfoListBox" HorizontalAlignment="Left" Height="180" Margin="153,40,0,0" VerticalAlignment="Top" Width="138" SelectionMode="Extended" SelectionChanged="NoiseTestTabSecondaryConfigInfoListBox_SelectionChanged"/>
+                    <Button x:Name="noiseTestTabUpdateStorageButton" Content="Update Storage From Data" HorizontalAlignment="Left" Margin="10,342,0,0" VerticalAlignment="Top" Width="220" Click="NoiseTestTabUpdateStorageButton_Click"/>
+                    <TextBox x:Name="noiseTestTabConfigViewTextBox" HorizontalAlignment="Left" Height="112" Margin="10,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="281" VerticalScrollBarVisibility="Auto"/>
+                    <RadioButton x:Name="noiseTestTabSingleModeRadioButton" Content="Single Mode" HorizontalAlignment="Left" Margin="375,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabSingleModeRadioButton_Checked"/>
+                    <RadioButton x:Name="noiseTestTabChartModeRadioButton" Content="Chart Mode" HorizontalAlignment="Left" Margin="507,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabChartModeRadioButton_Checked"/>
+                    <RadioButton x:Name="noiseTestTabReportModeRadioButton" Content="ReportMode" HorizontalAlignment="Left" Margin="627,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabReportModeRadioButton_Checked"/>
+                    <Grid x:Name="SingleModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
+                        <TextBlock>Single Mode Grid</TextBlock>
+                    </Grid>
+                    <Grid x:Name="ChartModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
+                        <TextBlock>Chart Mode Grid</TextBlock>
+                    </Grid>
+                    <Grid x:Name="ReportModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
+                        <TextBlock>Report Mode Grid</TextBlock>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
