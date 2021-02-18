@@ -60,6 +60,7 @@
     <Compile Include="AdcDataStorage.cs" />
     <Compile Include="AdcConfig.cs" />
     <Compile Include="AdcConfigCollection.cs" />
+    <Compile Include="AdcPerfCalcUtil.cs" />
     <Compile Include="AdcSampleData.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

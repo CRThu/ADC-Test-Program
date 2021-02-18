@@ -30,7 +30,7 @@ namespace ADC_CDC_CONTROLLER
             if (dataTabAdcSamplesListBox.SelectedItem == null)
                 return;
 
-            List<ulong>  currentList = adcDataStorage.ReadDataStorage((string)dataTabAdcSamplesListBox.SelectedItem);
+            List<ulong> currentList = adcDataStorage.ReadDataStorage((string)dataTabAdcSamplesListBox.SelectedItem);
             string currentSettingInfo = adcDataStorage.AdcSamplesSettingInfo[(string)dataTabAdcSamplesListBox.SelectedItem];
 
             dataTabStorageSettingInfoTextBox.Text = currentSettingInfo;
@@ -64,17 +64,24 @@ namespace ADC_CDC_CONTROLLER
 
         private void dataTabLoadStorageButton_Click(object sender, RoutedEventArgs e)
         {
-            // Open File Dialog
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            try
             {
-                Title = "Open Data File...",
-                Filter = "Data File|*.csv",
-                InitialDirectory = Directory.GetCurrentDirectory()
-            };
-            if (openFileDialog.ShowDialog() == false)
-                return;
-            adcDataStorage.LoadAllDataFromFile(openFileDialog.FileName, DataStroageExtension.Csv);
-            DataTabUpdateListBoxButton_Click(null, null);
+                // Open File Dialog
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    Title = "Open Data File...",
+                    Filter = "Data File|*.csv",
+                    InitialDirectory = Directory.GetCurrentDirectory()
+                };
+                if (openFileDialog.ShowDialog() == false)
+                    return;
+                adcDataStorage.LoadAllDataFromFile(openFileDialog.FileName, DataStroageExtension.Csv);
+                DataTabUpdateListBoxButton_Click(null, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }

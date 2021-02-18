@@ -189,7 +189,7 @@
                     <Label Content="Config Info" HorizontalAlignment="Left" Margin="235,10,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Noise Test" >
+            <TabItem Header="Static Test" >
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                         <GradientStop Color="#FFF0F0F0" Offset="0"/>
@@ -206,13 +206,47 @@
                     <RadioButton x:Name="noiseTestTabChartModeRadioButton" Content="Chart Mode" HorizontalAlignment="Left" Margin="507,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabChartModeRadioButton_Checked"/>
                     <RadioButton x:Name="noiseTestTabReportModeRadioButton" Content="ReportMode" HorizontalAlignment="Left" Margin="627,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabReportModeRadioButton_Checked"/>
                     <Grid x:Name="SingleModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
-                        <TextBlock>Single Mode Grid</TextBlock>
+                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
+                            <Path.Data>
+                                <LineGeometry StartPoint="0,0" EndPoint="1,1" />
+                            </Path.Data>
+                        </Path>
+                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
+                            <Path.Data>
+                                <LineGeometry StartPoint="1,0" EndPoint="0,1" />
+                            </Path.Data>
+                        </Path>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" >Single Mode Grid</TextBlock>
                     </Grid>
-                    <Grid x:Name="ChartModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
-                        <TextBlock>Chart Mode Grid</TextBlock>
+                    <Grid x:Name="ChartModeGrid" Height="512" Margin="296,40,9.5,0" VerticalAlignment="Top" Visibility="Visible">
+                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
+                            <Path.Data>
+                                <LineGeometry StartPoint="0,0" EndPoint="1,1" />
+                            </Path.Data>
+                        </Path>
+                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
+                            <Path.Data>
+                                <LineGeometry StartPoint="1,0" EndPoint="0,1" />
+                            </Path.Data>
+                        </Path>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" >Chart Mode Grid</TextBlock>
+                        <DataGrid x:Name="staticTestTabChartModeDataGrid" Height="320" Margin="10,10,10,0" VerticalAlignment="Top" ItemsSource="{Binding}" CanUserAddRows="False"/>
+                        <CheckBox x:Name="staticTestTabChartModeRotationCheckBox" Content="Rot(X,Y)" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Checked="StaticTestTabChartModeRotationCheckBox_Checked" Unchecked="StaticTestTabChartModeRotationCheckBox_Unchecked"/>
+                        <Button x:Name="staticTestTabChartModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="111,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeCalcResolutionButton_Click"/>
+                        <Button x:Name="staticTestTabChartModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="240,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeStoreCsvButton_Click"/>
                     </Grid>
                     <Grid x:Name="ReportModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
-                        <TextBlock>Report Mode Grid</TextBlock>
+                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
+                            <Path.Data>
+                                <LineGeometry StartPoint="0,0" EndPoint="1,1" />
+                            </Path.Data>
+                        </Path>
+                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
+                            <Path.Data>
+                                <LineGeometry StartPoint="1,0" EndPoint="0,1" />
+                            </Path.Data>
+                        </Path>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" >Report Mode Grid</TextBlock>
                     </Grid>
                 </Grid>
             </TabItem>

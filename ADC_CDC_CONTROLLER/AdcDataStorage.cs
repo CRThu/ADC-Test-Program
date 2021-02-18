@@ -15,6 +15,7 @@ namespace ADC_CDC_CONTROLLER
 
     class AdcDataStorage
     {
+        // bugs in tmpAdcSample
         public const string tmpAdcSample = "tmpAdcSample";
 
         // Replace string to settings
