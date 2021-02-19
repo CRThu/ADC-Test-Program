@@ -1,0 +1,55 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\GitHub\\ADC-Test-Program\\ADC_CDC_CONTROLLER\\ADC_CDC_CONTROLLER.csproj": {}
+  },
+  "projects": {
+    "D:\\GitHub\\ADC-Test-Program\\ADC_CDC_CONTROLLER\\ADC_CDC_CONTROLLER.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\GitHub\\ADC-Test-Program\\ADC_CDC_CONTROLLER\\ADC_CDC_CONTROLLER.csproj",
+        "projectName": "ADC_CDC_CONTROLLER",
+        "projectPath": "D:\\GitHub\\ADC-Test-Program\\ADC_CDC_CONTROLLER\\ADC_CDC_CONTROLLER.csproj",
+        "packagesPath": "C:\\Users\\yummycarrot\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\ADC-Test-Program\\ADC_CDC_CONTROLLER\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "C:\\Users\\yummycarrot\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net452"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net452": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net452": {
+          "dependencies": {
+            "InteractiveDataDisplay.WPF": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

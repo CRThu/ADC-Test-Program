@@ -210,6 +210,8 @@ namespace ADC_CDC_CONTROLLER
             if (AdcPrimarySettingsListBox.SelectedIndex == -1)
                 return;
 
+            AdcSecondarySettingsListBox.SelectedItems.Clear();
+
             AdcSecondarySettingsListBox.ItemsSource = AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].Configs.Select(t => t.ConfigName).ToList();
             foreach (string ConfigName in AdcSettings[AdcPrimarySettingsListBox.SelectedIndex].CurrentSecondaryConfigNames)
                 AdcSecondarySettingsListBox.SelectedItems.Add(ConfigName);

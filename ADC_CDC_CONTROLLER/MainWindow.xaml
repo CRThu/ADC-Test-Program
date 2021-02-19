@@ -4,10 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
+        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
         xmlns:local="clr-namespace:ADC_CDC_CONTROLLER"
-        xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        xmlns:Chr="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
         Title="ADC Test Program by carrot" Height="637.167" Width="871.333" Loaded="Window_Loaded">
 
@@ -205,37 +203,39 @@
                     <RadioButton x:Name="noiseTestTabSingleModeRadioButton" Content="Single Mode" HorizontalAlignment="Left" Margin="375,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabSingleModeRadioButton_Checked"/>
                     <RadioButton x:Name="noiseTestTabChartModeRadioButton" Content="Chart Mode" HorizontalAlignment="Left" Margin="507,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabChartModeRadioButton_Checked"/>
                     <RadioButton x:Name="noiseTestTabReportModeRadioButton" Content="ReportMode" HorizontalAlignment="Left" Margin="627,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabReportModeRadioButton_Checked"/>
-                    <Grid x:Name="SingleModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
-                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
-                            <Path.Data>
-                                <LineGeometry StartPoint="0,0" EndPoint="1,1" />
-                            </Path.Data>
-                        </Path>
-                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
-                            <Path.Data>
-                                <LineGeometry StartPoint="1,0" EndPoint="0,1" />
-                            </Path.Data>
-                        </Path>
-                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" >Single Mode Grid</TextBlock>
+                    <Grid x:Name="SingleModeGrid" Margin="296,40,9.5,9.5" Visibility="Visible">
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="Collapsed">Single Mode Grid</TextBlock>
+                        <DataGrid x:Name="staticTestTabSingleModeDataGrid" Height="89" Margin="10,10,10,0" VerticalAlignment="Top"  ItemsSource="{Binding}" CanUserAddRows="False"/>
+                        <GroupBox x:Name="groupBox" Header="GroupBox" HorizontalAlignment="Left" Height="190" Margin="10,104,0,0" VerticalAlignment="Top" Width="176">
+                            <Grid>
+                                <Label Content="Bipolar" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                                <CheckBox x:Name="staticTestTabSingleModeisBipolarCheckBox" Content="isBipolar" HorizontalAlignment="Left" Margin="76,16,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                <Label Content="VRef" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
+                                <TextBox x:Name="staticTestTabSingleModeVrefTextBox" HorizontalAlignment="Left" Height="22" Margin="76,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" Text="2.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Label Content="Gain" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
+                                <TextBox x:Name="staticTestTabSingleModeGainTextBox" HorizontalAlignment="Left" Height="22" Margin="76,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="1"/>
+                                <Label Content="AdcBits" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top"/>
+                                <TextBox x:Name="staticTestTabSingleModeAdcBitsTextBox" HorizontalAlignment="Left" Height="22" Margin="76,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="24"/>
+                                <Button x:Name="button1" Content="Load From App" HorizontalAlignment="Left" Margin="10,139,0,0" VerticalAlignment="Top" Width="135"/>
+                            </Grid>
+                        </GroupBox>
+                        <Button x:Name="staticTestTabSingleModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="46,309,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabSingleModeCalcResolutionButton_Click"/>
+                        <d3:Chart LeftTitle="Code" Height="207" Margin="191,104,10,0" VerticalAlignment="Top" LegendVisibility="Collapsed">
+                            <d3:LineGraph x:Name="linegraph1" Stroke="CornflowerBlue" StrokeThickness="1.5"/>
+                        </d3:Chart>
+                        <d3:Chart LeftTitle="Counts" Margin="191,316,10,15" LegendVisibility="Collapsed" BottomTitle="Code">
+                            <d3:BarGraph x:Name="bargraph1" Color="CornflowerBlue" StrokeThickness="1"/>
+                            <!--d3:LineGraph x:Name="barmatch1" Stroke="Wheat" StrokeThickness="1.5"/-->
+                        </d3:Chart>
                     </Grid>
-                    <Grid x:Name="ChartModeGrid" Height="512" Margin="296,40,9.5,0" VerticalAlignment="Top" Visibility="Visible">
-                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
-                            <Path.Data>
-                                <LineGeometry StartPoint="0,0" EndPoint="1,1" />
-                            </Path.Data>
-                        </Path>
-                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
-                            <Path.Data>
-                                <LineGeometry StartPoint="1,0" EndPoint="0,1" />
-                            </Path.Data>
-                        </Path>
-                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" >Chart Mode Grid</TextBlock>
+                    <Grid x:Name="ChartModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="Collapsed">Chart Mode Grid</TextBlock>
                         <DataGrid x:Name="staticTestTabChartModeDataGrid" Height="320" Margin="10,10,10,0" VerticalAlignment="Top" ItemsSource="{Binding}" CanUserAddRows="False"/>
                         <CheckBox x:Name="staticTestTabChartModeRotationCheckBox" Content="Rot(X,Y)" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Checked="StaticTestTabChartModeRotationCheckBox_Checked" Unchecked="StaticTestTabChartModeRotationCheckBox_Unchecked"/>
                         <Button x:Name="staticTestTabChartModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="111,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeCalcResolutionButton_Click"/>
                         <Button x:Name="staticTestTabChartModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="240,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeStoreCsvButton_Click"/>
                     </Grid>
-                    <Grid x:Name="ReportModeGrid" HorizontalAlignment="Left" Height="512" Margin="296,40,0,0" VerticalAlignment="Top" Width="530" Visibility="Collapsed">
+                    <Grid x:Name="ReportModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
                         <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
                             <Path.Data>
                                 <LineGeometry StartPoint="0,0" EndPoint="1,1" />
@@ -246,7 +246,7 @@
                                 <LineGeometry StartPoint="1,0" EndPoint="0,1" />
                             </Path.Data>
                         </Path>
-                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" >Report Mode Grid</TextBlock>
+                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="Collapsed">Report Mode Grid</TextBlock>
                     </Grid>
                 </Grid>
             </TabItem>

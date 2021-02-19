@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -60,7 +60,7 @@ namespace ADC_CDC_CONTROLLER
         {
             return WriteToDataStorage(name, AdcSamplesSettingInfo[tmpAdcSample], AdcSamplesStorage[tmpAdcSample]);
         }
-        
+
         public int WriteToDataStorage(string name, string info, List<ulong> samples)
         {
             if (name.Equals(tmpAdcSample))
@@ -91,8 +91,8 @@ namespace ADC_CDC_CONTROLLER
         {
             KeyValuePair<string, string> tmpAdcSampleSettingInfoKvp = AdcSamplesSettingInfo.Where(info => info.Key.Equals(tmpAdcSample)).First();
             Dictionary<string, string> tmpAdcSampleSettingInfoDic = new Dictionary<string, string>
-            { 
-                {tmpAdcSampleSettingInfoKvp.Key,tmpAdcSampleSettingInfoKvp.Value } 
+            {
+                {tmpAdcSampleSettingInfoKvp.Key,tmpAdcSampleSettingInfoKvp.Value }
             };
             KeyValuePair<string, List<ulong>> tmpAdcSampleStorageKvp = AdcSamplesStorage.Where(info => info.Key.Equals(tmpAdcSample)).First();
             Dictionary<string, List<ulong>> tmpAdcSampleStorageDic = new Dictionary<string, List<ulong>>
@@ -106,7 +106,7 @@ namespace ADC_CDC_CONTROLLER
         public void StoreAllDataToFile(string path, DataStroageExtension ext)
         {
             if (ext == DataStroageExtension.Csv)
-                StoreDataToCsv(path,AdcSamplesSettingInfo, AdcSamplesStorage);
+                StoreDataToCsv(path, AdcSamplesSettingInfo, AdcSamplesStorage);
         }
         private void StoreDataToCsv(string path, Dictionary<string, string> info, Dictionary<string, List<ulong>> data)
         {
@@ -115,7 +115,7 @@ namespace ADC_CDC_CONTROLLER
             // NAME1,INFO1,1,1,1,1,
             // NAME2,INFO2,1,1,1,1,1,1,
             // NAME3,INFO3,1,1,1,1,1,1,1,1,
-            
+
             FileStream fs = new FileStream(path, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
@@ -147,7 +147,7 @@ namespace ADC_CDC_CONTROLLER
                     List<string> elements = line.Split(new char[] { ',' }).Where(str => !string.IsNullOrEmpty(str)).ToList();
                     string key = elements[0];
                     string info = elements[1];
-                    elements.RemoveRange(0,2);
+                    elements.RemoveRange(0, 2);
                     ulong[] value = elements.Select(code => Convert.ToUInt64(code)).ToArray();
                     AdcSamplesStorage.Add(key, value.ToList());
                     AdcSamplesSettingInfo.Add(key, info);
@@ -173,18 +173,6 @@ namespace ADC_CDC_CONTROLLER
                     throw new ArgumentOutOfRangeException();
 
             return convertList;
-        }
-
-        public List<double> ConvertVoltages(List<ulong> codeList, bool isBipolar, double vRef, double gain, int adcBits)
-        {
-            if (isBipolar)
-                // Code = 2^(N-1) * [(A_IN * Gain / V_REF) + 1]
-                // A_IN = [Code / 2^(N-1) - 1] * V_REF / Gain
-                return codeList.ConvertAll(code => (code / Math.Pow(2, adcBits - 1) - 1) * vRef / gain);
-            else
-                // Code = (2^N * A_IN * Gain) / V_REF
-                // A_IN = Code * V_REF / 2^N / Gain
-                return codeList.ConvertAll(code => (code * vRef / Math.Pow(2, adcBits) / gain));
         }
     }
 }

@@ -12,9 +12,6 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using static ADC_CDC_CONTROLLER.Util;
 
-// MSCHART 已经引用
-// TODO:图表 https://github.com/Microsoft/InteractiveDataDisplay.WPF
-
 namespace ADC_CDC_CONTROLLER
 {
     /// <summary>
