@@ -187,7 +187,7 @@
                     <Label Content="Config Info" HorizontalAlignment="Left" Margin="235,10,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Static Test" >
+            <TabItem Header="Static Report" >
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                         <GradientStop Color="#FFF0F0F0" Offset="0"/>
@@ -202,52 +202,47 @@
                     <TextBox x:Name="noiseTestTabConfigViewTextBox" HorizontalAlignment="Left" Height="112" Margin="10,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="281" VerticalScrollBarVisibility="Auto"/>
                     <RadioButton x:Name="noiseTestTabSingleModeRadioButton" Content="Single Mode" HorizontalAlignment="Left" Margin="375,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabSingleModeRadioButton_Checked"/>
                     <RadioButton x:Name="noiseTestTabChartModeRadioButton" Content="Chart Mode" HorizontalAlignment="Left" Margin="507,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabChartModeRadioButton_Checked"/>
-                    <RadioButton x:Name="noiseTestTabReportModeRadioButton" Content="ReportMode" HorizontalAlignment="Left" Margin="627,16,0,0" VerticalAlignment="Top" IsEnabled="False" Checked="noiseTestTabReportModeRadioButton_Checked"/>
-                    <Grid x:Name="SingleModeGrid" Margin="296,40,9.5,9.5" Visibility="Visible">
+                    <RadioButton x:Name="noiseTestTabReportModeRadioButton" Content="ReportMode" HorizontalAlignment="Left" Margin="627,16,0,0" VerticalAlignment="Top" Checked="noiseTestTabReportModeRadioButton_Checked"/>
+                    <Grid x:Name="SingleModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
                         <TextBlock Block.TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="Collapsed">Single Mode Grid</TextBlock>
                         <DataGrid x:Name="staticTestTabSingleModeDataGrid" Height="89" Margin="10,10,10,0" VerticalAlignment="Top"  ItemsSource="{Binding}" CanUserAddRows="False"/>
-                        <GroupBox x:Name="groupBox" Header="GroupBox" HorizontalAlignment="Left" Height="190" Margin="10,104,0,0" VerticalAlignment="Top" Width="176">
-                            <Grid>
-                                <Label Content="Bipolar" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                                <CheckBox x:Name="staticTestTabSingleModeisBipolarCheckBox" Content="isBipolar" HorizontalAlignment="Left" Margin="76,16,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                                <Label Content="VRef" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
-                                <TextBox x:Name="staticTestTabSingleModeVrefTextBox" HorizontalAlignment="Left" Height="22" Margin="76,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" Text="2.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                <Label Content="Gain" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
-                                <TextBox x:Name="staticTestTabSingleModeGainTextBox" HorizontalAlignment="Left" Height="22" Margin="76,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="1"/>
-                                <Label Content="AdcBits" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top"/>
-                                <TextBox x:Name="staticTestTabSingleModeAdcBitsTextBox" HorizontalAlignment="Left" Height="22" Margin="76,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="24"/>
-                                <Button x:Name="button1" Content="Load From App" HorizontalAlignment="Left" Margin="10,139,0,0" VerticalAlignment="Top" Width="135"/>
-                            </Grid>
-                        </GroupBox>
-                        <Button x:Name="staticTestTabSingleModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="46,309,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabSingleModeCalcResolutionButton_Click"/>
-                        <d3:Chart LeftTitle="Code" Height="207" Margin="191,104,10,0" VerticalAlignment="Top" LegendVisibility="Collapsed">
+                        <Button x:Name="staticTestTabSingleModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="38,104,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabSingleModeCalcResolutionButton_Click"/>
+                        <d3:Chart LeftTitle="Code" Margin="10,128,10,0" LegendVisibility="Collapsed" Height="183" VerticalAlignment="Top">
                             <d3:LineGraph x:Name="linegraph1" Stroke="CornflowerBlue" StrokeThickness="1.5"/>
                         </d3:Chart>
-                        <d3:Chart LeftTitle="Counts" Margin="191,316,10,15" LegendVisibility="Collapsed" BottomTitle="Code">
+                        <d3:Chart LeftTitle="Counts" Margin="10,316,10,0" LegendVisibility="Collapsed" BottomTitle="Code" Height="186" VerticalAlignment="Top">
                             <d3:BarGraph x:Name="bargraph1" Color="CornflowerBlue" StrokeThickness="1"/>
-                            <!--d3:LineGraph x:Name="barmatch1" Stroke="Wheat" StrokeThickness="1.5"/-->
                         </d3:Chart>
                     </Grid>
                     <Grid x:Name="ChartModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
-                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="Collapsed">Chart Mode Grid</TextBlock>
                         <DataGrid x:Name="staticTestTabChartModeDataGrid" Height="320" Margin="10,10,10,0" VerticalAlignment="Top" ItemsSource="{Binding}" CanUserAddRows="False"/>
                         <CheckBox x:Name="staticTestTabChartModeRotationCheckBox" Content="Rot(X,Y)" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Checked="StaticTestTabChartModeRotationCheckBox_Checked" Unchecked="StaticTestTabChartModeRotationCheckBox_Unchecked"/>
                         <Button x:Name="staticTestTabChartModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="111,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeCalcResolutionButton_Click"/>
                         <Button x:Name="staticTestTabChartModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="240,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeStoreCsvButton_Click"/>
                     </Grid>
                     <Grid x:Name="ReportModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
-                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
-                            <Path.Data>
-                                <LineGeometry StartPoint="0,0" EndPoint="1,1" />
-                            </Path.Data>
-                        </Path>
-                        <Path Grid.Row="2" Grid.Column="0" Stroke="LightGray" StrokeThickness="2" Stretch="Fill">
-                            <Path.Data>
-                                <LineGeometry StartPoint="1,0" EndPoint="0,1" />
-                            </Path.Data>
-                        </Path>
-                        <TextBlock Block.TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="Collapsed">Report Mode Grid</TextBlock>
+                        <DataGrid x:Name="staticTestTabReportModeDataGrid" Margin="10,10,10,34" ItemsSource="{Binding}" CanUserAddRows="False"/>
+                        <Button x:Name="staticTestTabReportModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="92,483,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabReportModeCalcResolutionButton_Click"/>
+                        <Button x:Name="staticTestTabReportModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="221,483,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabReportModeStoreCsvButton_Click"/>
                     </Grid>
+                    <GroupBox x:Name="groupBox" Header="LSB Voltage Calculator" HorizontalAlignment="Left" Height="190" Margin="10,362,0,0" VerticalAlignment="Top" Width="281">
+                        <Grid>
+                            <Label Content="Bipolar" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="staticTestTabisBipolarCheckBox" Content="isBipolar" HorizontalAlignment="Left" Margin="76,15,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                            <Label Content="VRef" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="staticTestTabVrefTextBox" HorizontalAlignment="Left" Height="22" Margin="76,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" Text="2.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="Gain" HorizontalAlignment="Left" Margin="11,61,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="staticTestTabGainTextBox" HorizontalAlignment="Left" Height="22" Margin="76,63,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="1"/>
+                            <Label Content="AdcBits" HorizontalAlignment="Left" Margin="11,87,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="staticTestTabAdcBitsTextBox" HorizontalAlignment="Left" Height="22" Margin="76,89,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="24"/>
+                            <Button x:Name="button1" Content="Load From App" HorizontalAlignment="Left" Margin="10,117,0,0" VerticalAlignment="Top" Width="135" IsEnabled="False"/>
+                            <CheckBox x:Name="staticTestTabisGainVariableCheckBox" HorizontalAlignment="Left" Margin="154,67,0,0" VerticalAlignment="Top" Checked="StaticTestTabisGainVariableCheckBox_Checked" Unchecked="StaticTestTabisGainVariableCheckBox_Unchecked"/>
+                            <Label Content="LSB" HorizontalAlignment="Left" Margin="10,138,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="staticTestTabLSBTextBox" HorizontalAlignment="Left" Height="22" Margin="76,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsEnabled="False"/>
+                            <ComboBox x:Name="staticTestTabGainVariableComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="84" Margin="175,64,0,0" IsEnabled="False"/>
+                            <Label Content="IsVariable" HorizontalAlignment="Left" Margin="175,141,0,0" VerticalAlignment="Top"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>

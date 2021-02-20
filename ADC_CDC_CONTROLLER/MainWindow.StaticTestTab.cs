@@ -19,7 +19,13 @@ namespace ADC_CDC_CONTROLLER
         // <a:1> <b:2> <c:3>
         Dictionary<string, List<string>> allConfigInfos = new Dictionary<string, List<string>>();
         Dictionary<string, List<string>> selectConfigInfos = new Dictionary<string, List<string>>();
-        DataTable singleModeDataTable, chartModeDataTable;
+        DataTable singleModeDataTable, chartModeDataTable, reportModeDataTable;
+
+        string[] reportModeDataTableperfNames = { "Count","Min", "Max", "Avg|Offset Err",
+                "Std|RMS Noise(LSB)", "Peak Noise(LSB)", "Peak Noise Calc(LSB)",
+                "Eff Res(b)", "NoiseFree Res(b)", "NoiseFree Res Calc(b)",
+                "LSB(u)","Std|RMS Noise(u)", "Peak Noise(u)", "Peak Noise Calc(u)",
+            };
 
         private void NoiseTestTabUpdateStorageButton_Click(object sender, RoutedEventArgs e)
         {
@@ -55,6 +61,8 @@ namespace ADC_CDC_CONTROLLER
                 noiseTestTabPrimaryConfigInfoListBox.SelectedIndex = 0;
                 noiseTestTabSecondaryConfigInfoListBox.ItemsSource = allConfigInfos[(string)noiseTestTabPrimaryConfigInfoListBox.SelectedItem];
 
+                staticTestTabGainVariableComboBox.ItemsSource = allConfigInfos.Keys.ToList();
+                noiseTestTabPrimaryConfigInfoListBox.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
@@ -93,7 +101,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 noiseTestTabSingleModeRadioButton.IsEnabled = false;
                 noiseTestTabChartModeRadioButton.IsEnabled = false;
-                noiseTestTabReportModeRadioButton.IsEnabled = false;
+                noiseTestTabReportModeRadioButton.IsEnabled = true;
             }
             noiseTestTabSingleModeRadioButton.IsChecked = false;
             noiseTestTabChartModeRadioButton.IsChecked = false;
@@ -143,17 +151,13 @@ namespace ADC_CDC_CONTROLLER
             else if (noiseTestTabReportModeRadioButton.IsChecked.Equals(true))
             {
                 ReportModeGrid.Visibility = Visibility.Visible;
-                MessageBox.Show("TODO");
+                ReportModeDataTableUpdate();
             }
         }
 
         private void StaticTestTabSingleModeCalcResolutionButton_Click(object sender, RoutedEventArgs e)
         {
-            bool isBipolar = (bool)staticTestTabSingleModeisBipolarCheckBox.IsChecked;
-            double vRef = Convert.ToDouble(staticTestTabSingleModeVrefTextBox.Text);
-            double gain = Convert.ToDouble(staticTestTabSingleModeGainTextBox.Text);
-            int adcBits = Convert.ToInt32(staticTestTabSingleModeAdcBitsTextBox.Text);
-            SingleModeDataTableCalc(isBipolar, vRef, gain, adcBits);
+            SingleModeDataTableCalc();
         }
 
         private void StaticTestTabChartModeRotationCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -197,7 +201,7 @@ namespace ADC_CDC_CONTROLLER
                         List<string> str = new List<string>();
                         foreach (var kv in diffValueDic)
                         {
-                            if(sampleSettingInfo.ContainsKey(kv.Key))
+                            if (sampleSettingInfo.ContainsKey(kv.Key))
                                 str.Add(sampleSettingInfo[kv.Key]);
                         }
                         if (!str.Count.Equals(2))
@@ -247,7 +251,9 @@ namespace ADC_CDC_CONTROLLER
         {
             string rowName = "Sample", colName = "Pref";
             string[] rows = { "Code(LSB)", "Voltage(uVolt)" };
-            string[] cols = { "LSB", "Min", "Max", "Avg|Offset Err", "Std|RMS Noise", "Peak Noise", "Peak Noise Calc", "Eff Res(b)", "NoiseFree Res(b)", "NoiseFree Res Calc(b)" };
+            string[] cols = { "LSB", "Min", "Max", "Avg|Offset Err",
+                "Std|RMS Noise", "Peak Noise", "Peak Noise Calc",
+                "Eff Res(b)", "NoiseFree Res(b)", "NoiseFree Res Calc(b)" };
 
             singleModeDataTable = DataTableUtil.DataTableInit(colName, cols, rowName, rows);
 
@@ -255,7 +261,7 @@ namespace ADC_CDC_CONTROLLER
             staticTestTabSingleModeDataGrid.ItemsSource = singleModeDataTable.DefaultView;
         }
 
-        void SingleModeDataTableCalc(bool isBipolar, double vRef, double gain, int adcBits)
+        void SingleModeDataTableCalc()
         {
             try
             {
@@ -282,6 +288,21 @@ namespace ADC_CDC_CONTROLLER
                     if (isEqual)
                     {
                         hasSample = true;
+
+                        bool isBipolar = (bool)staticTestTabisBipolarCheckBox.IsChecked;
+                        double vRef = Convert.ToDouble(staticTestTabVrefTextBox.Text);
+                        double gain;
+                        if ((bool)!staticTestTabisGainVariableCheckBox.IsChecked)
+                            gain = Convert.ToDouble(staticTestTabGainTextBox.Text);
+                        else
+                        {
+                            gain = Convert.ToDouble(selectSingleSampleInfo[staticTestTabGainVariableComboBox.Text]);
+                            staticTestTabGainTextBox.Text = gain.ToString();
+                        }
+                        int adcBits = Convert.ToInt32(staticTestTabAdcBitsTextBox.Text);
+                        double lsb = AdcPerfCalcUtil.LsbVoltage(isBipolar, vRef, gain, adcBits);
+                        staticTestTabLSBTextBox.Text = (1e6*lsb).ToString("G4");
+
                         // lsb: Min Max Avg nrms npp nppcalc
                         DataTableUtil.DataTableAddData(singleModeDataTable, 0, 0, 1.ToString());
                         DataTableUtil.DataTableAddData(singleModeDataTable, 1, 0, AdcPerfCalcUtil.MinCode(sample.Value).ToString());
@@ -291,11 +312,10 @@ namespace ADC_CDC_CONTROLLER
                         DataTableUtil.DataTableAddData(singleModeDataTable, 5, 0, AdcPerfCalcUtil.PeakNoise(sample.Value, 1).ToString());
                         DataTableUtil.DataTableAddData(singleModeDataTable, 6, 0, AdcPerfCalcUtil.PeakNoiseCalc(sample.Value, 1).ToString("f3"));
                         // eff noisefree noisefreecalc
-                        DataTableUtil.DataTableAddData(singleModeDataTable, 7, 0, AdcPerfCalcUtil.EffResolution(sample.Value, 24).ToString("f2"));
-                        DataTableUtil.DataTableAddData(singleModeDataTable, 8, 0, AdcPerfCalcUtil.NoiseFreeResolution(sample.Value, 24).ToString("f2"));
-                        DataTableUtil.DataTableAddData(singleModeDataTable, 9, 0, AdcPerfCalcUtil.NoiseFreeResolutionCalc(sample.Value, 24).ToString("f2"));
+                        DataTableUtil.DataTableAddData(singleModeDataTable, 7, 0, AdcPerfCalcUtil.EffResolution(sample.Value, adcBits).ToString("f2"));
+                        DataTableUtil.DataTableAddData(singleModeDataTable, 8, 0, AdcPerfCalcUtil.NoiseFreeResolution(sample.Value, adcBits).ToString("f2"));
+                        DataTableUtil.DataTableAddData(singleModeDataTable, 9, 0, AdcPerfCalcUtil.NoiseFreeResolutionCalc(sample.Value, adcBits).ToString("f2"));
                         // volt: offset nrms npp nppcalc
-                        double lsb = AdcPerfCalcUtil.LsbVoltage(isBipolar, vRef, gain, adcBits);
                         DataTableUtil.DataTableAddData(singleModeDataTable, 0, 1, (1e6 * lsb).ToString("G4"));
                         DataTableUtil.DataTableAddData(singleModeDataTable, 3, 1, (1e6 * AdcPerfCalcUtil.OffsetErrorVoltage(sample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"));
                         DataTableUtil.DataTableAddData(singleModeDataTable, 4, 1, (1e6 * AdcPerfCalcUtil.RmsNoise(sample.Value, lsb)).ToString("G3"));
@@ -320,11 +340,9 @@ namespace ADC_CDC_CONTROLLER
             linegraph1.PlotY(sample);
 
             Dictionary<ulong, double> dataStats = new Dictionary<ulong, double>();
-            for(ulong i=AdcPerfCalcUtil.MinCode(sample);i<= AdcPerfCalcUtil.MaxCode(sample);i++)
-                dataStats.Add(i, (double)sample.Where(code=>code.Equals(i)).Count()/ (double)sample.Count);
-            bargraph1.PlotBars(dataStats.Keys,dataStats.Values);
-            // TODO?
-            //barmatch1.PlotY(sample);
+            for (ulong i = AdcPerfCalcUtil.MinCode(sample); i <= AdcPerfCalcUtil.MaxCode(sample); i++)
+                dataStats.Add(i, (double)sample.Where(code => code.Equals(i)).Count() / (double)sample.Count);
+            bargraph1.PlotBars(dataStats.Keys, dataStats.Values);
         }
 
         void ChartModeDataTableUpdate()
@@ -355,6 +373,106 @@ namespace ADC_CDC_CONTROLLER
 
             staticTestTabChartModeDataGrid.ItemsSource = null;
             staticTestTabChartModeDataGrid.ItemsSource = chartModeDataTable.DefaultView;
+        }
+
+        void ReportModeDataTableUpdate()
+        {
+            string rowName = "Sample", colName = "Pref";
+
+            string[] rows = adcDataStorage.AdcSamplesStorage.Keys.ToArray();
+            List<string> cols = new List<string>();
+            cols.AddRange(allConfigInfos.Keys.ToArray());
+            cols.AddRange(reportModeDataTableperfNames);
+
+            reportModeDataTable = DataTableUtil.DataTableInit(colName, cols.ToArray(), rowName, rows);
+
+            staticTestTabReportModeDataGrid.ItemsSource = null;
+            staticTestTabReportModeDataGrid.ItemsSource = reportModeDataTable.DefaultView;
+        }
+
+        private void StaticTestTabReportModeCalcResolutionButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                foreach (var kvSample in adcDataStorage.AdcSamplesStorage)
+                {
+                    Dictionary<string, string> sampleSettingInfo = ConvertInfoToDic(adcDataStorage.AdcSamplesSettingInfo[kvSample.Key]);
+                    foreach (var kvInfo in allConfigInfos)
+                    {
+                        if (sampleSettingInfo.ContainsKey(kvInfo.Key))
+                            DataTableUtil.DataTableAddData(reportModeDataTable, kvInfo.Key, kvSample.Key, sampleSettingInfo[kvInfo.Key]);
+                    }
+
+                    bool isBipolar = (bool)staticTestTabisBipolarCheckBox.IsChecked;
+                    double vRef = Convert.ToDouble(staticTestTabVrefTextBox.Text);
+                    double gain;
+                    if ((bool)!staticTestTabisGainVariableCheckBox.IsChecked)
+                        gain = Convert.ToDouble(staticTestTabGainTextBox.Text);
+                    else
+                    {
+                        gain = Convert.ToDouble(sampleSettingInfo[staticTestTabGainVariableComboBox.Text]);
+                        staticTestTabGainTextBox.Text = gain.ToString();
+                    }
+                    int adcBits = Convert.ToInt32(staticTestTabAdcBitsTextBox.Text);
+                    double lsb = AdcPerfCalcUtil.LsbVoltage(isBipolar, vRef, gain, adcBits);
+                    staticTestTabLSBTextBox.Text = (1e6 * lsb).ToString("G4");
+
+                    foreach (var perfName in reportModeDataTableperfNames)
+                    {
+                        string calcResult;
+                        switch (perfName)
+                        {
+                            case "Count": calcResult = kvSample.Value.Count.ToString(); break;
+                            case "Min": calcResult = AdcPerfCalcUtil.MinCode(kvSample.Value).ToString(); break;
+                            case "Max": calcResult = AdcPerfCalcUtil.MaxCode(kvSample.Value).ToString(); break;
+                            case "Avg|Offset Err": calcResult = AdcPerfCalcUtil.AvgCode(kvSample.Value).ToString("f3"); break;
+                            case "Std|RMS Noise(LSB)": calcResult = AdcPerfCalcUtil.RmsNoise(kvSample.Value, 1).ToString("f3"); break;
+                            case "Peak Noise(LSB)": calcResult = AdcPerfCalcUtil.PeakNoise(kvSample.Value, 1).ToString(); break;
+                            case "Peak Noise Calc(LSB)": calcResult = AdcPerfCalcUtil.PeakNoiseCalc(kvSample.Value, 1).ToString("f3"); break;
+                            case "Eff Res(b)": calcResult = AdcPerfCalcUtil.EffResolution(kvSample.Value, adcBits).ToString("f2"); break;
+                            case "NoiseFree Res(b)": calcResult = AdcPerfCalcUtil.NoiseFreeResolution(kvSample.Value, adcBits).ToString("f2"); break;
+                            case "NoiseFree Res Calc(b)": calcResult = AdcPerfCalcUtil.NoiseFreeResolutionCalc(kvSample.Value, adcBits).ToString("f2"); break;
+                            case "LSB(u)": calcResult = (1e6 * lsb).ToString("G4"); break;
+                            case "Std|RMS Noise(u)": calcResult = (1e6 * AdcPerfCalcUtil.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
+                            case "Peak Noise(u)": calcResult = (1e6 * AdcPerfCalcUtil.PeakNoise(kvSample.Value, lsb)).ToString("G3"); break;
+                            case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalcUtil.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
+                            default: calcResult = ""; break;
+                        }
+                        DataTableUtil.DataTableAddData(reportModeDataTable, perfName, kvSample.Key, calcResult);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void StaticTestTabReportModeStoreCsvButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Save File Dialog
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Report File...",
+                Filter = "Report File|*.csv",
+                FileName = "StaticTestReport;All;",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
+            if (saveFileDialog.ShowDialog() == false)
+                return;
+
+            DataTableUtil.DatatableToCSV("All;", reportModeDataTable, saveFileDialog.FileName);
+        }
+
+        private void StaticTestTabisGainVariableCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            staticTestTabGainVariableComboBox.IsEnabled = (bool)staticTestTabisGainVariableCheckBox.IsChecked;
+            staticTestTabGainTextBox.IsEnabled = !(bool)staticTestTabisGainVariableCheckBox.IsChecked;
+        }
+        private void StaticTestTabisGainVariableCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            staticTestTabGainVariableComboBox.IsEnabled = (bool)staticTestTabisGainVariableCheckBox.IsChecked;
+            staticTestTabGainTextBox.IsEnabled = !(bool)staticTestTabisGainVariableCheckBox.IsChecked;
         }
 
         // tmp
