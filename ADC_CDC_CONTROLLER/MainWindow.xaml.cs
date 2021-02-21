@@ -25,6 +25,7 @@ namespace ADC_CDC_CONTROLLER
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             InitAdcSettings();
             AdcPrimarySettingsListBox.ItemsSource = AdcSettings.Select(t => t.ConfigName).ToList();
             AdcPrimarySettingsListBox.SelectedIndex = 0;
@@ -39,6 +40,5 @@ namespace ADC_CDC_CONTROLLER
             if (portList.Length > 0)
                 serialPortComboBox1.SelectedIndex = 0;
         }
-
     }
 }

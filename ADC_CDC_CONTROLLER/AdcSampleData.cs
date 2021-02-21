@@ -11,12 +11,12 @@ namespace ADC_CDC_CONTROLLER
     {
         // TODO
         public AdcConfigCollection AdcSampleConfigInfo;
-        public ObservableCollection<ulong> AdcDataCollection;
+        public ObservableCollection<ulong> AdcSampleDataCollection;
 
         public AdcSampleData()
         {
             AdcSampleConfigInfo = new AdcConfigCollection();
-            AdcDataCollection = new ObservableCollection<ulong>();
+            AdcSampleDataCollection = new ObservableCollection<ulong>();
         }
     }
 }

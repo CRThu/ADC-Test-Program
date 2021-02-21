@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,14 +11,19 @@ namespace ADC_CDC_CONTROLLER
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Config { get; set; }
-        public string DefaultConfig { get; set; }
-        public List<string> AllConfigs { get; set; }
+        public string CurrentConfig { get; set; }
+        public string DefaultConfig
+        {
+            get { return DefaultConfig; }
+            set { DefaultConfig = value; CurrentConfig = value; }
+        }
+        public ObservableCollection<AdcConfigItem> Items { get; set; }
 
+        /*
         public KeyValuePair<string, string> CurrentConfigKeyValuePair
         {
-            get { return new KeyValuePair<string, string>(Name, Config); }
-            set { Name = value.Key; Config = value.Value; }
+            get { return new KeyValuePair<string, string>(Name, CurrentConfig); }
+            set { Name = value.Key; CurrentConfig = value.Value; }
         }
 
         public KeyValuePair<string, string> DefaultConfigKeyValuePair
@@ -25,32 +31,30 @@ namespace ADC_CDC_CONTROLLER
             get { return new KeyValuePair<string, string>(Name, DefaultConfig); }
             set { Name = value.Key; DefaultConfig = value.Value; }
         }
+        */
 
         public AdcConfig()
         {
             Name = "";
             Description = "";
-            Config = "";
             DefaultConfig = "";
-            AllConfigs = new List<string>();
+            Items = new ObservableCollection<AdcConfigItem>();
         }
 
         public AdcConfig(string name, string description)
         {
             Name = name;
             Description = description;
-            Config = "";
             DefaultConfig = "";
-            AllConfigs = new List<string>();
+            Items = new ObservableCollection<AdcConfigItem>();
         }
 
-        public AdcConfig(string name, string description, string config, string defaultConfig, List<string> allConfigs)
+        public AdcConfig(string name, string description, string defaultConfig, ObservableCollection<AdcConfigItem> allConfigs)
         {
             Name = name;
             Description = description;
-            Config = config;
             DefaultConfig = defaultConfig;
-            AllConfigs = allConfigs;
+            Items = allConfigs;
         }
     }
 }

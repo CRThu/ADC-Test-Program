@@ -54,6 +54,8 @@ namespace ADC_CDC_CONTROLLER
 
         private void XmlEditerLoadXmlButton_Click(object sender, RoutedEventArgs e)
         {
+            AdcConfigCollection adcConfigCollection = new AdcConfigCollection();
+            adcConfigCollection.LoadConfigs(@"../../AD7124-8.xml", ConfigStroageExtension.Xml);
             //throw new NotImplementedException();
         }
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Xml;
 
 namespace ADC_CDC_CONTROLLER
 {
@@ -13,21 +16,78 @@ namespace ADC_CDC_CONTROLLER
 
     class AdcConfigCollection
     {
-        public string AdcId;
-        public string AdcName;
-        public string AdcVersion;
-        public int AdcBits;
-        public List<AdcConfig> Configs;
+        // Keys: id name version bit 
+        public Dictionary<string, string> AdcInfos;
+        public ObservableCollection<AdcConfig> AdcConfigs;
 
         public void LoadConfigs(string path, ConfigStroageExtension ext)
         {
             if (ext == ConfigStroageExtension.Xml)
-                LoadConfigsFromXml(path, Configs);
+                LoadConfigsFromXml(path, AdcInfos, AdcConfigs);
         }
 
-        public void LoadConfigsFromXml(string path,List<AdcConfig> configs)
+        public void LoadConfigsFromXml(string path, Dictionary<string, string> adcInfos, ObservableCollection<AdcConfig> adcConfigs)
         {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
 
+            // Root: <info>
+            XmlNode InfoXmlNode = doc.SelectSingleNode("adc/info");
+            //string xmlContent = InfoXmlNode.Name + "\n";
+            foreach (XmlNode xmlNode in InfoXmlNode.ChildNodes)
+            {
+                // Child: <id> <name> <version> <bit> 
+                // #text
+                adcInfos.Add(xmlNode.Name, xmlNode.ChildNodes[0].InnerText);
+                //xmlContent += "." + xmlNode.Name + "." + xmlNode.ChildNodes[0].InnerText + "\n";
+            }
+            // Root: <configs>
+            XmlNode ConfigsXmlNode = doc.SelectSingleNode("adc/configs");
+            //xmlContent += ConfigsXmlNode.Name + "\n";
+            foreach (XmlNode ConfigXmlNode in ConfigsXmlNode.ChildNodes)
+            {
+                // Child: <config> <config>
+                AdcConfig adcConfig = new AdcConfig();
+                foreach (XmlNode ConfigXmlChildNode in ConfigXmlNode.ChildNodes)
+                {
+                    if (!ConfigXmlChildNode.Name.Equals("items"))
+                    {
+                        // Child: <name> <description> <default>
+                        //xmlContent += "." + ConfigXmlNode.Name + "." + ConfigXmlChildNode.Name + "." + ConfigXmlChildNode.InnerText + "\n";
+                        switch (ConfigXmlChildNode.Name)
+                        {
+                            case "name": adcConfig.Name = ConfigXmlChildNode.InnerText; break;
+                            case "description": adcConfig.Description = ConfigXmlChildNode.InnerText; break;
+                            case "default": adcConfig.DefaultConfig = ConfigXmlChildNode.InnerText; break;
+                            default: break;
+                        }
+                    }
+                    else
+                    {
+                        // Child: <items>
+                        foreach (XmlNode ItemXmlNode in ConfigXmlChildNode.ChildNodes)
+                        {
+                            // Child: <item> <item>
+                            AdcConfigItem adcConfigItem = new AdcConfigItem();
+                            foreach (XmlNode ItemXmlChildNode in ItemXmlNode.ChildNodes)
+                            {
+                                // Child: <name> <description> <command>
+                                //xmlContent += "." + ConfigXmlNode.Name + "." + ConfigXmlChildNode.Name + "." + ConfigXmlChildNode.Name + "." + ItemXmlNode.Name + "." + ItemXmlChildNode.Name + "." + ItemXmlChildNode.InnerText + "\n";
+                                switch (ItemXmlChildNode.Name)
+                                {
+                                    case "name": adcConfigItem.Name = ItemXmlChildNode.InnerText; break;
+                                    case "description": adcConfigItem.Description = ItemXmlChildNode.InnerText; break;
+                                    case "command": adcConfigItem.Command = ItemXmlChildNode.InnerText; break;
+                                    default: break;
+                                }
+                            }
+                            adcConfig.Items.Add(adcConfigItem);
+                        }
+                    }
+                }
+                adcConfigs.Add(adcConfig);
+            }
+            //MessageBox.Show(xmlContent);
         }
 
         public void StoreConfigs(string path, ConfigStroageExtension ext)
@@ -42,20 +102,14 @@ namespace ADC_CDC_CONTROLLER
 
         public AdcConfigCollection()
         {
-            AdcId = "";
-            AdcName = "";
-            AdcVersion = "";
-            AdcBits = 0;
-            Configs = new List<AdcConfig>();
+            AdcInfos = new Dictionary<string, string>();
+            AdcConfigs = new ObservableCollection<AdcConfig>();
         }
-        
-        public AdcConfigCollection(List<AdcConfig> configs)
+
+        public AdcConfigCollection(Dictionary<string, string> adcInfos, ObservableCollection<AdcConfig> configs)
         {
-            AdcId = "";
-            AdcName = "";
-            AdcVersion = "";
-            AdcBits = 0;
-            Configs = configs;
+            AdcInfos = adcInfos;
+            AdcConfigs = configs;
         }
     }
 }

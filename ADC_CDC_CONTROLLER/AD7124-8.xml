@@ -1,120 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <adc>
-    <id>AD7124-8</id>
-    <name>AD7124-8</name>
-    <version>1.0</version>
-    <bit>24</bit>
-    <config>
-        <name>Power Mode</name>
-        <description>Power Mode</description>
-        <default>Low Power</default>
-        <items>
-            <item>
-                <name>Low Power</name>
-                <description>POWER_MODE = 00</description>
-                <command>REGM;01;6;2;0;</command>
-            </item>
-            <item>
-                <name>Mid Power</name>
-                <description>POWER_MODE = 01</description>
-                <command>REGM;01;6;2;1;</command>
-            </item>
-            <item>
-                <name>Full Power</name>
-                <description>POWER_MODE = 10</description>
-                <command>REGM;01;6;2;2;</command>
-            </item>
-        </items>
-    </config>
-    <config>
-        <name>PGA</name>
-        <description>PGA</description>
-        <default>1</default>
-        <items>
-            <item>
-                <name>1</name>
-                <description>PGA = 1, ±2.5V</description>
-                <command>REGM;19;0;3;0;</command>
-            </item>
-            <item>
-                <name>2</name>
-                <description>PGA = 2, ±1.25V</description>
-                <command>REGM;19;0;3;1;</command>
-            </item>
-            <item>
-                <name>4</name>
-                <description>PGA = 4, ±625mV</description>
-                <command>REGM;19;0;3;2;</command>
-            </item>
-            <item>
-                <name>8</name>
-                <description>PGA = 8, ±312.5mV</description>
-                <command>REGM;19;0;3;3;</command>
-            </item>
-            <item>
-                <name>16</name>
-                <description>PGA = 16, ±156.25mV</description>
-                <command>REGM;19;0;3;4;</command>
-            </item>
-            <item>
-                <name>32</name>
-                <description>PGA = 32, ±78.125mV</description>
-                <command>REGM;19;0;3;5;</command>
-            </item>
-            <item>
-                <name>64</name>
-                <description>PGA = 64, ±39.06mV</description>
-                <command>REGM;19;0;3;6;</command>
-            </item>
-            <item>
-                <name>128</name>
-                <description>PGA = 128, ±19.53mV</description>
-                <command>REGM;19;0;3;7;</command>
-            </item>
-        </items>
-    </config>
-    <config>
-        <name>Filter</name>
-        <description>Filter</description>
-        <default>Sinc4</default>
-        <items>
-            <item>
-                <name>Sinc4</name>
-                <description>Filter = 000</description>
-                <command>REGM;21;21;3;0;</command>
-            </item>
-            <item>
-                <name>Sinc3</name>
-                <description>Filter = 010</description>
-                <command>REGM;21;21;3;2;</command>
-            </item>
-            <item>
-                <name>Sinc4+Sinc1</name>
-                <description>Filter = 100</description>
-                <command>REGM;21;21;3;4;</command>
-            </item>
-            <item>
-                <name>Sinc3+Sinc1</name>
-                <description>Filter = 101</description>
-                <command>REGM;21;21;3;5;</command>
-            </item>
-            <item>
-                <name>Post Filter</name>
-                <description>Filter = 111</description>
-                <command>REGM;21;21;3;7;</command>
-            </item>
-        </items>
-    </config>
-    <config>
-        <name></name>
-        <description></description>
-        <default></default>
-        <items>
-            <item>
-                <name></name>
-                <description></description>
-                <command></command>
-            </item>
-        </items>
-    </config>
+    <info>
+        <id>AD7124-8</id>
+        <name>AD7124-8</name>
+        <version>1.0</version>
+        <bit>24</bit>
+    </info>
+    <configs>
+        <config>
+            <name>Power Mode</name>
+            <description>Power Mode</description>
+            <default>Low Power</default>
+            <items>
+                <item>
+                    <name>Low Power</name>
+                    <description>POWER_MODE = 00</description>
+                    <command>REGM;01;6;2;0;</command>
+                </item>
+                <item>
+                    <name>Mid Power</name>
+                    <description>POWER_MODE = 01</description>
+                    <command>REGM;01;6;2;1;</command>
+                </item>
+                <item>
+                    <name>Full Power</name>
+                    <description>POWER_MODE = 10</description>
+                    <command>REGM;01;6;2;2;</command>
+                </item>
+            </items>
+        </config>
+        <config>
+            <name>PGA</name>
+            <description>PGA</description>
+            <default>1</default>
+            <items>
+                <item>
+                    <name>1</name>
+                    <description>PGA = 1, ±2.5V</description>
+                    <command>REGM;19;0;3;0;</command>
+                </item>
+                <item>
+                    <name>2</name>
+                    <description>PGA = 2, ±1.25V</description>
+                    <command>REGM;19;0;3;1;</command>
+                </item>
+                <item>
+                    <name>4</name>
+                    <description>PGA = 4, ±625mV</description>
+                    <command>REGM;19;0;3;2;</command>
+                </item>
+                <item>
+                    <name>8</name>
+                    <description>PGA = 8, ±312.5mV</description>
+                    <command>REGM;19;0;3;3;</command>
+                </item>
+                <item>
+                    <name>16</name>
+                    <description>PGA = 16, ±156.25mV</description>
+                    <command>REGM;19;0;3;4;</command>
+                </item>
+                <item>
+                    <name>32</name>
+                    <description>PGA = 32, ±78.125mV</description>
+                    <command>REGM;19;0;3;5;</command>
+                </item>
+                <item>
+                    <name>64</name>
+                    <description>PGA = 64, ±39.06mV</description>
+                    <command>REGM;19;0;3;6;</command>
+                </item>
+                <item>
+                    <name>128</name>
+                    <description>PGA = 128, ±19.53mV</description>
+                    <command>REGM;19;0;3;7;</command>
+                </item>
+            </items>
+        </config>
+        <config>
+            <name>Filter</name>
+            <description>Filter</description>
+            <default>Sinc4</default>
+            <items>
+                <item>
+                    <name>Sinc4</name>
+                    <description>Filter = 000</description>
+                    <command>REGM;21;21;3;0;</command>
+                </item>
+                <item>
+                    <name>Sinc3</name>
+                    <description>Filter = 010</description>
+                    <command>REGM;21;21;3;2;</command>
+                </item>
+                <item>
+                    <name>Sinc4+Sinc1</name>
+                    <description>Filter = 100</description>
+                    <command>REGM;21;21;3;4;</command>
+                </item>
+                <item>
+                    <name>Sinc3+Sinc1</name>
+                    <description>Filter = 101</description>
+                    <command>REGM;21;21;3;5;</command>
+                </item>
+                <item>
+                    <name>Post Filter</name>
+                    <description>Filter = 111</description>
+                    <command>REGM;21;21;3;7;</command>
+                </item>
+            </items>
+        </config>
+        <config>
+            <name></name>
+            <description></description>
+            <default></default>
+            <items>
+                <item>
+                    <name></name>
+                    <description></description>
+                    <command></command>
+                </item>
+            </items>
+        </config>
+    </configs>
 </adc>
