@@ -180,7 +180,7 @@
                     <Label Content="Storage List" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <Label Content="Code" HorizontalAlignment="Left" Margin="441,10,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="dataTabStoreStorageButton" Content="Store Storage To File" HorizontalAlignment="Left" Margin="10,331,0,0" VerticalAlignment="Top" Width="220" Click="DataTabStoreStorageButton_Click"/>
-                    <Button x:Name="dataTabLoadStorageButton" Content="Load Storage From File" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Width="220" Click="dataTabLoadStorageButton_Click"/>
+                    <Button x:Name="dataTabLoadStorageButton" Content="Load Storage From File" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Width="220" Click="DataTabLoadStorageButton_Click"/>
                     <Label Content="Voltage(PGA=1)" HorizontalAlignment="Left" Margin="624,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="dataTabVoltageTextBox" HorizontalAlignment="Left" Height="246" Margin="624,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" VerticalScrollBarVisibility="Auto"/>
                     <TextBox x:Name="dataTabStorageSettingInfoTextBox" HorizontalAlignment="Left" Height="246" Margin="235,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" VerticalScrollBarVisibility="Auto"/>
@@ -213,6 +213,8 @@
                         <d3:Chart LeftTitle="Counts" Margin="10,316,10,0" LegendVisibility="Collapsed" BottomTitle="Code" Height="186" VerticalAlignment="Top">
                             <d3:BarGraph x:Name="bargraph1" Color="CornflowerBlue" StrokeThickness="1"/>
                         </d3:Chart>
+                        <CheckBox x:Name="staticTestTabSingleModeisBarScaleCheckBox" HorizontalAlignment="Left" Margin="165,108,0,0" VerticalAlignment="Top" Content="BarScale" IsChecked="True"/>
+                        <CheckBox x:Name="staticTestTabSingleModeisBarCountCheckBox" HorizontalAlignment="Left" Margin="252,108,0,0" VerticalAlignment="Top" Content="BarCount"/>
                     </Grid>
                     <Grid x:Name="ChartModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
                         <DataGrid x:Name="staticTestTabChartModeDataGrid" Height="320" Margin="10,10,10,0" VerticalAlignment="Top" ItemsSource="{Binding}" CanUserAddRows="False"/>
@@ -221,7 +223,7 @@
                         <Button x:Name="staticTestTabChartModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="240,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeStoreCsvButton_Click"/>
                     </Grid>
                     <Grid x:Name="ReportModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
-                        <DataGrid x:Name="staticTestTabReportModeDataGrid" Margin="10,10,10,34" ItemsSource="{Binding}" CanUserAddRows="False"/>
+                        <DataGrid x:Name="staticTestTabReportModeDataGrid" Margin="10,10,10,0" ItemsSource="{Binding}" CanUserAddRows="False" Height="468" VerticalAlignment="Top"/>
                         <Button x:Name="staticTestTabReportModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="92,483,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabReportModeCalcResolutionButton_Click"/>
                         <Button x:Name="staticTestTabReportModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="221,483,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabReportModeStoreCsvButton_Click"/>
                     </Grid>

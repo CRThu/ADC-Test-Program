@@ -72,7 +72,7 @@ namespace ADC_CDC_CONTROLLER
                             foreach (XmlNode ItemXmlChildNode in ItemXmlNode.ChildNodes)
                             {
                                 // Child: <name> <description> <command>
-                                //xmlContent += "." + ConfigXmlNode.Name + "." + ConfigXmlChildNode.Name + "." + ConfigXmlChildNode.Name + "." + ItemXmlNode.Name + "." + ItemXmlChildNode.Name + "." + ItemXmlChildNode.InnerText + "\n";
+                                //xmlContent += "." + ConfigXmlNode.Name + "." + ConfigXmlChildNode.Name + "." + ItemXmlNode.Name + "." + ItemXmlChildNode.Name + "." + ItemXmlChildNode.InnerText + "\n";
                                 switch (ItemXmlChildNode.Name)
                                 {
                                     case "name": adcConfigItem.Name = ItemXmlChildNode.InnerText; break;

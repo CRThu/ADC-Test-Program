@@ -301,7 +301,7 @@ namespace ADC_CDC_CONTROLLER
                         }
                         int adcBits = Convert.ToInt32(staticTestTabAdcBitsTextBox.Text);
                         double lsb = AdcPerfCalcUtil.LsbVoltage(isBipolar, vRef, gain, adcBits);
-                        staticTestTabLSBTextBox.Text = (1e6*lsb).ToString("G4");
+                        staticTestTabLSBTextBox.Text = (1e6 * lsb).ToString("G4");
 
                         // lsb: Min Max Avg nrms npp nppcalc
                         DataTableUtil.DataTableAddData(singleModeDataTable, 0, 0, 1.ToString());
@@ -340,8 +340,20 @@ namespace ADC_CDC_CONTROLLER
             linegraph1.PlotY(sample);
 
             Dictionary<ulong, double> dataStats = new Dictionary<ulong, double>();
-            for (ulong i = AdcPerfCalcUtil.MinCode(sample); i <= AdcPerfCalcUtil.MaxCode(sample); i++)
-                dataStats.Add(i, (double)sample.Where(code => code.Equals(i)).Count() / (double)sample.Count);
+            ulong sampleMinCode = AdcPerfCalcUtil.MinCode(sample);
+            ulong sampleMaxCode = AdcPerfCalcUtil.MaxCode(sample);
+            // isScale or barCnt>100
+            ulong scale = 1;
+            if (staticTestTabSingleModeisBarScaleCheckBox.IsChecked.Equals(false) || sampleMaxCode - sampleMinCode + 1 <= 100)
+                for (ulong i = sampleMinCode; i <= sampleMaxCode; i++)
+                    dataStats.Add(i, (double)sample.Where(code => code.Equals(i)).Count() / ((bool)staticTestTabSingleModeisBarCountCheckBox.IsChecked ? 1 : sample.Count));
+            else
+            {
+                scale = (ulong)Math.Ceiling((sampleMaxCode - sampleMinCode + 1) / 100m);
+                for (ulong i = sampleMinCode; i <= sampleMaxCode; i += scale)
+                    dataStats.Add(i, (double)sample.Where(code => code >= i && code < (i + scale)).Count() / ((bool)staticTestTabSingleModeisBarCountCheckBox.IsChecked ? 1 : sample.Count));
+            }
+            bargraph1.BarsWidth = scale;
             bargraph1.PlotBars(dataStats.Keys, dataStats.Values);
         }
 

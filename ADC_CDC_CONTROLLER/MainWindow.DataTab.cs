@@ -17,10 +17,11 @@ namespace ADC_CDC_CONTROLLER
         private void DataTabUpdateListBoxButton_Click(object sender, RoutedEventArgs e)
         {
             dataTabAdcSamplesListBox.Items.Clear();
+            dataTabAdcSamplesListBox.SelectedIndex = -1;
+
             foreach (var key in adcDataStorage.AdcSamplesStorageKeys)
                 dataTabAdcSamplesListBox.Items.Add(key);
 
-            dataTabAdcSamplesListBox.SelectedIndex = -1;
             dataTabStorageTextBox.Text = "";
             dataTabVoltageTextBox.Text = "";
         }
@@ -43,7 +44,7 @@ namespace ADC_CDC_CONTROLLER
             data_str = "";
             List<double> voltageList = AdcPerfCalcUtil.ConvertVoltages(currentList, true, 2.5, 1, 24);
             foreach (var data in voltageList)
-                data_str += data.ToString() + Environment.NewLine;
+                data_str += data.ToString("G4") + Environment.NewLine;
             dataTabVoltageTextBox.Text = data_str;
         }
 
@@ -62,7 +63,7 @@ namespace ADC_CDC_CONTROLLER
             adcDataStorage.StoreAllDataToFile(saveFileDialog.FileName, DataStroageExtension.Csv);
         }
 
-        private void dataTabLoadStorageButton_Click(object sender, RoutedEventArgs e)
+        private void DataTabLoadStorageButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -75,6 +76,7 @@ namespace ADC_CDC_CONTROLLER
                 };
                 if (openFileDialog.ShowDialog() == false)
                     return;
+
                 adcDataStorage.LoadAllDataFromFile(openFileDialog.FileName, DataStroageExtension.Csv);
                 DataTabUpdateListBoxButton_Click(null, null);
             }

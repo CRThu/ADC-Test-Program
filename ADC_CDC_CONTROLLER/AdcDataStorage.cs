@@ -144,10 +144,11 @@ namespace ADC_CDC_CONTROLLER
                 while (sr.Peek() > 0)
                 {
                     string line = sr.ReadLine();
-                    List<string> elements = line.Split(new char[] { ',' }).Where(str => !string.IsNullOrEmpty(str)).ToList();
+                    List<string> elements = line.Split(new char[] { ',' }).ToList();
                     string key = elements[0];
                     string info = elements[1];
                     elements.RemoveRange(0, 2);
+                    elements = elements.Where(element => !string.IsNullOrEmpty(element)).ToList();
                     ulong[] value = elements.Select(code => Convert.ToUInt64(code)).ToArray();
                     AdcSamplesStorage.Add(key, value.ToList());
                     AdcSamplesSettingInfo.Add(key, info);

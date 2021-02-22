@@ -12,10 +12,11 @@ namespace ADC_CDC_CONTROLLER
         public string Name { get; set; }
         public string Description { get; set; }
         public string CurrentConfig { get; set; }
+        private string defaultConfig;
         public string DefaultConfig
         {
-            get { return DefaultConfig; }
-            set { DefaultConfig = value; CurrentConfig = value; }
+            get { return defaultConfig; }
+            set { defaultConfig = value; CurrentConfig = value; }
         }
         public ObservableCollection<AdcConfigItem> Items { get; set; }
 
