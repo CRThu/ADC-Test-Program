@@ -42,6 +42,8 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_TASK1COMM_STR = "TASK1.COMM;";
         const string CMD_TASK1PACK_STR = "TASK1.PACK;";
 
+        Log log1 = new Log();
+
         private void SerialPortConnectButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -371,7 +373,17 @@ namespace ADC_CDC_CONTROLLER
                 str_buf += isTx ? "[WPF]: " : "";
                 str_buf += str;
                 str_buf += isTx ? "\n" : "";
-                textBox.Text += str_buf;
+                //textBox.Text += str_buf;
+
+                log1.LogText += str_buf;
+                // Too long
+                if (textBox.Text.Length > 150000)
+                {
+                    textBox.Text = ".....\n";
+                }
+
+                textBox.AppendText(str_buf);
+                textBox.SelectionStart = textBox.Text.Length;
                 textBox.ScrollToEnd();
             }));
         }
@@ -518,6 +530,25 @@ namespace ADC_CDC_CONTROLLER
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
                 }
             }
+        }
+
+        private void SaveLogsToFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Save File Dialog
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Logs File...",
+                Filter = "Text File|*.txt",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
+
+            if (saveFileDialog.ShowDialog() == false)
+                return;
+            FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create);
+
+            fs.Write(System.Text.Encoding.Default.GetBytes(log1.LogText), 0, log1.LogText.Length);
+            fs.Flush();
+            fs.Close();
         }
     }
 }

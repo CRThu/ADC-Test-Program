@@ -80,6 +80,7 @@
     <Compile Include="AdcPerfCalcUtil.cs" />
     <Compile Include="AdcSampleData.cs" />
     <Compile Include="DataTableUtil.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

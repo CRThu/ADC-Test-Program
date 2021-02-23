@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +23,9 @@ namespace ADC_CDC_CONTROLLER
             taskTabTaskTxtListView.DataContext = taskTabTaskTxtList;
 
             bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+
+            //serialPortCommInfoTextBox.DataContext = log1;
+            serialPortCommInfoTextBox.IsUndoEnabled = false;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -40,5 +45,6 @@ namespace ADC_CDC_CONTROLLER
             if (portList.Length > 0)
                 serialPortComboBox1.SelectedIndex = 0;
         }
+
     }
 }
