@@ -550,5 +550,10 @@ namespace ADC_CDC_CONTROLLER
             fs.Flush();
             fs.Close();
         }
+
+        private void ClearLogsButton_Click(object sender, RoutedEventArgs e)
+        {
+            log1.LogText = "";
+        }
     }
 }

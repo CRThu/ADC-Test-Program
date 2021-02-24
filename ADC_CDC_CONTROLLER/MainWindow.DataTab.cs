@@ -85,5 +85,13 @@ namespace ADC_CDC_CONTROLLER
                 MessageBox.Show(ex.ToString());
             }
         }
+
+        private void DataTabClearStorageButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure to clear adcDataStorage?", "WARNING", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            if(messageBoxResult==MessageBoxResult.OK)
+                adcDataStorage = new AdcDataStorage();
+            DataTabUpdateListBoxButton_Click(null, null);
+        }
     }
 }

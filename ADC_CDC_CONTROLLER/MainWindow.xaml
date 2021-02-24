@@ -64,7 +64,7 @@
                     <Label Content="BytesPerCode" HorizontalAlignment="Left" Margin="16,374,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="writeCmdsTextBox" HorizontalAlignment="Left" Height="68" Margin="21,448,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                     <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Left" Margin="271,448,0,0" VerticalAlignment="Top" Width="90" Height="44" Click="WriteCmdsFromTextBoxButton_Click"/>
-                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,498,0,0" VerticalAlignment="Top" Width="90" Height="18" Click="SaveCmdsToFileButton_Copy_Click"/>
+                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,497,0,0" VerticalAlignment="Top" Width="90" Click="SaveCmdsToFileButton_Copy_Click"/>
                     <Label Content="REGM" HorizontalAlignment="Left" Margin="16,259,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="cmdREGMButton" Content="REGM" HorizontalAlignment="Left" Margin="285,262,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGMButton_Click"/>
                     <TextBox x:Name="cmdREGMTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,260,0,0" TextWrapping="Wrap" Text="21" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -84,7 +84,8 @@
                     <TextBox x:Name="cmdREGQTextBox2" HorizontalAlignment="Left" Height="23" Margin="140,290,0,0" TextWrapping="Wrap" Text="10:0" VerticalAlignment="Top" Width="40" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="[" HorizontalAlignment="Left" Margin="126,289,0,0" VerticalAlignment="Top"/>
                     <Label Content="]" HorizontalAlignment="Left" Margin="180,289,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="saveLogsToFileButton" Content="SAVE Logs" HorizontalAlignment="Left" Margin="271,521,0,0" VerticalAlignment="Top" Width="90" Height="18" Click="SaveLogsToFileButton_Click"/>
+                    <Button x:Name="saveLogsToFileButton" Content="SAVE Logs" HorizontalAlignment="Left" Margin="271,521,0,0" VerticalAlignment="Top" Width="90" Click="SaveLogsToFileButton_Click"/>
+                    <Button x:Name="clearLogsButton" Content="Clear Logs" HorizontalAlignment="Left" Margin="165,521,0,0" VerticalAlignment="Top" Width="90" Click="ClearLogsButton_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Setting">
@@ -123,7 +124,7 @@
                     <TextBox x:Name="AdcAllSelectedSettingsTextBox" HorizontalAlignment="Left" Height="84" Margin="66,330,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="331" VerticalScrollBarVisibility="Auto"/>
                     <Button x:Name="AdcSettingGetConfigNowButton" Content="Get Config Now" HorizontalAlignment="Left" Margin="402,395,0,0" VerticalAlignment="Top" Width="110" IsEnabled="False"/>
                     <TextBox x:Name="AdcSettingsInfoTextBox" Margin="528,14,10,9.5" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
-                    <TextBox x:Name="AdcSettingTaskAddonCmdsTextBox" HorizontalAlignment="Left" Margin="66,448,0,9.5" TextWrapping="Wrap" Width="331" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Text="TASK1.RUN;256;&#xA;&lt;waitCmd/&gt;&#xA;TASK1.PACK;256;&#xA;&lt;setAnalysisParams&gt;PGA;%PGA%;Filter;%Filter%;&lt;/setAnalysisParams&gt;&#xD;&#xA;&lt;storeDic&gt;PGA.%PGA%;Filter.%Filter%&lt;/storeDic&gt;&#xA;&lt;storeFile&gt;data/PGA.%PGA%;Filter.%Filter%.txt&lt;/storeFile&gt;"/>
+                    <TextBox x:Name="AdcSettingTaskAddonCmdsTextBox" HorizontalAlignment="Left" Margin="66,448,0,9.5" TextWrapping="Wrap" Width="331" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Text="&lt;setAnalysisParams&gt;PGA;%PGA%;Filter;%Filter%;&lt;/setAnalysisParams&gt;&#xD;&#xA;TASK1.RUN;1024;&#xA;&lt;waitCmd/&gt;&#xA;TASK1.PACK;1024;&#xA;&lt;storeDic&gt;PGA.%PGA%;Filter.%Filter%&lt;/storeDic&gt;&#xA;&lt;storeFile&gt;data/PGA.%PGA%;Filter.%Filter%.txt&lt;/storeFile&gt;"/>
                     <Label Content="Addon" HorizontalAlignment="Left" Margin="12,450,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="AdcSettingTaskAddonCmdsCheckBox" Content="" HorizontalAlignment="Left" Margin="28,480,0,0" VerticalAlignment="Top" IsChecked="True"/>
                     <Button x:Name="AdcSettingOpenCmdsFileButton" Content="View" HorizontalAlignment="Left" Margin="402,532,0,0" VerticalAlignment="Top" Width="110" Click="AdcSettingOpenCmdsFileButton_Click"/>
@@ -186,6 +187,7 @@
                     <TextBox x:Name="dataTabVoltageTextBox" HorizontalAlignment="Left" Height="246" Margin="624,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" VerticalScrollBarVisibility="Auto"/>
                     <TextBox x:Name="dataTabStorageSettingInfoTextBox" HorizontalAlignment="Left" Height="246" Margin="235,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" VerticalScrollBarVisibility="Auto"/>
                     <Label Content="Config Info" HorizontalAlignment="Left" Margin="235,10,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="dataTabClearStorageButton" Content="Clear Storage" HorizontalAlignment="Left" Margin="10,379,0,0" VerticalAlignment="Top" Width="220" Click="DataTabClearStorageButton_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Static Report" >
@@ -246,6 +248,17 @@
                             <Label Content="IsVariable" HorizontalAlignment="Left" Margin="175,141,0,0" VerticalAlignment="Top"/>
                         </Grid>
                     </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="About" >
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                        <GradientStop Color="#FFF0F0F0" Offset="0"/>
+                        <GradientStop Color="#FFEDFFFA" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid Background="#FFEDFFFA">
+                    <TextBlock x:Name="AboutTabAppVersionTextBlock" Text="App Version:1.0.*&#x000A;Build Time:*"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -52,8 +52,9 @@ namespace ADC_CDC_CONTROLLER
 
         public void WriteTmpAdcSamples(string info, List<byte> byteList, int bytesPerCode)
         {
-            AdcSamplesSettingInfo[tmpAdcSample] = info;
-            AdcSamplesStorage[tmpAdcSample] = ConvertBytesToCodes(byteList, bytesPerCode);
+            WriteToDataStorage(tmpAdcSample, info, ConvertBytesToCodes(byteList, bytesPerCode));
+            //AdcSamplesSettingInfo[tmpAdcSample] = info;
+            //AdcSamplesStorage[tmpAdcSample] = ConvertBytesToCodes(byteList, bytesPerCode);
         }
 
         public int WriteTmpAdcSamplesToDataStorage(string name)
@@ -63,8 +64,8 @@ namespace ADC_CDC_CONTROLLER
 
         public int WriteToDataStorage(string name, string info, List<ulong> samples)
         {
-            if (name.Equals(tmpAdcSample))
-                throw new AccessViolationException();
+            //if (name.Equals(tmpAdcSample))
+            //    throw new AccessViolationException();
 
             if (!AdcSamplesSettingInfo.ContainsKey(name))
                 AdcSamplesSettingInfo.Add(name, info);

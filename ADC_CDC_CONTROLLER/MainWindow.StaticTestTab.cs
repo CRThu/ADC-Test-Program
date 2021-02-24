@@ -24,7 +24,7 @@ namespace ADC_CDC_CONTROLLER
         string[] reportModeDataTableperfNames = { "Count","Min", "Max", "Avg|Offset Err",
                 "Std|RMS Noise(LSB)", "Peak Noise(LSB)", "Peak Noise Calc(LSB)",
                 "Eff Res(b)", "NoiseFree Res(b)", "NoiseFree Res Calc(b)",
-                "LSB(u)","Std|RMS Noise(u)", "Peak Noise(u)", "Peak Noise Calc(u)",
+                "LSB(u)","Avg|Offset Err(u)","Std|RMS Noise(u)", "Peak Noise(u)", "Peak Noise Calc(u)",
             };
 
         private void NoiseTestTabUpdateStorageButton_Click(object sender, RoutedEventArgs e)
@@ -445,7 +445,8 @@ namespace ADC_CDC_CONTROLLER
                             case "NoiseFree Res(b)": calcResult = AdcPerfCalcUtil.NoiseFreeResolution(kvSample.Value, adcBits).ToString("f2"); break;
                             case "NoiseFree Res Calc(b)": calcResult = AdcPerfCalcUtil.NoiseFreeResolutionCalc(kvSample.Value, adcBits).ToString("f2"); break;
                             case "LSB(u)": calcResult = (1e6 * lsb).ToString("G4"); break;
-                            case "Std|RMS Noise(u)": calcResult = (1e6 * AdcPerfCalcUtil.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
+                            case "Avg|Offset Err(u)": calcResult = (1e6 * AdcPerfCalcUtil.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3");  break;
+                            case "Std|RMS Noise(u)": calcResult = (1e6 * AdcPerfCalcUtil.RmsNoise(kvSample.Value, lsb)).ToString("G3"); break;
                             case "Peak Noise(u)": calcResult = (1e6 * AdcPerfCalcUtil.PeakNoise(kvSample.Value, lsb)).ToString("G3"); break;
                             case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalcUtil.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
                             default: calcResult = ""; break;
