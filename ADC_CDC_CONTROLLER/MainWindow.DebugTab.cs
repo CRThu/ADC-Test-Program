@@ -19,7 +19,8 @@ namespace ADC_CDC_CONTROLLER
     /// </summary>
     public partial class MainWindow : Window
     {
-        SerialPort myPort = new SerialPort();
+        //SerialPort myPort = new SerialPort();
+
         bool isDataReceivedRefused = false;
         string recvDataStr;
         bool isWaitingSignal = false;
@@ -42,95 +43,78 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_TASK1COMM_STR = "TASK1.COMM;";
         const string CMD_TASK1PACK_STR = "TASK1.PACK;";
 
+        SerialPortComm serialPortComm;
         Log log1 = new Log();
 
         private void SerialPortConnectButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                myPort.PortName = serialPortComboBox1.SelectedItem.ToString();
-                myPort.BaudRate = 9600;
-                myPort.DataBits = 8;
-                myPort.NewLine = "\n";
-                myPort.ReadBufferSize = Convert.ToInt32(rxBufSizeTextBox.Text);
-                myPort.ReadTimeout = Convert.ToInt32(rxTimeOutTextBox.Text);
-                myPort.Open();
-                serialPortStatusLabel.Content = myPort.IsOpen ? "Connected" : "Disconnected";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            string serialPortName = serialPortComboBox1.SelectedItem.ToString().Split('|').First().Trim();
+            int serialPortBaudRate = 9600;
+            int serialPortRxBufSize = Convert.ToInt32(debugTabRxBufSizeTextBox.Text);
+            int serialPortRxTimeout = Convert.ToInt32(debugTabRxTimeOutTextBox.Text);
+            int serialPortTxBufSize = 2048;
+            int serialPortTxTimeout = SerialPort.InfiniteTimeout;
 
-            myPort.DataReceived += MyPort_DataReceived;
+            serialPortComm = new SerialPortComm(serialPortName, serialPortBaudRate);
+            serialPortComm.SetBuffer(serialPortRxBufSize, serialPortRxTimeout, serialPortTxBufSize, serialPortTxTimeout);
+            serialPortComm.Open();
+            debugTabSerialPortStatusLabel.Content = serialPortComm.IsOpen ? "Connected" : "Disconnected";
+
+            serialPortComm.DataReceivedEvent(MyPort_DataReceived);
         }
 
         private void SerialPortDisconnectButton_Click(object sender, RoutedEventArgs e)
         {
-            if (myPort.IsOpen)
+            if (serialPortComm.IsOpen)
             {
-                try
-                {
-                    myPort.Close();
-                    serialPortStatusLabel.Content = myPort.IsOpen ? "Connected" : "Disconnected";
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
+                serialPortComm.Close();
+                debugTabSerialPortStatusLabel.Content = serialPortComm.IsOpen ? "Connected" : "Disconnected";
             }
             else
-                MessageBox.Show("COM has been closed!");
+                MessageBox.Show("Serial port has been closed!");
         }
 
-        // myPort.ReceivedBytesThreshold
         private void MyPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            try
+            // Refuse DataReceived Process
+            if (!isDataReceivedRefused)
             {
-                // Refuse DataReceived Process
-                if (!isDataReceivedRefused)
+                int _bytesToRead = serialPortComm.BytesToRead;
+                if (_bytesToRead > 0)
                 {
-                    int _bytesToRead = myPort.BytesToRead;
-                    if (_bytesToRead > 0)
+                    byte[] recvData = new byte[_bytesToRead];
+
+                    serialPortComm.Read(recvData, _bytesToRead);
+                    //serialPortComm.serialPort.Read(recvData, 0, _bytesToRead);
+
+                    recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
+
+                    if (isWaitingSignal)
                     {
-                        byte[] recvData = new byte[_bytesToRead];
-
-                        myPort.Read(recvData, 0, _bytesToRead);
-                        // TODO 重构
-                        recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
-
-                        if (isWaitingSignal)
+                        if (recvDataStr.IndexOf("[COMMAND]") >= 0)
                         {
-                            if (recvDataStr.IndexOf("[COMMAND]") >= 0)
-                            {
-                                ReceivedSignalStr = recvDataStr;
-                                isWaitingSignal = false;
-                            }
+                            ReceivedSignalStr = recvDataStr;
+                            isWaitingSignal = false;
                         }
-                        if (recvDataStr.IndexOf("<dat>") >= 0)
-                        {
-                            int hex_start = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("<dat>")) + "<dat>".Length;
-                            int hex_end = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("</dat>")) - 1;
-
-                            string recvDataStr_tmp = "";
-                            recvDataStr_tmp += recvDataStr.Substring(0, hex_start);
-                            // HEX
-                            //recvDataStr_tmp += recvDataStr.Substring(hex_start, hex_end-hex_start+1);
-                            byte[] hex_bytes = recvData.Skip(hex_start).Take(hex_end - hex_start + 1).ToArray();
-                            recvDataStr_tmp += ToHexStrFromByte(hex_bytes);
-                            adcDataStorage.WriteTmpAdcSamples(adcCurrentSampleSettingInfoStr, hex_bytes.ToList(), bytesPerCode);
-                            recvDataStr_tmp += recvDataStr.Substring(hex_end + 1, recvDataStr.Length - hex_end - 1);
-                            recvDataStr = recvDataStr_tmp;
-                        }
-
-                        SerialPortLoggerTextBox_Update(false, recvDataStr);
                     }
+                    if (recvDataStr.IndexOf("<dat>") >= 0)
+                    {
+                        int hex_start = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("<dat>")) + "<dat>".Length;
+                        int hex_end = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("</dat>")) - 1;
+
+                        string recvDataStr_tmp = "";
+                        recvDataStr_tmp += recvDataStr.Substring(0, hex_start);
+                        // HEX
+                        //recvDataStr_tmp += recvDataStr.Substring(hex_start, hex_end-hex_start+1);
+                        byte[] hex_bytes = recvData.Skip(hex_start).Take(hex_end - hex_start + 1).ToArray();
+                        recvDataStr_tmp += ToHexStrFromByte(hex_bytes);
+                        adcDataStorage.WriteTmpAdcSamples(adcCurrentSampleSettingInfoStr, hex_bytes.ToList(), bytesPerCode);
+                        recvDataStr_tmp += recvDataStr.Substring(hex_end + 1, recvDataStr.Length - hex_end - 1);
+                        recvDataStr = recvDataStr_tmp;
+                    }
+
+                    SerialPortLoggerTextBox_Update(false, recvDataStr);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -221,72 +205,34 @@ namespace ADC_CDC_CONTROLLER
         {
             int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
             int BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
-            int timeout = Convert.ToInt32(rxTimeOutTextBox.Text);
+            int timeout = Convert.ToInt32(debugTabRxTimeOutTextBox.Text);
             Task1PACKReceive(AdcDataSize, BytesPerCode, timeout);
         }
         private void Task1PACKReceive(int adcDataSize, int bytesPerCode, int timeout)
         {
-            try
-            {
-                int recvDataPackageSize = adcDataSize * bytesPerCode;
+            int recvDataPackageSize = adcDataSize * bytesPerCode;
 
-                isDataReceivedRefused = true;
-                string TxString = CMD_TASK1PACK_STR + adcDataSize + ";";
-                SerialPortStringSendFunc(TxString);
+            isDataReceivedRefused = true;
+            string TxString = CMD_TASK1PACK_STR + adcDataSize + ";";
+            SerialPortStringSendFunc(TxString);
 
-                string str = "";
-                byte[] recvDataPackage = new byte[recvDataPackageSize];
+            string str = "";
+            byte[] recvDataPackage = new byte[recvDataPackageSize];
 
-                // NEW SOLUTION:https://stackoverflow.com/questions/16439897/serialport-readbyte-int32-int32-is-not-blocking-but-i-want-it-to-how-do
-                // Stop Program and Keep UI alive.
-                /*
-                Thread t = new Thread(o => Thread.Sleep(timeout));
-                t.Start(this);
-                while (t.IsAlive)
-                {
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+            int data_len = serialPortComm.Read(recvDataPackage, recvDataPackageSize, timeout);
 
-                    if (myPort.BytesToRead >= recvDataPackageSize)
-                        t.Abort();
-                }
-                */
-                int data_len = ReadDataBlock(recvDataPackage, recvDataPackageSize, timeout);
+            //ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
+            adcDataStorage.WriteTmpAdcSamples(adcCurrentSampleSettingInfoStr, recvDataPackage.ToList(), bytesPerCode);
+            str += ("Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
+            str += ToHexStrFromByte(recvDataPackage);
+            SerialPortLoggerTextBox_Update(true, str);
 
-                //ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
-                adcDataStorage.WriteTmpAdcSamples(adcCurrentSampleSettingInfoStr,recvDataPackage.ToList(), bytesPerCode);
-                str += ("Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
-                str += ToHexStrFromByte(recvDataPackage);
-                SerialPortLoggerTextBox_Update(true, str);
+            isDataReceivedRefused = false;
 
-                isDataReceivedRefused = false;
-
-                if (myPort.BytesToRead > 0)
-                    MyPort_DataReceived(null, null);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            if (serialPortComm.BytesToRead > 0)
+                MyPort_DataReceived(null, null);
         }
-        public int ReadDataBlock(byte[] responseBytes, int bytesExpected, int timeOut)
-        {
-            int offset = 0, bytesRead;
-            myPort.ReadTimeout = timeOut;
-            try
-            {
-                while (bytesExpected > 0 &&
-                  (bytesRead = myPort.Read(responseBytes, offset, bytesExpected)) > 0)
-                {
-                    offset += bytesRead;
-                    bytesExpected -= bytesRead;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            return offset;
-        }
+        
         private void CmdLoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
             // Open File Dialog
@@ -346,21 +292,15 @@ namespace ADC_CDC_CONTROLLER
 
         private void SerialPortStringSendFunc(string str)
         {
-            try
-            {
-                byte[] TxData = System.Text.Encoding.ASCII.GetBytes(str);
-                myPort.Write(TxData, 0, TxData.Length);
-                SerialPortLoggerTextBox_Update(true, str);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            serialPortComm.Write(str);
+            SerialPortLoggerTextBox_Update(true, str);
         }
+
         private void SerialPortLoggerTextBox_Update(bool isTx, string str)
         {
             SerialPortLoggerTextBox_Update(isTx, str, serialPortCommInfoTextBox);
         }
+        
         private void SerialPortLoggerTextBox_Update(bool isTx, string str, TextBox textBox)
         {
             // Dispatcher.Invoke()
@@ -470,7 +410,7 @@ namespace ADC_CDC_CONTROLLER
                 string[] param = command.Split(new char[] { ';' });
                 int AdcDataSize = Convert.ToInt32(param[1]);
                 int BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
-                int timeout = Convert.ToInt32(rxTimeOutTextBox.Text);
+                int timeout = Convert.ToInt32(debugTabRxTimeOutTextBox.Text);
                 // TASK1.PACK;256;
                 if (param.Length > 3)
                 {

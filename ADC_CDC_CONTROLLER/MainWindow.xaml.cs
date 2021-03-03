@@ -43,9 +43,9 @@ namespace ADC_CDC_CONTROLLER
                 + "Build Mode:\t" + (isDebugMode ? "Debug" : "Release") + Environment.NewLine
                 + ".NET Version:\t" + envVersion + Environment.NewLine
                 + "Hardware Info:" + Environment.NewLine;
-            string[] coms = HardwareInfoUtil.GetSerialPortName();
-            foreach(var com in coms)
-                AboutTabAppVersionTextBlock.Text += com+Environment.NewLine;
+            string[] coms = HardwareInfoUtil.GetSerialPortFullName();
+            foreach (var com in coms)
+                AboutTabAppVersionTextBlock.Text += com + Environment.NewLine;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -57,9 +57,10 @@ namespace ADC_CDC_CONTROLLER
             UpdateAdcSecondarySettingsListBox();
 
             string[] portList = System.IO.Ports.SerialPort.GetPortNames();
+            string[] portDescriptionList = HardwareInfoUtil.GetSerialPortFullName();
             for (int i = 0; i < portList.Length; ++i)
             {
-                string name = portList[i];
+                string name = portList[i] + "|" + portDescriptionList.Where(str => str.Contains(portList[i])).First();
                 serialPortComboBox1.Items.Add(name);
             }
             if (portList.Length > 0)

@@ -93,7 +93,7 @@ namespace ADC_CDC_CONTROLLER
             }
         }
 
-        public static string[] GetSerialPortName()
+        public static string[] GetSerialPortFullName()
         {
             return WmiGetSerialPort(HardwareEnum.Win32_PnPEntity, "Name");
         }

@@ -23,7 +23,7 @@
                     <ComboBox x:Name="serialPortComboBox1" HorizontalAlignment="Left" Margin="71,22,0,0" VerticalAlignment="Top" Width="120"/>
                     <Button x:Name="serialPortConnectButton" Content="Connect" HorizontalAlignment="Left" Margin="21,61,0,0" VerticalAlignment="Top" Width="76" Click="SerialPortConnectButton_Click"/>
                     <Button x:Name="serialPortDisconnectButton" Content="Disconnect" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="76" Click="SerialPortDisconnectButton_Click"/>
-                    <Label x:Name="serialPortStatusLabel" Content="Disconnected" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="debugTabSerialPortStatusLabel" Content="Disconnected" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top"/>
                     <Label Content="OPEN&amp;RESET" HorizontalAlignment="Left" Margin="16,110,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="serialPortCommInfoTextBox" Margin="382,10,10,10" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
                     <Label Content="DATW" HorizontalAlignment="Left" Margin="16,140,0,0" VerticalAlignment="Top"/>
@@ -51,7 +51,7 @@
                     <Button x:Name="cmdLoadFromFileButton" Content="LOAD CMDs" HorizontalAlignment="Left" Margin="271,412,0,0" VerticalAlignment="Top" Width="90" Click="CmdLoadFromFileButton_Click"/>
                     <TextBox x:Name="cmdLoadFromFileTextBox" HorizontalAlignment="Left" Height="22" Margin="46,412,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="98"/>
                     <Label Content="DEC INPUT" HorizontalAlignment="Left" Margin="144,316,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="rxBufSizeTextBox" HorizontalAlignment="Left" Height="23" Margin="307,72,0,0" TextWrapping="Wrap" Text="65536" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="debugTabRxBufSizeTextBox" HorizontalAlignment="Left" Height="23" Margin="307,72,0,0" TextWrapping="Wrap" Text="65536" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="RX__BUF__SIZE" HorizontalAlignment="Left" Margin="212,71,0,0" VerticalAlignment="Top" Width="89"/>
                     <Label Content="COMM" HorizontalAlignment="Left" Margin="86,85,0,0" VerticalAlignment="Top"/>
                     <Label Content="TASK" HorizontalAlignment="Left" Margin="86,316,0,0" VerticalAlignment="Top"/>
@@ -75,7 +75,7 @@
                     <TextBox x:Name="cmdREGMTextBox3" HorizontalAlignment="Left" Height="23" Margin="217,260,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" MaxLength="6" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="7FF"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="194,259,0,0" VerticalAlignment="Top"/>
                     <Label Content="TIMEOUT" HorizontalAlignment="Left" Margin="212,45,0,0" VerticalAlignment="Top" Width="89"/>
-                    <TextBox x:Name="rxTimeOutTextBox" HorizontalAlignment="Left" Height="23" Margin="307,46,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="debugTabRxTimeOutTextBox" HorizontalAlignment="Left" Height="23" Margin="307,46,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Button x:Name="cmdRESETButton" Content="RESET" HorizontalAlignment="Left" Margin="186,113,0,0" VerticalAlignment="Top" Width="76" Click="cmdRESETButton_Click"/>
                     <Label Content="REGQ" HorizontalAlignment="Left" Margin="16,289,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="cmdREGQButton" Content="REGQ" HorizontalAlignment="Left" Margin="285,292,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGQButton_Click"/>
