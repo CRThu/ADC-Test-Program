@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ADC_CDC_CONTROLLER
 {
-    class Log// : INotifyPropertyChanged
+    class Logger// : INotifyPropertyChanged
     {
         // Log Binding
         //public event PropertyChangedEventHandler PropertyChanged;

@@ -82,11 +82,12 @@
     <Compile Include="AdcSampleData.cs" />
     <Compile Include="DataTableUtil.cs" />
     <Compile Include="HardwareInfoUtil.cs" />
-    <Compile Include="Log.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SerialPortComm.cs" />
+    <Compile Include="SerialPortProtocol.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="XmlEditor.xaml.cs">
       <DependentUpon>XmlEditor.xaml</DependentUpon>

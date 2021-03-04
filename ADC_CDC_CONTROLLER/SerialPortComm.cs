@@ -12,7 +12,7 @@ namespace ADC_CDC_CONTROLLER
 {
     class SerialPortComm
     {
-        private SerialPort serialPort;
+        protected SerialPort serialPort;
         public bool IsOpen => serialPort.IsOpen;
         public int BytesToRead => serialPort.BytesToRead;
 
@@ -41,10 +41,17 @@ namespace ADC_CDC_CONTROLLER
 
         public void SetBuffer(int rxBufSize, int rxTimeout, int txBufSize, int txTimeout)
         {
-            serialPort.ReadBufferSize = rxBufSize;
-            serialPort.ReadTimeout = rxTimeout;
-            serialPort.WriteBufferSize = txBufSize;
-            serialPort.WriteTimeout = txTimeout;
+            try
+            {
+                serialPort.ReadBufferSize = rxBufSize;
+                serialPort.ReadTimeout = rxTimeout;
+                serialPort.WriteBufferSize = txBufSize;
+                serialPort.WriteTimeout = txTimeout;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         public void Open()
@@ -75,37 +82,35 @@ namespace ADC_CDC_CONTROLLER
         // Stop Program and Keep UI alive.
         public int Read(byte[] responseBytes, int bytesExpected, int timeOut)
         {
-            if (timeOut == 0)
-            {
-                if(serialPort.BytesToRead < bytesExpected)
-                    bytesExpected = serialPort.BytesToRead;
-                return Read(responseBytes, bytesExpected);
-            }
-            else
-            {
-                if (timeOut == SerialPort.InfiniteTimeout)
-                    timeOut = Timeout.Infinite;
+            if (timeOut == SerialPort.InfiniteTimeout)
+                timeOut = Timeout.Infinite;
 
-                int ActualBytesToRead = 0;
+            int offset = 0, bytesRead;
+            try
+            {
                 Thread t = new Thread(o => Thread.Sleep(timeOut));
                 t.Start(this);
                 while (t.IsAlive)
                 {
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 
-                    if (serialPort.BytesToRead >= bytesExpected)
+                    if (bytesExpected > 0 && serialPort.BytesToRead > 0)
                     {
-                        ActualBytesToRead = bytesExpected;
+                        bytesRead = serialPort.Read(responseBytes, offset, bytesExpected);
+                        offset += bytesRead;
+                        bytesExpected -= bytesRead;
+                    }
+                    else if (bytesExpected == 0)
+                    {
                         t.Abort();
                     }
-                    else
-                    {
-                        ActualBytesToRead = serialPort.BytesToRead;
-                    }
                 }
-
-                return Read(responseBytes, ActualBytesToRead);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            return offset;
         }
 
         public int Read(byte[] responseBytes, int bytesExpected)

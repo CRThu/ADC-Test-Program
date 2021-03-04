@@ -76,7 +76,7 @@
                     <Label Content="0x" HorizontalAlignment="Left" Margin="194,259,0,0" VerticalAlignment="Top"/>
                     <Label Content="TIMEOUT" HorizontalAlignment="Left" Margin="212,45,0,0" VerticalAlignment="Top" Width="89"/>
                     <TextBox x:Name="debugTabRxTimeOutTextBox" HorizontalAlignment="Left" Height="23" Margin="307,46,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <Button x:Name="cmdRESETButton" Content="RESET" HorizontalAlignment="Left" Margin="186,113,0,0" VerticalAlignment="Top" Width="76" Click="cmdRESETButton_Click"/>
+                    <Button x:Name="cmdRESETButton" Content="RESET" HorizontalAlignment="Left" Margin="186,113,0,0" VerticalAlignment="Top" Width="76" Click="CmdRESETButton_Click"/>
                     <Label Content="REGQ" HorizontalAlignment="Left" Margin="16,289,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="cmdREGQButton" Content="REGQ" HorizontalAlignment="Left" Margin="285,292,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGQButton_Click"/>
                     <TextBox x:Name="cmdREGQTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,290,0,0" TextWrapping="Wrap" Text="21" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
