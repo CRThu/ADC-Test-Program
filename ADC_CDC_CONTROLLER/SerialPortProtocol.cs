@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ADC_CDC_CONTROLLER
 {
@@ -28,12 +29,26 @@ namespace ADC_CDC_CONTROLLER
                 stringBuilder.Append(";");
             }
             string command = stringBuilder.ToString();
-            serialPort.Write(command);
+            try
+            {
+                serialPort.Write(command);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
             return command;
         }
         public string SerialPortTaskCommandWrite(string commandString)
         {
-            serialPort.Write(commandString);
+            try
+            {
+                serialPort.Write(commandString);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
             return commandString;
         }
     }

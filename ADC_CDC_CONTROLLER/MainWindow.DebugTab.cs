@@ -44,7 +44,8 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_TASK1PACK_STR = "TASK1.PACK";
 
         SerialPortProtocol serialPort;
-        Logger log1 = new Logger();
+        //Logger log1 = new Logger();
+        LoggerControl loggerControl;
 
         private void SerialPortConnectButton_Click(object sender, RoutedEventArgs e)
         {
@@ -84,7 +85,7 @@ namespace ADC_CDC_CONTROLLER
                 {
                     byte[] recvData = new byte[_bytesToRead];
 
-                    serialPort.Read(recvData, _bytesToRead, 0);
+                    serialPort.Read(recvData, _bytesToRead);
 
                     recvDataStr = System.Text.Encoding.ASCII.GetString(recvData);
 
@@ -112,7 +113,7 @@ namespace ADC_CDC_CONTROLLER
                         recvDataStr = recvDataStr_tmp;
                     }
 
-                    SerialPortLoggerTextBox_Update(false, recvDataStr);
+                    loggerControl.SerialPortLoggerTextBox_Update(false, recvDataStr);
                 }
             }
         }
@@ -120,36 +121,36 @@ namespace ADC_CDC_CONTROLLER
         private void CmdOPENButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_OPEN_STR);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdRESETButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_RESET_STR);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
         private void CmdDATWButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_DATW_STR, cmdDATWTextBox1.Text);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdDATRButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_DATR_STR);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdREGWButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_REGW_STR, cmdREGWTextBox1.Text, cmdREGWTextBox2.Text);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdREGRButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_REGR_STR, cmdREGRTextBox1.Text);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdREGMButton_Click(object sender, RoutedEventArgs e)
@@ -164,7 +165,7 @@ namespace ADC_CDC_CONTROLLER
             // Modify REG21[10:0]=0x180
             //  REGM;21;0;11;180;
             string command = serialPort.SerialPortCommandWrite(CMD_REGM_STR, cmdREGMTextBox1.Text, regBitsLSB.ToString(), regBitsLen.ToString(), cmdREGMTextBox3.Text);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
         private void CmdREGQButton_Click(object sender, RoutedEventArgs e)
         {
@@ -178,13 +179,13 @@ namespace ADC_CDC_CONTROLLER
             // Modify REG21[10:0]=0x180
             //  REGM;21;0;11;
             string command = serialPort.SerialPortCommandWrite(CMD_REGQ_STR, cmdREGMTextBox1.Text, regBitsLSB.ToString(), regBitsLen.ToString());
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdTASK1RUNButton_Click(object sender, RoutedEventArgs e)
         {
             string command = serialPort.SerialPortCommandWrite(CMD_TASK1RUN_STR, cmdTASK1RUNTextBox1.Text);
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdTASK1COMMButton_Click(object sender, RoutedEventArgs e)
@@ -192,7 +193,7 @@ namespace ADC_CDC_CONTROLLER
             bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
             int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
             string command = serialPort.SerialPortCommandWrite(CMD_TASK1COMM_STR, AdcDataSize.ToString());
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
         }
 
         private void CmdTASK1PACKButton_Click(object sender, RoutedEventArgs e)
@@ -208,7 +209,7 @@ namespace ADC_CDC_CONTROLLER
 
             isDataReceivedRefused = true;
             string command = serialPort.SerialPortCommandWrite(CMD_TASK1PACK_STR, adcDataSize.ToString());
-            SerialPortLoggerTextBox_Update(true, command);
+            loggerControl.SerialPortLoggerTextBox_Update(true, command);
 
             string str = "";
             byte[] recvDataPackage = new byte[recvDataPackageSize];
@@ -221,7 +222,7 @@ namespace ADC_CDC_CONTROLLER
             str += ToHexStrFromByte(recvDataPackage);
             if (data_len != recvDataPackageSize)
                 str += "\nWarning:Packets hasn't been received successfully!";
-            SerialPortLoggerTextBox_Update(true, str);
+            loggerControl.SerialPortLoggerTextBox_Update(true, str);
 
             isDataReceivedRefused = false;
 
@@ -286,38 +287,6 @@ namespace ADC_CDC_CONTROLLER
             fs.Close();
         }
 
-        private void SerialPortLoggerTextBox_Update(bool isTx, string str)
-        {
-            SerialPortLoggerTextBox_Update(isTx, str, serialPortCommInfoTextBox);
-        }
-        
-        private void SerialPortLoggerTextBox_Update(bool isTx, string str, TextBox textBox)
-        {
-            // Dispatcher.Invoke()
-            // serialPortCommInfoTextBox.Text += str_buf;
-            textBox.Dispatcher.Invoke(new System.Action(() =>
-            {
-                string str_buf = "";
-                // ASCII
-                //str_buf += isTx ? "Tx: " : "Rx: ";
-                str_buf += isTx ? "[WPF]: " : "";
-                str_buf += str;
-                str_buf += isTx ? "\n" : "";
-                //textBox.Text += str_buf;
-
-                log1.LogText += str_buf;
-                // Too long
-                if (textBox.Text.Length > 150000)
-                {
-                    textBox.Text = ".....\n";
-                }
-
-                textBox.AppendText(str_buf);
-                textBox.SelectionStart = textBox.Text.Length;
-                textBox.ScrollToEnd();
-            }));
-        }
-
         private void AutoRunCmds(string[] txtArray)
         {
             DebugTabAutoRunCmds(txtArray, "./");
@@ -368,7 +337,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 // GUI Delay
                 intervalTime = Convert.ToInt32(MidStrEx(command, "<delay>", "</delay>"));
-                SerialPortLoggerTextBox_Update(true, "Delay " + intervalTime + " ms...");
+                loggerControl.SerialPortLoggerTextBox_Update(true, "Delay " + intervalTime + " ms...");
             }
             else if (command.Contains("<msgBox>") && command.Contains("</msgBox>"))
             {
@@ -380,20 +349,20 @@ namespace ADC_CDC_CONTROLLER
             {
                 // Log Print
                 string logStr = MidStrEx(command, "<log>", "</log>");
-                SerialPortLoggerTextBox_Update(true, logStr);
+                loggerControl.SerialPortLoggerTextBox_Update(true, logStr);
             }
             else if (command.Contains("<waitCmd/>"))
             {
                 // Wait For [COMMAND]: xxx
                 isWaitingSignal = true;
-                SerialPortLoggerTextBox_Update(true, "Waiting For Signal");
+                loggerControl.SerialPortLoggerTextBox_Update(true, "Waiting For Signal");
                 while (isWaitingSignal)
                 {
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
                 }
                 // Receive Signal
                 string str = ReceivedSignalStr.Replace(" ", "").Split(new char[] { ':' })[1];
-                SerialPortLoggerTextBox_Update(true, "Get Signal:" + str);
+                loggerControl.SerialPortLoggerTextBox_Update(true, "Get Signal:" + str);
             }
             else if (command.Contains("TASK1.PACK"))
             {
@@ -414,7 +383,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 string dicKeyStr = MidStrEx(command, "<storeDic>", "</storeDic>");
                 int size = adcDataStorage.WriteTmpAdcSamplesToDataStorage(dicKeyStr);
-                SerialPortLoggerTextBox_Update(true, "Stored data to dictionary:<Key.Name=" + dicKeyStr + ", Value.Size=" + size + ">");
+                loggerControl.SerialPortLoggerTextBox_Update(true, "Stored data to dictionary:<Key.Name=" + dicKeyStr + ", Value.Size=" + size + ">");
             }
             else if (command.Contains("<storeFile>") && command.Contains("</storeFile>"))
             {
@@ -424,10 +393,10 @@ namespace ADC_CDC_CONTROLLER
                 if (!Directory.Exists(Path.GetDirectoryName(fullPathStr)))
                 {
                     var di = Directory.CreateDirectory(Path.GetDirectoryName(fullPathStr));
-                    SerialPortLoggerTextBox_Update(true, "Create Directory:" + Path.GetDirectoryName(fullPathStr));
+                    loggerControl.SerialPortLoggerTextBox_Update(true, "Create Directory:" + Path.GetDirectoryName(fullPathStr));
                 }
                 adcDataStorage.StoretmpAdcSamplesToFile(fullPathStr, DataStroageExtension.Csv);
-                SerialPortLoggerTextBox_Update(true, "Stored data to path:" + fullPathStr);
+                loggerControl.SerialPortLoggerTextBox_Update(true, "Stored data to path:" + fullPathStr);
             }
             else if(command.Contains("<setAnalysisParams>") && command.Contains("</setAnalysisParams>"))
             {
@@ -442,14 +411,14 @@ namespace ADC_CDC_CONTROLLER
                     log += " [" + dataParamsArray[i] + "," + dataParamsArray[i + 1] + "]";
                 }
                 log += " }";
-                SerialPortLoggerTextBox_Update(true, log);
+                loggerControl.SerialPortLoggerTextBox_Update(true, log);
                 adcCurrentSampleSettingInfoStr = dataParams;
             }
             else
             {
                 // Tramsit Command
                 string txCmd = serialPort.SerialPortTaskCommandWrite(command);
-                SerialPortLoggerTextBox_Update(true, txCmd);
+                loggerControl.SerialPortLoggerTextBox_Update(true, txCmd);
             }
             if (intervalTime > 0)
             {
@@ -477,14 +446,14 @@ namespace ADC_CDC_CONTROLLER
                 return;
             FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create);
 
-            fs.Write(System.Text.Encoding.Default.GetBytes(log1.LogText), 0, log1.LogText.Length);
+            fs.Write(Encoding.Default.GetBytes(loggerControl.LogText), 0, loggerControl.LogText.Length);
             fs.Flush();
             fs.Close();
         }
 
         private void ClearLogsButton_Click(object sender, RoutedEventArgs e)
         {
-            log1.LogText = "";
+            loggerControl.LogText = "";
             serialPortCommInfoTextBox.Text = "";
         }
     }

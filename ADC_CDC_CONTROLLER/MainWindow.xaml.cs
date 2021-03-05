@@ -26,7 +26,8 @@ namespace ADC_CDC_CONTROLLER
 
             bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
 
-            //serialPortCommInfoTextBox.DataContext = log1;
+            loggerControl = new LoggerControl(serialPortCommInfoTextBox);
+            //serialPortCommInfoTextBox.DataContext = loggerControl;
             serialPortCommInfoTextBox.IsUndoEnabled = false;
 
             // About Tab

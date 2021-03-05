@@ -83,6 +83,7 @@
     <Compile Include="DataTableUtil.cs" />
     <Compile Include="HardwareInfoUtil.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="LoggerControl.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

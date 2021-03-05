@@ -27,5 +27,9 @@ namespace ADC_CDC_CONTROLLER
                 }
             }
         }
+        public Logger()
+        {
+            LogText = "";
+        }
     }
 }
