@@ -43,7 +43,7 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_TASK1COMM_STR = "TASK1.COMM";
         const string CMD_TASK1PACK_STR = "TASK1.PACK";
 
-        SerialPortProtocol serialPort;
+        SerialPortProtocol serialPort = new SerialPortProtocol();
         //Logger log1 = new Logger();
         LoggerControl loggerControl;
 
@@ -120,36 +120,36 @@ namespace ADC_CDC_CONTROLLER
 
         private void CmdOPENButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_OPEN_STR);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_OPEN_STR);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
         private void CmdRESETButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_RESET_STR);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_RESET_STR);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
         private void CmdDATWButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_DATW_STR, cmdDATWTextBox1.Text);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_DATW_STR, cmdDATWTextBox1.Text);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
         private void CmdDATRButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_DATR_STR);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_DATR_STR);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
         private void CmdREGWButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_REGW_STR, cmdREGWTextBox1.Text, cmdREGWTextBox2.Text);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_REGW_STR, cmdREGWTextBox1.Text, cmdREGWTextBox2.Text);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
         private void CmdREGRButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_REGR_STR, cmdREGRTextBox1.Text);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_REGR_STR, cmdREGRTextBox1.Text);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
@@ -164,7 +164,7 @@ namespace ADC_CDC_CONTROLLER
             int regBitsLen = regBitsMSB - regBitsLSB + 1;
             // Modify REG21[10:0]=0x180
             //  REGM;21;0;11;180;
-            string command = serialPort.SerialPortCommandWrite(CMD_REGM_STR, cmdREGMTextBox1.Text, regBitsLSB.ToString(), regBitsLen.ToString(), cmdREGMTextBox3.Text);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_REGM_STR, cmdREGMTextBox1.Text, regBitsLSB.ToString(), regBitsLen.ToString(), cmdREGMTextBox3.Text);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
         private void CmdREGQButton_Click(object sender, RoutedEventArgs e)
@@ -178,13 +178,13 @@ namespace ADC_CDC_CONTROLLER
             int regBitsLen = regBitsMSB - regBitsLSB + 1;
             // Modify REG21[10:0]=0x180
             //  REGM;21;0;11;
-            string command = serialPort.SerialPortCommandWrite(CMD_REGQ_STR, cmdREGMTextBox1.Text, regBitsLSB.ToString(), regBitsLen.ToString());
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_REGQ_STR, cmdREGMTextBox1.Text, regBitsLSB.ToString(), regBitsLen.ToString());
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
         private void CmdTASK1RUNButton_Click(object sender, RoutedEventArgs e)
         {
-            string command = serialPort.SerialPortCommandWrite(CMD_TASK1RUN_STR, cmdTASK1RUNTextBox1.Text);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_TASK1RUN_STR, cmdTASK1RUNTextBox1.Text);
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
@@ -192,7 +192,7 @@ namespace ADC_CDC_CONTROLLER
         {
             bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
             int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
-            string command = serialPort.SerialPortCommandWrite(CMD_TASK1COMM_STR, AdcDataSize.ToString());
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_TASK1COMM_STR, AdcDataSize.ToString());
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
@@ -208,7 +208,7 @@ namespace ADC_CDC_CONTROLLER
             int recvDataPackageSize = adcDataSize * bytesPerCode;
 
             isDataReceivedRefused = true;
-            string command = serialPort.SerialPortCommandWrite(CMD_TASK1PACK_STR, adcDataSize.ToString());
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_TASK1PACK_STR, adcDataSize.ToString());
             loggerControl.UpdateLoggerTextBox(true, command);
 
             string str = "";
@@ -417,7 +417,7 @@ namespace ADC_CDC_CONTROLLER
             else
             {
                 // Tramsit Command
-                string txCmd = serialPort.SerialPortTaskCommandWrite(command);
+                string txCmd = serialPort.SerialPortCommandLineWrite(command);
                 loggerControl.UpdateLoggerTextBox(true, txCmd);
             }
             if (intervalTime > 0)

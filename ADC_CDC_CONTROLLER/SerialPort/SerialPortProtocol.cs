@@ -20,7 +20,7 @@ namespace ADC_CDC_CONTROLLER
 
         }
 
-        public string SerialPortCommandWrite(params string[] @params)
+        public string SerialPortCommandParamsWrite(params string[] @params)
         {
             StringBuilder stringBuilder = new StringBuilder();
             foreach (string param in @params)
@@ -29,6 +29,13 @@ namespace ADC_CDC_CONTROLLER
                 stringBuilder.Append(";");
             }
             string command = stringBuilder.ToString();
+
+            SerialPortCommandLineWrite(command);
+
+            return command;
+        }
+        public string SerialPortCommandLineWrite(string command)
+        {
             try
             {
                 serialPort.Write(command);
@@ -38,18 +45,6 @@ namespace ADC_CDC_CONTROLLER
                 MessageBox.Show(ex.ToString());
             }
             return command;
-        }
-        public string SerialPortTaskCommandWrite(string commandString)
-        {
-            try
-            {
-                serialPort.Write(commandString);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            return commandString;
         }
     }
 }

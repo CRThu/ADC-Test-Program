@@ -366,24 +366,6 @@ namespace ADC_CDC_CONTROLLER
                 CurrentSecondaryConfigNames = new List<string>();
                 Configs = new List<AdcSecondarySettingStruct>();
             }
-            /*
-            public AdcPrimarySettingClass(string ConfigName, string DefaultSecondaryConfigName, List<AdcSecondarySettingStruct> Configs)
-            {
-                this.ConfigName = ConfigName;
-                this.ConfigDescription = "[Primary]: " + ConfigName;
-                this.DefaultSecondaryConfigName = DefaultSecondaryConfigName;
-                this.CurrentSecondaryConfigName = DefaultSecondaryConfigName;
-                this.Configs = Configs;
-            }
-            public AdcPrimarySettingClass(string ConfigName, string ConfigDescription, string DefaultSecondaryConfigName, string CurrentSecondaryConfigName, List<AdcSecondarySettingStruct> Configs)
-            {
-                this.ConfigName = ConfigName;
-                this.ConfigDescription = ConfigDescription;
-                this.DefaultSecondaryConfigName = DefaultSecondaryConfigName;
-                this.CurrentSecondaryConfigName = CurrentSecondaryConfigName;
-                this.Configs = Configs;
-            }
-            */
         }
         public struct AdcSecondarySettingStruct
         {

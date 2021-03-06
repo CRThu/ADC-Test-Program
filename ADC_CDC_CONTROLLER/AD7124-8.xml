@@ -109,14 +109,176 @@
             </items>
         </config>
         <config>
-            <name></name>
-            <description></description>
-            <default></default>
+            <name>Speed (SincX Filter)</name>
+            <description>Speed (SincX Filter)</description>
+            <default>384</default>
             <items>
                 <item>
-                    <name></name>
-                    <description></description>
-                    <command></command>
+                    <name>1</name>
+                    <description>FS = 1</description>
+                    <command>REGM;21;0;11;1;</command>
+                </item>
+                <item>
+                    <name>2</name>
+                    <description>FS = 2</description>
+                    <command>REGM;21;0;11;2;</command>
+                </item>
+                <item>
+                    <name>3</name>
+                    <description>FS = 3</description>
+                    <command>REGM;21;0;11;3;</command>
+                </item>
+                <item>
+                    <name>4</name>
+                    <description>FS = 4</description>
+                    <command>REGM;21;0;11;4;</command>
+                </item>
+                <item>
+                    <name>5</name>
+                    <description>FS = 5</description>
+                    <command>REGM;21;0;11;5;</command>
+                </item>
+                <item>
+                    <name>6</name>
+                    <description>FS = 6</description>
+                    <command>REGM;21;0;11;6;</command>
+                </item>
+                <item>
+                    <name>8</name>
+                    <description>FS = 8</description>
+                    <command>REGM;21;0;11;8;</command>
+                </item>
+                <item>
+                    <name>10</name>
+                    <description>FS = 10</description>
+                    <command>REGM;21;0;11;A;</command>
+                </item>
+                <item>
+                    <name>15</name>
+                    <description>FS = 15</description>
+                    <command>REGM;21;0;11;F;</command>
+                </item>
+                <item>
+                    <name>20</name>
+                    <description>FS = 20</description>
+                    <command>REGM;21;0;11;14;</command>
+                </item>
+                <item>
+                    <name>24</name>
+                    <description>FS = 24</description>
+                    <command>REGM;21;0;11;18;</command>
+                </item>
+                <item>
+                    <name>30</name>
+                    <description>FS = 30</description>
+                    <command>REGM;21;0;11;1E;</command>
+                </item>
+                <item>
+                    <name>40</name>
+                    <description>FS = 40</description>
+                    <command>REGM;21;0;11;28;</command>
+                </item>
+                <item>
+                    <name>48</name>
+                    <description>FS = 48</description>
+                    <command>REGM;21;0;11;30;</command>
+                </item>
+                <item>
+                    <name>60</name>
+                    <description>FS = 60</description>
+                    <command>REGM;21;0;11;3C;</command>
+                </item>
+                <item>
+                    <name>80</name>
+                    <description>FS = 80</description>
+                    <command>REGM;21;0;11;50;</command>
+                </item>
+                <item>
+                    <name>96</name>
+                    <description>FS = 96</description>
+                    <command>REGM;21;0;11;60;</command>
+                </item>
+                <item>
+                    <name>120</name>
+                    <description>FS = 120</description>
+                    <command>REGM;21;0;11;78;</command>
+                </item>
+                <item>
+                    <name>160</name>
+                    <description>FS = 160</description>
+                    <command>REGM;21;0;11;A0;</command>
+                </item>
+                <item>
+                    <name>240</name>
+                    <description>FS = 240</description>
+                    <command>REGM;21;0;11;F0;</command>
+                </item>
+                <item>
+                    <name>320</name>
+                    <description>FS = 320</description>
+                    <command>REGM;21;0;11;140;</command>
+                </item>
+                <item>
+                    <name>384</name>
+                    <description>FS = 384</description>
+                    <command>REGM;21;0;11;180;</command>
+                </item>
+                <item>
+                    <name>480</name>
+                    <description>FS = 480</description>
+                    <command>REGM;21;0;11;1E0;</command>
+                </item>
+                <item>
+                    <name>640</name>
+                    <description>FS = 640</description>
+                    <command>REGM;21;0;11;280;</command>
+                </item>
+                <item>
+                    <name>960</name>
+                    <description>FS = 960</description>
+                    <command>REGM;21;0;11;3C0;</command>
+                </item>
+                <item>
+                    <name>1280</name>
+                    <description>FS = 1280</description>
+                    <command>REGM;21;0;11;500;</command>
+                </item>
+                <item>
+                    <name>1920</name>
+                    <description>FS = 1920</description>
+                    <command>REGM;21;0;11;780;</command>
+                </item>
+                <item>
+                    <name>2047</name>
+                    <description>FS = 2047</description>
+                    <command>REGM;21;0;11;7FF;</command>
+                </item>
+            </items>
+        </config>
+        <config>
+            <name>Speed (Post Filter)</name>
+            <description>Speed (Post Filter)</description>
+            <default>25 SPS</default>
+            <items>
+                <item>
+                    <name>16.67 SPS</name>
+                    <description>[Secondary]: POST_FILTER = 110</description>
+                    <command>REGM;21;17;3;6;</command>
+                </item>
+                <item>
+                    <name>20 SPS</name>
+                    <description>[Secondary]: POST_FILTER = 101</description>
+                    <command>REGM;21;17;3;5;</command>
+                </item>
+                <item>
+                    <name>25 SPS</name>
+                    <description>[Secondary]: POST_FILTER = 011</description>
+                    <command>REGM;21;17;3;3;</command>
+                </item>
+                <item>
+                    <name>27.27 SPS</name>
+                    <description>[Secondary]: POST_FILTER = 010</description>
+                    <command>REGM;21;17;3;2;</command>
                 </item>
             </items>
         </config>

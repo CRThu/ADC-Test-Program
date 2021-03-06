@@ -12,6 +12,18 @@ namespace ADC_CDC_CONTROLLER
     public enum ConfigStroageExtension
     {
         Xml
+        /*
+         * XML Format
+         *  adc
+         *      info
+         *          id,name,version,bit
+         *      configs
+         *          config[]
+         *              name,description,default
+         *              items[]
+         *                  item
+         *                      name,description,command
+         */
     }
 
     class AdcConfigCollection
@@ -87,7 +99,6 @@ namespace ADC_CDC_CONTROLLER
                 }
                 adcConfigs.Add(adcConfig);
             }
-            //MessageBox.Show(xmlContent);
         }
 
         public void StoreConfigs(string path, ConfigStroageExtension ext)
