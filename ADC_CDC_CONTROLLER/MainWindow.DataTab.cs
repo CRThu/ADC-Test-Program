@@ -42,7 +42,7 @@ namespace ADC_CDC_CONTROLLER
             dataTabStorageTextBox.Text = data_str;
 
             data_str = "";
-            List<double> voltageList = AdcPerfCalcUtil.ConvertVoltages(currentList, true, 2.5, 1, 24);
+            List<double> voltageList = AdcPerfCalculation.ConvertVoltages(currentList, true, 2.5, 1, 24);
             foreach (var data in voltageList)
                 data_str += data.ToString("G4") + Environment.NewLine;
             dataTabVoltageTextBox.Text = data_str;

@@ -74,22 +74,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AdcConfigItem.cs" />
-    <Compile Include="AdcDataStorage.cs" />
-    <Compile Include="AdcConfig.cs" />
-    <Compile Include="AdcConfigCollection.cs" />
-    <Compile Include="AdcPerfCalcUtil.cs" />
-    <Compile Include="AdcSampleData.cs" />
-    <Compile Include="DataTableUtil.cs" />
-    <Compile Include="HardwareInfoUtil.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="LoggerControl.cs" />
+    <Compile Include="AdcConfig\AdcConfigItem.cs" />
+    <Compile Include="DataStorage\AdcDataStorage.cs" />
+    <Compile Include="AdcConfig\AdcConfig.cs" />
+    <Compile Include="AdcConfig\AdcConfigCollection.cs" />
+    <Compile Include="AdcPerfCalculation.cs" />
+    <Compile Include="DataStorage\AdcSampleData.cs" />
+    <Compile Include="Utility\DataTableUtil.cs" />
+    <Compile Include="Utility\HardwareInfoUtil.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Logger\LoggerControl.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SerialPortComm.cs" />
-    <Compile Include="SerialPortProtocol.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="SerialPort\SerialPortComm.cs" />
+    <Compile Include="SerialPort\SerialPortProtocol.cs" />
+    <Compile Include="Utility\Util.cs" />
     <Compile Include="XmlEditor.xaml.cs">
       <DependentUpon>XmlEditor.xaml</DependentUpon>
     </Compile>
@@ -171,5 +171,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

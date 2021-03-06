@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ADC_CDC_CONTROLLER
 {
-    static class AdcPerfCalcUtil
+    static class AdcPerfCalculation
     {
         public static double RmsNoise(List<ulong> sample, double lsbVoltage)
         {

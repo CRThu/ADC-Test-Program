@@ -17,7 +17,7 @@ namespace ADC_CDC_CONTROLLER
             //this.textBox.DataContext = this;
         }
 
-        public void SerialPortLoggerTextBox_Update(bool isTx, string str)
+        public void UpdateLoggerTextBox(bool isTx, string str)
         {
             // Dispatcher.Invoke()
             // serialPortCommInfoTextBox.Text += str_buf;
