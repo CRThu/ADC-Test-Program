@@ -27,7 +27,7 @@ namespace ADC_CDC_CONTROLLER
          */
     }
 
-    public class AdcConfigCollection : IEnumerable
+    public class AdcConfigCollection : IEnumerable, ICloneable
     {
         // Keys: id name version bit 
         public Dictionary<string, string> AdcInfos;
@@ -36,6 +36,11 @@ namespace ADC_CDC_CONTROLLER
         public IEnumerator GetEnumerator()
         {
             return ((IEnumerable)AdcConfigs).GetEnumerator();
+        }
+
+        public object Clone()
+        {
+            return new AdcConfigCollection(this.AdcInfos, this.AdcConfigs);
         }
 
         public AdcConfigCollection()
@@ -129,6 +134,5 @@ namespace ADC_CDC_CONTROLLER
         {
 
         }
-
     }
 }

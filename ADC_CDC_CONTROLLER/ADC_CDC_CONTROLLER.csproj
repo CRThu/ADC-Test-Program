@@ -80,6 +80,7 @@
     <Compile Include="AdcConfig\AdcConfigCollection.cs" />
     <Compile Include="AdcPerfCalculation.cs" />
     <Compile Include="DataStorage\AdcSampleData.cs" />
+    <Compile Include="SerializeClone.cs" />
     <Compile Include="Utility\DataTableUtil.cs" />
     <Compile Include="Utility\HardwareInfoUtil.cs" />
     <Compile Include="Logger\Logger.cs" />

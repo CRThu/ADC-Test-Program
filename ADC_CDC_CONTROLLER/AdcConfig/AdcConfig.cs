@@ -13,6 +13,7 @@ namespace ADC_CDC_CONTROLLER
         public string Name { get; set; }
         public string Description { get; set; }
         // TODO string -> AdcConfigItem
+        ///*
         public ObservableCollection<string> CurrentConfigs { get; set; }
         public string CurrentConfig
         { 
@@ -25,6 +26,7 @@ namespace ADC_CDC_CONTROLLER
             get { return defaultConfig; }
             set { defaultConfig = value; CurrentConfig = value; }
         }
+        //*/
         public ObservableCollection<AdcConfigItem> Items { get; set; }
 
         /*
