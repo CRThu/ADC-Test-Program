@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ADC_CDC_CONTROLLER
 {
-    class AdcConfigItem
+    public class AdcConfigItem
     {
         public string Name { get; set; }
         public string Description { get; set; }

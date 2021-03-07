@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -26,11 +27,28 @@ namespace ADC_CDC_CONTROLLER
          */
     }
 
-    class AdcConfigCollection
+    public class AdcConfigCollection : IEnumerable
     {
         // Keys: id name version bit 
         public Dictionary<string, string> AdcInfos;
         public ObservableCollection<AdcConfig> AdcConfigs;
+
+        public IEnumerator GetEnumerator()
+        {
+            return ((IEnumerable)AdcConfigs).GetEnumerator();
+        }
+
+        public AdcConfigCollection()
+        {
+            AdcInfos = new Dictionary<string, string>();
+            AdcConfigs = new ObservableCollection<AdcConfig>();
+        }
+
+        public AdcConfigCollection(Dictionary<string, string> adcInfos, ObservableCollection<AdcConfig> configs)
+        {
+            AdcInfos = adcInfos;
+            AdcConfigs = configs;
+        }
 
         public void LoadConfigs(string path, ConfigStroageExtension ext)
         {
@@ -38,7 +56,7 @@ namespace ADC_CDC_CONTROLLER
                 LoadConfigsFromXml(path, AdcInfos, AdcConfigs);
         }
 
-        public void LoadConfigsFromXml(string path, Dictionary<string, string> adcInfos, ObservableCollection<AdcConfig> adcConfigs)
+        private void LoadConfigsFromXml(string path, Dictionary<string, string> adcInfos, ObservableCollection<AdcConfig> adcConfigs)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
@@ -106,21 +124,11 @@ namespace ADC_CDC_CONTROLLER
             if (ext == ConfigStroageExtension.Xml)
                 StoreConfigsToXml(path);
         }
-        public void StoreConfigsToXml(string path)
+
+        private void StoreConfigsToXml(string path)
         {
 
         }
 
-        public AdcConfigCollection()
-        {
-            AdcInfos = new Dictionary<string, string>();
-            AdcConfigs = new ObservableCollection<AdcConfig>();
-        }
-
-        public AdcConfigCollection(Dictionary<string, string> adcInfos, ObservableCollection<AdcConfig> configs)
-        {
-            AdcInfos = adcInfos;
-            AdcConfigs = configs;
-        }
     }
 }

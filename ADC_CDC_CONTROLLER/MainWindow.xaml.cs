@@ -53,7 +53,7 @@ namespace ADC_CDC_CONTROLLER
         {
 
             InitAdcSettings();
-            AdcPrimarySettingsListBox.ItemsSource = AdcSettings.Select(t => t.ConfigName).ToList();
+            AdcPrimarySettingsListBox.ItemsSource = adcConfigCollection.AdcConfigs.Select(t => t.Name).ToList();
             AdcPrimarySettingsListBox.SelectedIndex = 0;
             UpdateAdcSecondarySettingsListBox();
 
