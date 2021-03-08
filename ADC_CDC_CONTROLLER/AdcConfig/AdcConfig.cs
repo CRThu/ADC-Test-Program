@@ -13,36 +13,34 @@ namespace ADC_CDC_CONTROLLER
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        // TODO string -> AdcConfigItem
-        ///*
-        public ObservableCollection<string> CurrentConfigs { get; set; }
-        public string CurrentConfig
+
+        // Current Configs
+        public ObservableCollection<AdcConfigItem> CurrentConfigs { get; set; }
+        public AdcConfigItem CurrentConfig
         {
             get { return CurrentConfigs.First(); }
-            set { CurrentConfigs.Clear(); CurrentConfigs.Add(value); }
+            set { CurrentConfigs = new ObservableCollection<AdcConfigItem>() { value }; }
         }
-        private string defaultConfig;
-        public string DefaultConfig
+        // Match String to AdcConfigItem
+        public ObservableCollection<string> CurrentConfigsName
+        {
+            get { return new ObservableCollection<string>(CurrentConfigs.Select(item => item.Name)); }
+            set
+            {
+                // TODO
+                foreach(string currentconfigName in CurrentConfigsName)
+                    Items.First(item=>item.Name==currentconfigName)
+            }
+        }
+
+        // Default Config
+        private AdcConfigItem defaultConfig;
+        public AdcConfigItem DefaultConfig
         {
             get { return defaultConfig; }
             set { defaultConfig = value; CurrentConfig = value; }
         }
-        //*/
         public ObservableCollection<AdcConfigItem> Items { get; set; }
-
-        /*
-        public KeyValuePair<string, string> CurrentConfigKeyValuePair
-        {
-            get { return new KeyValuePair<string, string>(Name, CurrentConfig); }
-            set { Name = value.Key; CurrentConfig = value.Value; }
-        }
-
-        public KeyValuePair<string, string> DefaultConfigKeyValuePair
-        {
-            get { return new KeyValuePair<string, string>(Name, DefaultConfig); }
-            set { Name = value.Key; DefaultConfig = value.Value; }
-        }
-        */
 
         public IEnumerator GetEnumerator()
         {
@@ -58,8 +56,10 @@ namespace ADC_CDC_CONTROLLER
         {
             Name = "";
             Description = "";
-            CurrentConfigs = new ObservableCollection<string>();
-            DefaultConfig = "";
+            //CurrentConfigs = new ObservableCollection<string>();
+            //DefaultConfig = "";
+            CurrentConfigs = new ObservableCollection<AdcConfigItem>();
+            DefaultConfig = new AdcConfigItem();
             Items = new ObservableCollection<AdcConfigItem>();
         }
 
@@ -67,16 +67,20 @@ namespace ADC_CDC_CONTROLLER
         {
             Name = name;
             Description = description;
-            CurrentConfigs = new ObservableCollection<string>();
-            DefaultConfig = "";
+            //CurrentConfigs = new ObservableCollection<string>();
+            //DefaultConfig = "";
+            CurrentConfigs = new ObservableCollection<AdcConfigItem>();
+            DefaultConfig = new AdcConfigItem();
             Items = new ObservableCollection<AdcConfigItem>();
         }
 
-        public AdcConfig(string name, string description, string defaultConfig, ObservableCollection<AdcConfigItem> allConfigs)
+        public AdcConfig(string name, string description, AdcConfigItem defaultConfig, ObservableCollection<AdcConfigItem> allConfigs)
         {
             Name = name;
             Description = description;
-            CurrentConfigs = new ObservableCollection<string>();
+            //CurrentConfigs = new ObservableCollection<string>();
+            //DefaultConfig = defaultConfig;
+            CurrentConfigs = new ObservableCollection<AdcConfigItem>();
             DefaultConfig = defaultConfig;
             Items = allConfigs;
         }
