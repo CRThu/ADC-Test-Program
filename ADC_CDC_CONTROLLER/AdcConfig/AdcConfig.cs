@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace ADC_CDC_CONTROLLER
 {
-    public class AdcConfig : IEnumerable
+    [Serializable]
+    public class AdcConfig : IEnumerable, ICloneable
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -16,7 +17,7 @@ namespace ADC_CDC_CONTROLLER
         ///*
         public ObservableCollection<string> CurrentConfigs { get; set; }
         public string CurrentConfig
-        { 
+        {
             get { return CurrentConfigs.First(); }
             set { CurrentConfigs.Clear(); CurrentConfigs.Add(value); }
         }
@@ -46,6 +47,11 @@ namespace ADC_CDC_CONTROLLER
         public IEnumerator GetEnumerator()
         {
             return ((IEnumerable)Items).GetEnumerator();
+        }
+
+        public object Clone()
+        {
+            return SerializeClone.DeepClone(this);
         }
 
         public AdcConfig()

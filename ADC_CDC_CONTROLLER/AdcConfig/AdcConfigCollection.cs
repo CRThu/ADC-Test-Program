@@ -27,6 +27,7 @@ namespace ADC_CDC_CONTROLLER
          */
     }
 
+    [Serializable]
     public class AdcConfigCollection : IEnumerable, ICloneable
     {
         // Keys: id name version bit 
@@ -40,7 +41,7 @@ namespace ADC_CDC_CONTROLLER
 
         public object Clone()
         {
-            return new AdcConfigCollection(this.AdcInfos, this.AdcConfigs);
+            return SerializeClone.DeepClone(this);
         }
 
         public AdcConfigCollection()

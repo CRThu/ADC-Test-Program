@@ -246,13 +246,6 @@ namespace ADC_CDC_CONTROLLER
             // Load Xml
             adcConfigCollection = new AdcConfigCollection();
             adcConfigCollection.LoadConfigs(@"../../AD7124-8.xml", ConfigStroageExtension.Xml);
-            AdcConfigItem adcConfigItem1 = new AdcConfigItem("a", "b", "c");
-            AdcConfigItem adcConfigItem2 = (AdcConfigItem)adcConfigItem1.Clone();
-            adcConfigItem2.Name = "Name";
-            adcConfigItem2.Description = "Description";
-            adcConfigItem2.Command = "Command";
-            MessageBox.Show(adcConfigItem1.Name + "\t" + adcConfigItem1.Description + "\t" + adcConfigItem1.Command + "\n"
-                + adcConfigItem2.Name + "\t" + adcConfigItem2.Description + "\t" + adcConfigItem2.Command);
         }
     }
 }

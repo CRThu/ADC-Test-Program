@@ -15,23 +15,6 @@ namespace ADC_CDC_CONTROLLER
         public string Description { get; set; }
         public string Command { get; set; }
 
-        public object Clone()
-        {
-            return DeepClone(this);
-        }
-
-        // Reference: https://www.jb51.net/article/67891.htm
-        public static T DeepClone<T>(T obj)
-        {
-            using (var stream = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(stream, obj);
-                stream.Position = 0;
-                return (T)formatter.Deserialize(stream);
-            }
-        }
-
         public AdcConfigItem()
         {
             Name = "";
@@ -44,6 +27,11 @@ namespace ADC_CDC_CONTROLLER
             Name = name;
             Description = description;
             Command = command;
+        }
+
+        public object Clone()
+        {
+            return SerializeClone.DeepClone(this);
         }
     }
 }
