@@ -60,7 +60,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 serialPort.Open();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
@@ -79,9 +79,10 @@ namespace ADC_CDC_CONTROLLER
         }
 
         // SOLUTION:https://stackoverflow.com/questions/16439897/serialport-readbyte-int32-int32-is-not-blocking-but-i-want-it-to-how-do
-        // Stop Program and Keep UI alive.
+        // return Success or Receive whole packet timeout
         public int Read(byte[] responseBytes, int bytesExpected, int timeOut)
         {
+            serialPort.ReadTimeout = timeOut;
             if (timeOut == SerialPort.InfiniteTimeout)
                 timeOut = Timeout.Infinite;
 
@@ -103,6 +104,52 @@ namespace ADC_CDC_CONTROLLER
                     else if (bytesExpected == 0)
                     {
                         t.Abort();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            return offset;
+        }
+
+        // return Success or Wait for new bytes timeout
+        public int ReadContinuously(byte[] responseBytes, int bytesExpected, int waitTimeOut)
+        {
+            serialPort.ReadTimeout = waitTimeOut;
+            if (waitTimeOut == SerialPort.InfiniteTimeout)
+                waitTimeOut = Timeout.Infinite;
+
+            int offset = 0, bytesRead;
+            try
+            {
+                while (bytesExpected > 0)
+                {
+                    bool isTimeout = false;
+
+                    if (serialPort.BytesToRead > 0)
+                    {
+                        bytesRead = serialPort.Read(responseBytes, offset, bytesExpected);
+                        offset += bytesRead;
+                        bytesExpected -= bytesRead;
+                    }
+                    else
+                    {
+                        Thread t = new Thread(o => Thread.Sleep(waitTimeOut));
+                        t.Start(this);
+                        isTimeout = true;
+                        while (t.IsAlive)
+                        {
+                            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                            if (serialPort.BytesToRead > 0)
+                            {
+                                t.Abort();
+                                isTimeout = false;
+                            }
+                        }
+                        if (isTimeout == true)
+                            break;
                     }
                 }
             }

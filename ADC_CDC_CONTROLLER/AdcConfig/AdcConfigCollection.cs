@@ -84,6 +84,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 // Child: <config> <config>
                 AdcConfig adcConfig = new AdcConfig();
+                string defaultConfigName = "";
                 foreach (XmlNode ConfigXmlChildNode in ConfigXmlNode.ChildNodes)
                 {
                     if (!ConfigXmlChildNode.Name.Equals("items"))
@@ -94,7 +95,7 @@ namespace ADC_CDC_CONTROLLER
                         {
                             case "name": adcConfig.Name = ConfigXmlChildNode.InnerText; break;
                             case "description": adcConfig.Description = ConfigXmlChildNode.InnerText; break;
-                            case "default": adcConfig.DefaultConfig = ConfigXmlChildNode.InnerText; break;
+                            case "default": defaultConfigName = ConfigXmlChildNode.InnerText; break;
                             default: break;
                         }
                     }
@@ -121,6 +122,7 @@ namespace ADC_CDC_CONTROLLER
                         }
                     }
                 }
+                adcConfig.DefaultConfigName = defaultConfigName;
                 adcConfigs.Add(adcConfig);
             }
         }

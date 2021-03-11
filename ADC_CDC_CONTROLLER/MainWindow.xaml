@@ -7,7 +7,7 @@
         xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
         xmlns:local="clr-namespace:ADC_CDC_CONTROLLER"
         mc:Ignorable="d"
-        Title="ADC Test Program by carrot" Height="637.167" Width="871.333" Loaded="Window_Loaded">
+        Title="ADC Test Program by carrot" Height="669.417" Width="871.333" Loaded="Window_Loaded">
 
     <Grid Margin="0,0,5,1">
         <TabControl x:Name="tabControl" Margin="10">
@@ -31,13 +31,13 @@
                     <Label Content="REGW" HorizontalAlignment="Left" Margin="16,200,0,0" VerticalAlignment="Top"/>
                     <Label Content="REGR" HorizontalAlignment="Left" Margin="16,230,0,0" VerticalAlignment="Top"/>
                     <Label Content="TASK1" HorizontalAlignment="Left" Margin="21,340,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="cmdTASK1COMMButton" Content="TASK1.COMM" HorizontalAlignment="Left" Margin="271,378,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1COMMButton_Click"/>
+                    <Button x:Name="cmdTASK1RealTimeButton" Content="REALTIME" HorizontalAlignment="Left" Margin="271,378,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1RealTimeButton_Click"/>
                     <Button x:Name="cmdOPENButton" Content="OPEN" HorizontalAlignment="Left" Margin="285,113,0,0" VerticalAlignment="Top" Width="76" Click="CmdOPENButton_Click"/>
                     <Button x:Name="cmdDATWButton" Content="DATW" HorizontalAlignment="Left" Margin="285,143,0,0" VerticalAlignment="Top" Width="76" Click="CmdDATWButton_Click"/>
                     <Button x:Name="cmdDATRButton" Content="DATR" HorizontalAlignment="Left" Margin="285,173,0,0" VerticalAlignment="Top" Width="76" Click="CmdDATRButton_Click"/>
                     <Button x:Name="cmdREGWButton" Content="REGW" HorizontalAlignment="Left" Margin="285,203,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGWButton_Click"/>
                     <Button x:Name="cmdREGRButton" Content="REGR" HorizontalAlignment="Left" Margin="285,233,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGRButton_Click"/>
-                    <Button x:Name="cmdTASK1RUNButton" Content="TASK1.RUN" HorizontalAlignment="Left" Margin="271,342,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1RUNButton_Click"/>
+                    <Button x:Name="cmdTASK1RUNButton" Content="RUN" HorizontalAlignment="Left" Margin="271,342,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1RUNButton_Click"/>
                     <TextBox x:Name="cmdDATWTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,142,0,0" TextWrapping="Wrap" Text="45" VerticalAlignment="Top" Width="33" MaxLength="2" input:InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="cmdREGRTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,231,0,0" TextWrapping="Wrap" Text="31" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="cmdREGWTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,201,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="31"/>
@@ -59,21 +59,20 @@
                     <Label Content="Interval" HorizontalAlignment="Left" Margin="144,410,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="cmdIntervalTextBox" HorizontalAlignment="Left" Height="22" Margin="197,412,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="38" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="ms" HorizontalAlignment="Left" Margin="235,410,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="cmdTASK1PACKButton" Content="TASK1.PACK" HorizontalAlignment="Left" Margin="165,378,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1PACKButton_Click"/>
+                    <Button x:Name="cmdTASK1PACKButton" Content="PACK" HorizontalAlignment="Left" Margin="165,378,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1PACKButton_Click"/>
                     <TextBox x:Name="bytesPerCodeTextBox" HorizontalAlignment="Left" Height="22" Margin="110,376,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="44" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="BytesPerCode" HorizontalAlignment="Left" Margin="16,374,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="writeCmdsTextBox" HorizontalAlignment="Left" Height="68" Margin="21,448,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                    <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Left" Margin="271,448,0,0" VerticalAlignment="Top" Width="90" Height="44" Click="WriteCmdsFromTextBoxButton_Click"/>
-                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,497,0,0" VerticalAlignment="Top" Width="90" Click="SaveCmdsToFileButton_Copy_Click"/>
+                    <TextBox x:Name="writeCmdsTextBox" HorizontalAlignment="Left" Height="68" Margin="21,466,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Left" Margin="271,466,0,0" VerticalAlignment="Top" Width="90" Height="44" Click="WriteCmdsFromTextBoxButton_Click"/>
+                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,515,0,0" VerticalAlignment="Top" Width="90" Click="SaveCmdsToFileButton_Copy_Click"/>
                     <Label Content="REGM" HorizontalAlignment="Left" Margin="16,259,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="cmdREGMButton" Content="REGM" HorizontalAlignment="Left" Margin="285,262,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGMButton_Click"/>
                     <TextBox x:Name="cmdREGMTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,260,0,0" TextWrapping="Wrap" Text="21" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="70,259,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="cmdREGMTextBox2" HorizontalAlignment="Left" Height="23" Margin="140,260,0,0" TextWrapping="Wrap" Text="10:0" VerticalAlignment="Top" Width="40" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="cmdREGMTextBox2" HorizontalAlignment="Left" Height="23" Margin="140,260,0,0" TextWrapping="Wrap" Text="10:0" VerticalAlignment="Top" Width="50" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="[" HorizontalAlignment="Left" Margin="126,259,0,0" VerticalAlignment="Top"/>
-                    <Label Content="]" HorizontalAlignment="Left" Margin="180,259,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="cmdREGMTextBox3" HorizontalAlignment="Left" Height="23" Margin="217,260,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" MaxLength="6" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="7FF"/>
-                    <Label Content="0x" HorizontalAlignment="Left" Margin="194,259,0,0" VerticalAlignment="Top"/>
+                    <Label Content="] 0x" HorizontalAlignment="Left" Margin="190,260,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="cmdREGMTextBox3" HorizontalAlignment="Left" Height="23" Margin="220,260,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" MaxLength="6" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="7FF"/>
                     <Label Content="TIMEOUT" HorizontalAlignment="Left" Margin="212,45,0,0" VerticalAlignment="Top" Width="89"/>
                     <TextBox x:Name="debugTabRxTimeOutTextBox" HorizontalAlignment="Left" Height="23" Margin="307,46,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="54" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Button x:Name="cmdRESETButton" Content="RESET" HorizontalAlignment="Left" Margin="186,113,0,0" VerticalAlignment="Top" Width="76" Click="CmdRESETButton_Click"/>
@@ -81,11 +80,13 @@
                     <Button x:Name="cmdREGQButton" Content="REGQ" HorizontalAlignment="Left" Margin="285,292,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGQButton_Click"/>
                     <TextBox x:Name="cmdREGQTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,290,0,0" TextWrapping="Wrap" Text="21" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="0x" HorizontalAlignment="Left" Margin="70,289,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="cmdREGQTextBox2" HorizontalAlignment="Left" Height="23" Margin="140,290,0,0" TextWrapping="Wrap" Text="10:0" VerticalAlignment="Top" Width="40" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="cmdREGQTextBox2" HorizontalAlignment="Left" Height="23" Margin="140,290,0,0" TextWrapping="Wrap" Text="10:0" VerticalAlignment="Top" Width="50" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="[" HorizontalAlignment="Left" Margin="126,289,0,0" VerticalAlignment="Top"/>
-                    <Label Content="]" HorizontalAlignment="Left" Margin="180,289,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="saveLogsToFileButton" Content="SAVE Logs" HorizontalAlignment="Left" Margin="271,521,0,0" VerticalAlignment="Top" Width="90" Click="SaveLogsToFileButton_Click"/>
-                    <Button x:Name="clearLogsButton" Content="Clear Logs" HorizontalAlignment="Left" Margin="165,521,0,0" VerticalAlignment="Top" Width="90" Click="ClearLogsButton_Click"/>
+                    <Label Content="]" HorizontalAlignment="Left" Margin="190,289,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="saveLogsToFileButton" Content="SAVE Logs" HorizontalAlignment="Left" Margin="271,539,0,0" VerticalAlignment="Top" Width="90" Click="SaveLogsToFileButton_Click"/>
+                    <Button x:Name="clearLogsButton" Content="Clear Logs" HorizontalAlignment="Left" Margin="165,539,0,0" VerticalAlignment="Top" Width="90" Click="ClearLogsButton_Click"/>
+                    <Button x:Name="cmdVCPTESTButton" Content="VCP.TEST" HorizontalAlignment="Left" Margin="271,436,0,0" VerticalAlignment="Top" Width="90" Click="CmdVCPTESTButton_Click"/>
+                    <TextBox x:Name="cmdVCPTESTPacketsTextBox" HorizontalAlignment="Left" Height="19" Margin="165,436,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="90" MaxLength="20" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="25"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Setting">

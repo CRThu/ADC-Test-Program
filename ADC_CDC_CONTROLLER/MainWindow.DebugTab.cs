@@ -40,8 +40,9 @@ namespace ADC_CDC_CONTROLLER
         const string CMD_REGM_STR = "REGM";
         const string CMD_REGQ_STR = "REGQ";
         const string CMD_TASK1RUN_STR = "TASK1.RUN";
-        const string CMD_TASK1COMM_STR = "TASK1.COMM";
+        const string CMD_TASK1REALTIME_STR = "TASK1.REALTIME";
         const string CMD_TASK1PACK_STR = "TASK1.PACK";
+        const string CMD_VCPPERFTEST_STR = "VCP.PERFTEST";
 
         SerialPortProtocol serialPort = new SerialPortProtocol();
         //Logger log1 = new Logger();
@@ -188,12 +189,36 @@ namespace ADC_CDC_CONTROLLER
             loggerControl.UpdateLoggerTextBox(true, command);
         }
 
-        private void CmdTASK1COMMButton_Click(object sender, RoutedEventArgs e)
+        private void CmdTASK1RealTimeButton_Click(object sender, RoutedEventArgs e)
         {
             bytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
             int AdcDataSize = Convert.ToInt32(cmdTASK1RUNTextBox1.Text);
-            string command = serialPort.SerialPortCommandParamsWrite(CMD_TASK1COMM_STR, AdcDataSize.ToString());
+            int BytesPerCode = Convert.ToInt32(bytesPerCodeTextBox.Text);
+            int timeout = Convert.ToInt32(debugTabRxTimeOutTextBox.Text);
+
+            // TODO : Create TRANSFER FUNCTION
+            int recvDataPackageSize = AdcDataSize * BytesPerCode;
+            isDataReceivedRefused = true;
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_TASK1REALTIME_STR, AdcDataSize.ToString());
             loggerControl.UpdateLoggerTextBox(true, command);
+
+            string str = "";
+            byte[] recvDataPackage = new byte[recvDataPackageSize];
+            // TODO REALTIME
+            int data_len = serialPort.ReadContinuously(recvDataPackage, recvDataPackageSize, timeout);
+
+            //ADC_Data_Stroage_Raw = new List<byte>(recvDataPackage);
+            adcDataStorage.WriteTmpAdcSamples(adcCurrentSampleSettingInfoStr, recvDataPackage.ToList(), bytesPerCode);
+            str += ("Read " + data_len + "/" + recvDataPackageSize + " Bytes in Packet.\n");
+            str += ToHexStrFromByte(recvDataPackage);
+            if (data_len != recvDataPackageSize)
+                str += "\nWarning:Packets hasn't been received successfully!";
+            loggerControl.UpdateLoggerTextBox(true, str);
+
+            isDataReceivedRefused = false;
+
+            if (serialPort.BytesToRead > 0)
+                MyPort_DataReceived(null, null);
         }
 
         private void CmdTASK1PACKButton_Click(object sender, RoutedEventArgs e)
@@ -229,7 +254,7 @@ namespace ADC_CDC_CONTROLLER
             if (serialPort.BytesToRead > 0)
                 MyPort_DataReceived(null, null);
         }
-        
+
         private void CmdLoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
             // Open File Dialog
@@ -285,6 +310,46 @@ namespace ADC_CDC_CONTROLLER
             fs.Write(System.Text.Encoding.Default.GetBytes(writeCmdsTextBox.Text), 0, writeCmdsTextBox.Text.Length);
             fs.Flush();
             fs.Close();
+        }
+
+        private void CmdVCPTESTButton_Click(object sender, RoutedEventArgs e)
+        {
+            isDataReceivedRefused = true;
+            int packetsCount = Convert.ToInt32(cmdVCPTESTPacketsTextBox.Text);
+            string command = serialPort.SerialPortCommandParamsWrite(CMD_VCPPERFTEST_STR, packetsCount.ToString());
+            loggerControl.UpdateLoggerTextBox(true, command);
+
+            long ticksBegin = DateTime.Now.Ticks;
+            Thread.Sleep(1000);
+            long ticksEnd = DateTime.Now.Ticks;
+            loggerControl.UpdateLoggerTextBox(true, "~" + (ticksEnd - ticksBegin) + " Ticks / Second.");
+
+            byte[] recvBytes = new byte[1048576];
+            int recvByteLength = 0;
+
+            while (serialPort.BytesToRead == 0)
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+
+            recvByteLength = serialPort.Read(recvBytes, serialPort.BytesToRead);
+            ticksBegin = DateTime.Now.Ticks;
+            loggerControl.UpdateLoggerTextBox(true, "Receive Packets Len = " + recvByteLength);
+
+            for (int i = 0; i < packetsCount; i++)
+            {
+                while (serialPort.BytesToRead == 0)
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+
+                recvByteLength = serialPort.Read(recvBytes, serialPort.BytesToRead);
+                ticksEnd = DateTime.Now.Ticks;
+                long elapsedTick = (ticksEnd - ticksBegin);
+                double elapsedTime = (double)elapsedTick / 10000.0; // ms
+                loggerControl.UpdateLoggerTextBox(true, recvByteLength + " Bytes,\t" + elapsedTick + " Ticks,\t" + elapsedTime + " ms,\t" + ((double)recvByteLength / elapsedTime).ToString("G4") + " KB/s.");
+                ticksBegin = ticksEnd;
+            }
+            isDataReceivedRefused = false;
+            if (serialPort.BytesToRead > 0)
+                MyPort_DataReceived(null, null);
+            loggerControl.UpdateLoggerTextBox(true, "VCP.TEST DONE.");
         }
 
         private void AutoRunCmds(string[] txtArray)
@@ -398,7 +463,7 @@ namespace ADC_CDC_CONTROLLER
                 adcDataStorage.StoretmpAdcSamplesToFile(fullPathStr, DataStroageExtension.Csv);
                 loggerControl.UpdateLoggerTextBox(true, "Stored data to path:" + fullPathStr);
             }
-            else if(command.Contains("<setAnalysisParams>") && command.Contains("</setAnalysisParams>"))
+            else if (command.Contains("<setAnalysisParams>") && command.Contains("</setAnalysisParams>"))
             {
                 adcCurrentSampleSettingInfo.Clear();
                 string dataParams = MidStrEx(command, "<setAnalysisParams>", "</setAnalysisParams>");

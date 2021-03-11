@@ -21,16 +21,23 @@ namespace ADC_CDC_CONTROLLER
             get { return CurrentConfigs.First(); }
             set { CurrentConfigs = new ObservableCollection<AdcConfigItem>() { value }; }
         }
+
         // Match String to AdcConfigItem
         public ObservableCollection<string> CurrentConfigsName
         {
             get { return new ObservableCollection<string>(CurrentConfigs.Select(item => item.Name)); }
             set
             {
-                // TODO
-                foreach(string currentconfigName in CurrentConfigsName)
-                    Items.First(item=>item.Name==currentconfigName)
+                CurrentConfigs = new ObservableCollection<AdcConfigItem>();
+                foreach (string currentconfigName in value)
+                    CurrentConfigs.Add(Items.First(item => item.Name == currentconfigName));
             }
+        }
+
+        public string CurrentConfigName
+        {
+            get { return CurrentConfigsName.First(); }
+            set { CurrentConfigsName = new ObservableCollection<string>() { value }; }
         }
 
         // Default Config
@@ -40,6 +47,13 @@ namespace ADC_CDC_CONTROLLER
             get { return defaultConfig; }
             set { defaultConfig = value; CurrentConfig = value; }
         }
+
+        public string DefaultConfigName
+        {
+            get { return DefaultConfig.Name; }
+            set { DefaultConfig = Items.First(Items => Items.Name == value); }
+        }
+
         public ObservableCollection<AdcConfigItem> Items { get; set; }
 
         public IEnumerator GetEnumerator()

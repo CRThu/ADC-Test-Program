@@ -50,7 +50,8 @@ namespace ADC_CDC_CONTROLLER
             List<string> CommandsStr = new List<string>();
             foreach (AdcConfig i in adcConfigCollection)
             {
-                CommandsStr.Add(i.Items.First(item => item.Name == i.CurrentConfig).Command);
+                //CommandsStr.Add(i.Items.First(item => item.Name == i.CurrentConfig).Command);
+                CommandsStr.Add(i.CurrentConfig.Command);
                 SettingsInfoStr += "[WPF]: ";
                 SettingsInfoStr += i.Name;
                 SettingsInfoStr += ": ";
@@ -137,7 +138,8 @@ namespace ADC_CDC_CONTROLLER
                     // Prase Configs
                     Dictionary<string, string> configNamePraseKv = new Dictionary<string, string>();
                     for (int i = 0; i < adcConfigCollection.AdcConfigs.Count; i++)
-                        configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigs[iterCurrentConfigIndex[i]]);
+                        configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigsName[iterCurrentConfigIndex[i]]);
+                        //configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigs[iterCurrentConfigIndex[i]]);
                     //configNamePraseKv.Add(AdcSettings[i].ConfigName, AdcSettings[i].CurrentSecondaryConfigNames[0]);
 
 
@@ -213,7 +215,7 @@ namespace ADC_CDC_CONTROLLER
             AdcSecondarySettingsListBox.SelectedItems.Clear();
 
             AdcSecondarySettingsListBox.ItemsSource = adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].Items.Select(t => t.Name).ToList();
-            foreach (string ConfigName in adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].CurrentConfigs)
+            foreach (string ConfigName in adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].CurrentConfigsName)
                 AdcSecondarySettingsListBox.SelectedItems.Add(ConfigName);
         }
 
@@ -222,7 +224,7 @@ namespace ADC_CDC_CONTROLLER
             if (AdcPrimarySettingsListBox.SelectedIndex == -1 || AdcSecondarySettingsListBox.SelectedIndex == -1)
                 return;
 
-            adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].CurrentConfigs = new ObservableCollection<string>(AdcSecondarySettingsListBox.SelectedItems.Cast<string>().ToList());
+            adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].CurrentConfigsName = new ObservableCollection<string>(AdcSecondarySettingsListBox.SelectedItems.Cast<string>().ToList());
 
             AdcSelectedSettingCommandTextBox.Text = adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].Items[AdcSecondarySettingsListBox.SelectedIndex].Command;
             AdcSelectedSettingDescriptionTextBox.Text = adcConfigCollection.AdcConfigs[AdcPrimarySettingsListBox.SelectedIndex].Description
@@ -233,7 +235,7 @@ namespace ADC_CDC_CONTROLLER
             {
                 SettingsStr += i.Name;
                 SettingsStr += ": ";
-                foreach (string CurrentConfig in i.CurrentConfigs)
+                foreach (var CurrentConfig in i.CurrentConfigsName)
                     SettingsStr += CurrentConfig + "; ";
                 SettingsStr += Environment.NewLine;
             }
