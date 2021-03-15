@@ -16,6 +16,12 @@ namespace ADC_CDC_CONTROLLER
         public bool IsOpen => serialPort.IsOpen;
         public int BytesToRead => serialPort.BytesToRead;
 
+
+        // Reference:https://blog.csdn.net/u013078295/article/details/85005418
+        public bool Listening = false;//是否没有执行完invoke相关操作
+        public bool Closing = false;//是否正在关闭串口，执行Application.DoEvents，并阻止再次invoke
+
+
         public SerialPortComm()
         {
             serialPort = new SerialPort();
@@ -70,7 +76,11 @@ namespace ADC_CDC_CONTROLLER
         {
             try
             {
+                Closing = true;
+                while (Listening)
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
                 serialPort.Close();
+                Closing = false;
             }
             catch (Exception ex)
             {

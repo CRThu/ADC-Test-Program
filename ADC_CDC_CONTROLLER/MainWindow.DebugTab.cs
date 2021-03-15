@@ -50,19 +50,24 @@ namespace ADC_CDC_CONTROLLER
 
         private void SerialPortConnectButton_Click(object sender, RoutedEventArgs e)
         {
-            string serialPortName = serialPortComboBox1.SelectedItem.ToString().Split('|').First().Trim();
-            int serialPortBaudRate = 9600;
-            int serialPortRxBufSize = Convert.ToInt32(debugTabRxBufSizeTextBox.Text);
-            int serialPortRxTimeout = Convert.ToInt32(debugTabRxTimeOutTextBox.Text);
-            int serialPortTxBufSize = 2048;
-            int serialPortTxTimeout = SerialPort.InfiniteTimeout;
+            if (!serialPort.IsOpen)
+            {
+                string serialPortName = serialPortComboBox1.SelectedItem.ToString().Split('|').First().Trim();
+                int serialPortBaudRate = 9600;
+                int serialPortRxBufSize = Convert.ToInt32(debugTabRxBufSizeTextBox.Text);
+                int serialPortRxTimeout = Convert.ToInt32(debugTabRxTimeOutTextBox.Text);
+                int serialPortTxBufSize = 2048;
+                int serialPortTxTimeout = SerialPort.InfiniteTimeout;
 
-            serialPort = new SerialPortProtocol(serialPortName, serialPortBaudRate);
-            serialPort.SetBuffer(serialPortRxBufSize, serialPortRxTimeout, serialPortTxBufSize, serialPortTxTimeout);
-            serialPort.Open();
-            debugTabSerialPortStatusLabel.Content = serialPort.IsOpen ? "Connected" : "Disconnected";
+                serialPort = new SerialPortProtocol(serialPortName, serialPortBaudRate);
+                serialPort.SetBuffer(serialPortRxBufSize, serialPortRxTimeout, serialPortTxBufSize, serialPortTxTimeout);
+                serialPort.Open();
+                debugTabSerialPortStatusLabel.Content = serialPort.IsOpen ? "Connected" : "Disconnected";
 
-            serialPort.DataReceivedEvent(MyPort_DataReceived);
+                serialPort.DataReceivedEvent(MyPort_DataReceived);
+            }
+            else
+                MessageBox.Show("Serial port has been opened!");
         }
 
         private void SerialPortDisconnectButton_Click(object sender, RoutedEventArgs e)
@@ -78,6 +83,9 @@ namespace ADC_CDC_CONTROLLER
 
         private void MyPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+            if (serialPort.Closing) return;
+            serialPort.Listening = true;
+
             // Refuse DataReceived Process
             if (!isDataReceivedRefused)
             {
@@ -98,25 +106,11 @@ namespace ADC_CDC_CONTROLLER
                             isWaitingSignal = false;
                         }
                     }
-                    if (recvDataStr.IndexOf("<dat>") >= 0)
-                    {
-                        int hex_start = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("<dat>")) + "<dat>".Length;
-                        int hex_end = GetIndexOf(recvData, System.Text.Encoding.ASCII.GetBytes("</dat>")) - 1;
-
-                        string recvDataStr_tmp = "";
-                        recvDataStr_tmp += recvDataStr.Substring(0, hex_start);
-                        // HEX
-                        //recvDataStr_tmp += recvDataStr.Substring(hex_start, hex_end-hex_start+1);
-                        byte[] hex_bytes = recvData.Skip(hex_start).Take(hex_end - hex_start + 1).ToArray();
-                        recvDataStr_tmp += ToHexStrFromByte(hex_bytes);
-                        adcDataStorage.WriteTmpAdcSamples(adcCurrentSampleSettingInfoStr, hex_bytes.ToList(), bytesPerCode);
-                        recvDataStr_tmp += recvDataStr.Substring(hex_end + 1, recvDataStr.Length - hex_end - 1);
-                        recvDataStr = recvDataStr_tmp;
-                    }
 
                     loggerControl.UpdateLoggerTextBox(false, recvDataStr);
                 }
             }
+            serialPort.Listening = false;
         }
 
         private void CmdOPENButton_Click(object sender, RoutedEventArgs e)
