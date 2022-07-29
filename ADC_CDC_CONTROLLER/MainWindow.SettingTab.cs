@@ -247,7 +247,7 @@ namespace ADC_CDC_CONTROLLER
         {
             // Load Xml
             adcConfigCollection = new AdcConfigCollection();
-            adcConfigCollection.LoadConfigs(@"../../AD7124-8.xml", ConfigStroageExtension.Xml);
+            adcConfigCollection.LoadConfigs(@"./AD7124-8.xml", ConfigStroageExtension.Xml);
         }
     }
 }
