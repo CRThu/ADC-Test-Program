@@ -25,7 +25,7 @@
                     <Button x:Name="serialPortDisconnectButton" Content="Disconnect" HorizontalAlignment="Left" Margin="115,61,0,0" VerticalAlignment="Top" Width="76" Click="SerialPortDisconnectButton_Click"/>
                     <Label x:Name="debugTabSerialPortStatusLabel" Content="Disconnected" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top"/>
                     <Label Content="OPEN&amp;RESET" HorizontalAlignment="Left" Margin="16,110,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="serialPortCommInfoTextBox" Margin="382,10,10,10" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+                    <TextBox x:Name="serialPortCommInfoTextBox" Margin="382,10,10.4,0" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Height="444" VerticalAlignment="Top"/>
                     <Label Content="DATW" HorizontalAlignment="Left" Margin="16,140,0,0" VerticalAlignment="Top"/>
                     <Label Content="DATR" HorizontalAlignment="Left" Margin="16,170,0,0" VerticalAlignment="Top"/>
                     <Label Content="REGW" HorizontalAlignment="Left" Margin="16,200,0,0" VerticalAlignment="Top"/>
@@ -62,9 +62,9 @@
                     <Button x:Name="cmdTASK1PACKButton" Content="PACK" HorizontalAlignment="Left" Margin="165,378,0,0" VerticalAlignment="Top" Width="90" Click="CmdTASK1PACKButton_Click"/>
                     <TextBox x:Name="bytesPerCodeTextBox" HorizontalAlignment="Left" Height="22" Margin="110,376,0,0" TextWrapping="Wrap" Text="4" VerticalAlignment="Top" Width="44" MaxLength="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="BytesPerCode" HorizontalAlignment="Left" Margin="16,374,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="writeCmdsTextBox" HorizontalAlignment="Left" Height="68" Margin="21,466,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                    <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Left" Margin="271,466,0,0" VerticalAlignment="Top" Width="90" Height="44" Click="WriteCmdsFromTextBoxButton_Click"/>
-                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" HorizontalAlignment="Left" Margin="271,515,0,0" VerticalAlignment="Top" Width="90" Click="SaveCmdsToFileButton_Copy_Click"/>
+                    <TextBox x:Name="writeCmdsTextBox" Margin="10,459,106.4,10" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextChanged="writeCmdsTextBox_TextChanged"/>
+                    <Button x:Name="writeCmdsFromTextBoxButton" Content="WRITE CMDs" HorizontalAlignment="Right" Margin="0,459,11.4,0" VerticalAlignment="Top" Width="90" Height="19" Click="WriteCmdsFromTextBoxButton_Click"/>
+                    <Button x:Name="saveCmdsToFileButton_Copy" Content="SAVE CMDs" Margin="0,505,11.4,0" VerticalAlignment="Top" Click="SaveCmdsToFileButton_Copy_Click" HorizontalAlignment="Right" Width="90"/>
                     <Label Content="REGM" HorizontalAlignment="Left" Margin="16,259,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="cmdREGMButton" Content="REGM" HorizontalAlignment="Left" Margin="285,262,0,0" VerticalAlignment="Top" Width="76" Click="CmdREGMButton_Click"/>
                     <TextBox x:Name="cmdREGMTextBox1" HorizontalAlignment="Left" Height="23" Margin="93,260,0,0" TextWrapping="Wrap" Text="21" VerticalAlignment="Top" Width="33" MaxLength="2" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
@@ -83,10 +83,9 @@
                     <TextBox x:Name="cmdREGQTextBox2" HorizontalAlignment="Left" Height="23" Margin="140,290,0,0" TextWrapping="Wrap" Text="10:0" VerticalAlignment="Top" Width="50" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Label Content="[" HorizontalAlignment="Left" Margin="126,289,0,0" VerticalAlignment="Top"/>
                     <Label Content="]" HorizontalAlignment="Left" Margin="190,289,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="saveLogsToFileButton" Content="SAVE Logs" HorizontalAlignment="Left" Margin="271,539,0,0" VerticalAlignment="Top" Width="90" Click="SaveLogsToFileButton_Click"/>
-                    <Button x:Name="clearLogsButton" Content="Clear Logs" HorizontalAlignment="Left" Margin="165,539,0,0" VerticalAlignment="Top" Width="90" Click="ClearLogsButton_Click"/>
-                    <Button x:Name="cmdVCPTESTButton" Content="VCP.TEST" HorizontalAlignment="Left" Margin="271,436,0,0" VerticalAlignment="Top" Width="90" Click="CmdVCPTESTButton_Click"/>
-                    <TextBox x:Name="cmdVCPTESTPacketsTextBox" HorizontalAlignment="Left" Height="19" Margin="165,436,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="90" MaxLength="20" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="25"/>
+                    <Button x:Name="saveLogsToFileButton" Content="SAVE Logs" HorizontalAlignment="Right" Margin="0,528,11.4,0" VerticalAlignment="Top" Width="90" Click="SaveLogsToFileButton_Click"/>
+                    <Button x:Name="clearLogsButton" Content="Clear Logs" HorizontalAlignment="Right" Margin="0,551,11.4,0" VerticalAlignment="Top" Width="90" Click="ClearLogsButton_Click"/>
+                    <CheckBox Name="isAutoRunResumeFromStopCheckBox" Content="STOP处继续" HorizontalAlignment="Right" Margin="0,483,10.4,0" VerticalAlignment="Top" Height="17" Width="91"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Setting">

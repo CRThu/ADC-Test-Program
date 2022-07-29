@@ -61,7 +61,7 @@ namespace ADC_CDC_CONTROLLER
             string[] portDescriptionList = HardwareInfoUtil.GetSerialPortFullName();
             for (int i = 0; i < portList.Length; ++i)
             {
-                string name = portList[i] + "|" + portDescriptionList.Where(str => str.Contains(portList[i])).First();
+                string name = portList[i] + "|" + portDescriptionList.Where(str => str.Contains(portList[i])).FirstOrDefault();
                 serialPortComboBox1.Items.Add(name);
             }
             if (portList.Length > 0)

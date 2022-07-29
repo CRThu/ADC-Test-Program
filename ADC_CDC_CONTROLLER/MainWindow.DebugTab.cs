@@ -164,7 +164,7 @@ namespace ADC_CDC_CONTROLLER
         }
         private void CmdREGQButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] regBitsModifyPosStr = cmdREGMTextBox2.Text.Split(new char[] { ':' });
+            string[] regBitsModifyPosStr = cmdREGQTextBox2.Text.Split(new char[] { ':' });
             int[] regBitsModifyPos = new int[] {
                 Convert.ToInt32(regBitsModifyPosStr[0] ),
                 Convert.ToInt32(regBitsModifyPosStr[1])};
@@ -306,45 +306,45 @@ namespace ADC_CDC_CONTROLLER
             fs.Close();
         }
 
-        private void CmdVCPTESTButton_Click(object sender, RoutedEventArgs e)
-        {
-            isDataReceivedRefused = true;
-            int packetsCount = Convert.ToInt32(cmdVCPTESTPacketsTextBox.Text);
-            string command = serialPort.SerialPortCommandParamsWrite(CMD_VCPPERFTEST_STR, packetsCount.ToString());
-            loggerControl.UpdateLoggerTextBox(true, command);
+        //private void CmdVCPTESTButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    isDataReceivedRefused = true;
+        //    int packetsCount = Convert.ToInt32(cmdVCPTESTPacketsTextBox.Text);
+        //    string command = serialPort.SerialPortCommandParamsWrite(CMD_VCPPERFTEST_STR, packetsCount.ToString());
+        //    loggerControl.UpdateLoggerTextBox(true, command);
 
-            long ticksBegin = DateTime.Now.Ticks;
-            Thread.Sleep(1000);
-            long ticksEnd = DateTime.Now.Ticks;
-            loggerControl.UpdateLoggerTextBox(true, "~" + (ticksEnd - ticksBegin) + " Ticks / Second.");
+        //    long ticksBegin = DateTime.Now.Ticks;
+        //    Thread.Sleep(1000);
+        //    long ticksEnd = DateTime.Now.Ticks;
+        //    loggerControl.UpdateLoggerTextBox(true, "~" + (ticksEnd - ticksBegin) + " Ticks / Second.");
 
-            byte[] recvBytes = new byte[1048576];
-            int recvByteLength = 0;
+        //    byte[] recvBytes = new byte[1048576];
+        //    int recvByteLength = 0;
 
-            while (serialPort.BytesToRead == 0)
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+        //    while (serialPort.BytesToRead == 0)
+        //        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 
-            recvByteLength = serialPort.Read(recvBytes, serialPort.BytesToRead);
-            ticksBegin = DateTime.Now.Ticks;
-            loggerControl.UpdateLoggerTextBox(true, "Receive Packets Len = " + recvByteLength);
+        //    recvByteLength = serialPort.Read(recvBytes, serialPort.BytesToRead);
+        //    ticksBegin = DateTime.Now.Ticks;
+        //    loggerControl.UpdateLoggerTextBox(true, "Receive Packets Len = " + recvByteLength);
 
-            for (int i = 0; i < packetsCount; i++)
-            {
-                while (serialPort.BytesToRead == 0)
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+        //    for (int i = 0; i < packetsCount; i++)
+        //    {
+        //        while (serialPort.BytesToRead == 0)
+        //            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 
-                recvByteLength = serialPort.Read(recvBytes, serialPort.BytesToRead);
-                ticksEnd = DateTime.Now.Ticks;
-                long elapsedTick = (ticksEnd - ticksBegin);
-                double elapsedTime = (double)elapsedTick / 10000.0; // ms
-                loggerControl.UpdateLoggerTextBox(true, recvByteLength + " Bytes,\t" + elapsedTick + " Ticks,\t" + elapsedTime + " ms,\t" + ((double)recvByteLength / elapsedTime).ToString("G4") + " KB/s.");
-                ticksBegin = ticksEnd;
-            }
-            isDataReceivedRefused = false;
-            if (serialPort.BytesToRead > 0)
-                MyPort_DataReceived(null, null);
-            loggerControl.UpdateLoggerTextBox(true, "VCP.TEST DONE.");
-        }
+        //        recvByteLength = serialPort.Read(recvBytes, serialPort.BytesToRead);
+        //        ticksEnd = DateTime.Now.Ticks;
+        //        long elapsedTick = (ticksEnd - ticksBegin);
+        //        double elapsedTime = (double)elapsedTick / 10000.0; // ms
+        //        loggerControl.UpdateLoggerTextBox(true, recvByteLength + " Bytes,\t" + elapsedTick + " Ticks,\t" + elapsedTime + " ms,\t" + ((double)recvByteLength / elapsedTime).ToString("G4") + " KB/s.");
+        //        ticksBegin = ticksEnd;
+        //    }
+        //    isDataReceivedRefused = false;
+        //    if (serialPort.BytesToRead > 0)
+        //        MyPort_DataReceived(null, null);
+        //    loggerControl.UpdateLoggerTextBox(true, "VCP.TEST DONE.");
+        //}
 
         private void AutoRunCmds(string[] txtArray)
         {
@@ -356,17 +356,36 @@ namespace ADC_CDC_CONTROLLER
             AutoRunCmds(txtArray, taskFileDir);
         }
 
+        int programCursor = 0;
+        bool isResume = false;
+
+        private void writeCmdsTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            programCursor = 0;
+        }
+
         private void AutoRunCmds(string[] txtArray, string taskFileDir)
         {
             try
             {
+                isResume = isAutoRunResumeFromStopCheckBox.IsChecked ?? false;
+
                 txtArray = CmdFileDeleteComments(txtArray);
 
                 // AutoRunCommands
                 int sleepTime = Convert.ToInt32(cmdIntervalTextBox.Text);
-                for (int i = 0; i < txtArray.Length; i++)
+                for (int i = isResume ? programCursor : 0; i < txtArray.Length; i++)
                 {
-                    AutoRunPraseCmd(txtArray[i], taskFileDir, sleepTime);
+                    int ret = AutoRunPraseCmd(txtArray[i], taskFileDir, sleepTime);
+                    if (ret == -1)
+                    {
+                        programCursor = i + 1;
+                        break;
+                    }
+                    if (i == txtArray.Length - 1)
+                    {
+                        programCursor = 0;
+                    }
                 }
             }
             catch (Exception ex)
@@ -390,13 +409,18 @@ namespace ADC_CDC_CONTROLLER
             return txtArray;
         }
 
-        void AutoRunPraseCmd(string command, string taskFileDir, int intervalTime)
+        int AutoRunPraseCmd(string command, string taskFileDir, int intervalTime)
         {
             if (command.Contains("<delay>") && command.Contains("</delay>"))
             {
                 // GUI Delay
                 intervalTime = Convert.ToInt32(MidStrEx(command, "<delay>", "</delay>"));
                 loggerControl.UpdateLoggerTextBox(true, "Delay " + intervalTime + " ms...");
+            }
+            else if (command.Contains("<stop/>"))
+            {
+                loggerControl.UpdateLoggerTextBox(true, "STOP");
+                return -1;
             }
             else if (command.Contains("<msgBox>") && command.Contains("</msgBox>"))
             {
@@ -489,6 +513,7 @@ namespace ADC_CDC_CONTROLLER
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
                 }
             }
+            return 0;
         }
 
         private void SaveLogsToFileButton_Click(object sender, RoutedEventArgs e)
