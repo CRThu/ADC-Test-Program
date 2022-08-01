@@ -89,7 +89,7 @@ namespace ADC_CDC_CONTROLLER
         {
             try
             {
-                string WriteFileStr = "";
+                StringBuilder WriteFileStringBuilder = new StringBuilder();
 
                 // iterator for multiTasks Generating
                 int[] iterCurrentConfigIndex = new int[adcConfigCollection.AdcConfigs.Count];
@@ -139,7 +139,7 @@ namespace ADC_CDC_CONTROLLER
                     Dictionary<string, string> configNamePraseKv = new Dictionary<string, string>();
                     for (int i = 0; i < adcConfigCollection.AdcConfigs.Count; i++)
                         configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigsName[iterCurrentConfigIndex[i]]);
-                        //configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigs[iterCurrentConfigIndex[i]]);
+                    //configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigs[iterCurrentConfigIndex[i]]);
                     //configNamePraseKv.Add(AdcSettings[i].ConfigName, AdcSettings[i].CurrentSecondaryConfigNames[0]);
 
 
@@ -150,15 +150,15 @@ namespace ADC_CDC_CONTROLLER
 
 
                     // Write Tasks
-                    WriteFileStr += "### TASK.START ###" + Environment.NewLine;
-                    WriteFileStr += "# TASK.ITERATOR=" + (iter + 1) + "/" + iterTaskCnt + Environment.NewLine;
-                    WriteFileStr += "# TASK.GENTIME=" + DateTime.Now.ToString() + Environment.NewLine;
+                    WriteFileStringBuilder.AppendLine("### TASK.START ###");
+                    WriteFileStringBuilder.AppendLine("# TASK.ITERATOR=" + (iter + 1) + "/" + iterTaskCnt);
+                    WriteFileStringBuilder.AppendLine("# TASK.GENTIME=" + DateTime.Now.ToString());
                     foreach (var kv in configNamePraseKv)
-                        WriteFileStr += "# TASK.CONFIG." + kv.Key + "=" + kv.Value + Environment.NewLine;
-                    WriteFileStr += "### TASK.REG ###" + Environment.NewLine;
+                        WriteFileStringBuilder.AppendLine("# TASK.CONFIG." + kv.Key + "=" + kv.Value);
+                    WriteFileStringBuilder.AppendLine("### TASK.REG ###");
                     foreach (var kv in configNamePraseKv)
-                        WriteFileStr += adcConfigCollection.AdcConfigs.First(item => item.Name == kv.Key).Items.First(item => item.Name == kv.Value).Command + Environment.NewLine;
-                    WriteFileStr += "### TASK.ADDON ###" + Environment.NewLine;
+                        WriteFileStringBuilder.AppendLine(adcConfigCollection.AdcConfigs.First(item => item.Name == kv.Key).Items.First(item => item.Name == kv.Value).Command);
+                    WriteFileStringBuilder.AppendLine("### TASK.ADDON ###");
                     if (AdcSettingTaskAddonCmdsCheckBox.IsChecked == true)
                     {
                         string[] AddonCmdsStrs = AdcSettingTaskAddonCmdsTextBox.Text.Split(new char[] { '\r', '\n' })
@@ -173,17 +173,17 @@ namespace ADC_CDC_CONTROLLER
                                 if (index != -1)
                                     AddonCmdsStr = AddonCmdsStr.Replace("%" + kv.Key + "%", kv.Value);
                             }
-                            WriteFileStr += AddonCmdsStr + Environment.NewLine;
+                            WriteFileStringBuilder.AppendLine(AddonCmdsStr);
                         }
                     }
-                    WriteFileStr += "### TASK.END ###" + Environment.NewLine;
-                    WriteFileStr += Environment.NewLine;
+                    WriteFileStringBuilder.AppendLine("### TASK.END ###");
+                    WriteFileStringBuilder.AppendLine();
                 }
 
                 AdcSettingsInfoTextBox.Text += "[WPF]: Status: Writing Tasks." + System.Environment.NewLine;
                 AdcSettingsInfoTextBox.ScrollToEnd();
                 FileStream fs = new FileStream(TasksFileName, FileMode.Append, FileAccess.Write);
-                fs.Write(System.Text.Encoding.Default.GetBytes(WriteFileStr), 0, WriteFileStr.Length);
+                fs.Write(System.Text.Encoding.Default.GetBytes(WriteFileStringBuilder.ToString()), 0, WriteFileStringBuilder.Length);
                 fs.Flush();
                 fs.Close();
                 AdcSettingsInfoTextBox.Text += "[WPF]: Status: Writing Tasks Completed." + System.Environment.NewLine;
