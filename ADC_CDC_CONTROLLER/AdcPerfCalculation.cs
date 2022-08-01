@@ -39,6 +39,16 @@ namespace ADC_CDC_CONTROLLER
             return Math.Log(Math.Pow(2, adcBit) / PeakNoise(sample, 1), 2);
         }
 
+        public static double MinVoltage(List<ulong> sample, bool isBipolar, double vRef, double gain, int adcBits)
+        {
+            return ConvertVoltage((ulong)MinCode(sample), isBipolar, vRef, gain, adcBits);
+        }
+
+        public static double MaxVoltage(List<ulong> sample, bool isBipolar, double vRef, double gain, int adcBits)
+        {
+            return ConvertVoltage((ulong)MaxCode(sample), isBipolar, vRef, gain, adcBits);
+        }
+
         public static double OffsetErrorVoltage(List<ulong> sample, bool isBipolar, double vRef, double gain, int adcBits)
         {
             return ConvertVoltage((ulong)AvgCode(sample), isBipolar, vRef, gain, adcBits);
