@@ -51,10 +51,7 @@ namespace ADC_CDC_CONTROLLER
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
-            InitAdcSettings();
-            AdcPrimarySettingsListBox.ItemsSource = adcConfigCollection.AdcConfigs.Select(t => t.Name).ToList();
-            AdcPrimarySettingsListBox.SelectedIndex = 0;
+            LoadAdcSettings(@"./AD7124-8.xml");
             UpdateAdcSecondarySettingsListBox();
 
             string[] portList = System.IO.Ports.SerialPort.GetPortNames();
@@ -67,6 +64,5 @@ namespace ADC_CDC_CONTROLLER
             if (portList.Length > 0)
                 serialPortComboBox1.SelectedIndex = 0;
         }
-
     }
 }

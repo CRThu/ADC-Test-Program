@@ -142,12 +142,10 @@ namespace ADC_CDC_CONTROLLER
                     //configNamePraseKv.Add(adcConfigCollection.AdcConfigs[i].Name, adcConfigCollection.AdcConfigs[i].CurrentConfigs[iterCurrentConfigIndex[i]]);
                     //configNamePraseKv.Add(AdcSettings[i].ConfigName, AdcSettings[i].CurrentSecondaryConfigNames[0]);
 
-
                     // iterator Verify
-                    for (int t = 0; t < adcConfigCollection.AdcConfigs.Count; t++)
-                        AdcSettingsInfoTextBox.Text += adcConfigCollection.AdcConfigs[t].Name + ":" + adcConfigCollection.AdcConfigs[t].CurrentConfigs[iterCurrentConfigIndex[t]] + '\t';
-                    AdcSettingsInfoTextBox.Text += Environment.NewLine;
-
+                    //for (int t = 0; t < adcConfigCollection.AdcConfigs.Count; t++)
+                    //    AdcSettingsInfoTextBox.Text += adcConfigCollection.AdcConfigs[t].Name + ":" + adcConfigCollection.AdcConfigs[t].CurrentConfigs[iterCurrentConfigIndex[t]] + '\t';
+                    //AdcSettingsInfoTextBox.Text += Environment.NewLine;
 
                     // Write Tasks
                     WriteFileStringBuilder.AppendLine("### TASK.START ###");
@@ -243,11 +241,29 @@ namespace ADC_CDC_CONTROLLER
 
         }
 
-        private void InitAdcSettings()
+        private void LoadAdcSettings(string configFile)
         {
             // Load Xml
             adcConfigCollection = new AdcConfigCollection();
-            adcConfigCollection.LoadConfigs(@"./AD7124-8.xml", ConfigStroageExtension.Xml);
+            adcConfigCollection.LoadConfigs(configFile, ConfigStroageExtension.Xml);
+            // Update UI
+            AdcPrimarySettingsListBox.ItemsSource = adcConfigCollection.AdcConfigs.Select(t => t.Name).ToList();
+            AdcPrimarySettingsListBox.SelectedIndex = 0;
+        }
+
+        private void settingTabLoadXmlButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open File Dialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Open Data File...",
+                Filter = "Config File|*.xml",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
+            if (openFileDialog.ShowDialog() == false)
+                return;
+
+            LoadAdcSettings(openFileDialog.FileName);
         }
     }
 }
