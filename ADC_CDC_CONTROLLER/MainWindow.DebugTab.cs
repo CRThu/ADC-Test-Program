@@ -422,6 +422,11 @@ namespace ADC_CDC_CONTROLLER
                 loggerControl.UpdateLoggerTextBox(true, "STOP");
                 return -1;
             }
+            else if (command.Contains("<deldata>") && command.Contains("</deldata>"))
+            {
+                adcDataStorage = new AdcDataStorage();
+                DataTabUpdateListBoxButton_Click(null, null);
+            }
             else if (command.Contains("<msgBox>") && command.Contains("</msgBox>"))
             {
                 // MessageBox
