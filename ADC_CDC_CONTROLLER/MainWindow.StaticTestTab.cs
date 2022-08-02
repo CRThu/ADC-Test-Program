@@ -431,6 +431,7 @@ namespace ADC_CDC_CONTROLLER
                     double lsb = AdcPerfCalculation.LsbVoltage(isBipolar, vRef, gain, adcBits);
                     staticTestTabLSBTextBox.Text = (1e6 * lsb).ToString("G4");
 
+                    List<(string name, string perf)> vals = new List<(string name, string perf)>();
                     //foreach (var perfName in reportModeDataTableperfNames)
                     Parallel.ForEach(reportModeDataTableperfNames, perfName =>
                         {
@@ -456,11 +457,14 @@ namespace ADC_CDC_CONTROLLER
                                 case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
                                 default: calcResult = ""; break;
                             }
-                            lock(reportModeDataTable)
+                            lock(vals)
                             {
-                                DataTableUtil.DataTableAddData(reportModeDataTable, perfName, kvSample.Key, calcResult);
+                                vals.Add((perfName, calcResult));
                             }
+
                         });
+                    foreach (var val in vals)
+                        DataTableUtil.DataTableAddData(reportModeDataTable, val.name, kvSample.Key, val.perf);
                 }
             }
             catch (Exception ex)
