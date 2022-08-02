@@ -431,32 +431,36 @@ namespace ADC_CDC_CONTROLLER
                     double lsb = AdcPerfCalculation.LsbVoltage(isBipolar, vRef, gain, adcBits);
                     staticTestTabLSBTextBox.Text = (1e6 * lsb).ToString("G4");
 
-                    foreach (var perfName in reportModeDataTableperfNames)
-                    {
-                        string calcResult;
-                        switch (perfName)
+                    //foreach (var perfName in reportModeDataTableperfNames)
+                    Parallel.ForEach(reportModeDataTableperfNames, perfName =>
                         {
-                            case "Count": calcResult = kvSample.Value.Count.ToString(); break;
-                            case "Min": calcResult = AdcPerfCalculation.MinCode(kvSample.Value).ToString(); break;
-                            case "Max": calcResult = AdcPerfCalculation.MaxCode(kvSample.Value).ToString(); break;
-                            case "Avg|Offset Err": calcResult = AdcPerfCalculation.AvgCode(kvSample.Value).ToString("f3"); break;
-                            case "Std|RMS Noise(LSB)": calcResult = AdcPerfCalculation.RmsNoise(kvSample.Value, 1).ToString("f3"); break;
-                            case "Peak Noise(LSB)": calcResult = AdcPerfCalculation.PeakNoise(kvSample.Value, 1).ToString(); break;
-                            case "Peak Noise Calc(LSB)": calcResult = AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, 1).ToString("f3"); break;
-                            case "Eff Res(b)": calcResult = AdcPerfCalculation.EffResolution(kvSample.Value, adcBits).ToString("f2"); break;
-                            case "NoiseFree Res(b)": calcResult = AdcPerfCalculation.NoiseFreeResolution(kvSample.Value, adcBits).ToString("f2"); break;
-                            case "NoiseFree Res Calc(b)": calcResult = AdcPerfCalculation.NoiseFreeResolutionCalc(kvSample.Value, adcBits).ToString("f2"); break;
-                            case "LSB(u)": calcResult = (1e6 * lsb).ToString("G4"); break;
-                            case "Min(u)": calcResult = (1e6 * AdcPerfCalculation.MinVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
-                            case "Max(u)": calcResult = (1e6 * AdcPerfCalculation.MaxVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
-                            case "Avg|Offset Err(u)": calcResult = (1e6 * AdcPerfCalculation.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
-                            case "Std|RMS Noise(u)": calcResult = (1e6 * AdcPerfCalculation.RmsNoise(kvSample.Value, lsb)).ToString("G3"); break;
-                            case "Peak Noise(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoise(kvSample.Value, lsb)).ToString("G3"); break;
-                            case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
-                            default: calcResult = ""; break;
-                        }
-                        DataTableUtil.DataTableAddData(reportModeDataTable, perfName, kvSample.Key, calcResult);
-                    }
+                            string calcResult;
+                            switch (perfName)
+                            {
+                                case "Count": calcResult = kvSample.Value.Count.ToString(); break;
+                                case "Min": calcResult = AdcPerfCalculation.MinCode(kvSample.Value).ToString(); break;
+                                case "Max": calcResult = AdcPerfCalculation.MaxCode(kvSample.Value).ToString(); break;
+                                case "Avg|Offset Err": calcResult = AdcPerfCalculation.AvgCode(kvSample.Value).ToString("f3"); break;
+                                case "Std|RMS Noise(LSB)": calcResult = AdcPerfCalculation.RmsNoise(kvSample.Value, 1).ToString("f3"); break;
+                                case "Peak Noise(LSB)": calcResult = AdcPerfCalculation.PeakNoise(kvSample.Value, 1).ToString(); break;
+                                case "Peak Noise Calc(LSB)": calcResult = AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, 1).ToString("f3"); break;
+                                case "Eff Res(b)": calcResult = AdcPerfCalculation.EffResolution(kvSample.Value, adcBits).ToString("f2"); break;
+                                case "NoiseFree Res(b)": calcResult = AdcPerfCalculation.NoiseFreeResolution(kvSample.Value, adcBits).ToString("f2"); break;
+                                case "NoiseFree Res Calc(b)": calcResult = AdcPerfCalculation.NoiseFreeResolutionCalc(kvSample.Value, adcBits).ToString("f2"); break;
+                                case "LSB(u)": calcResult = (1e6 * lsb).ToString("G4"); break;
+                                case "Min(u)": calcResult = (1e6 * AdcPerfCalculation.MinVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
+                                case "Max(u)": calcResult = (1e6 * AdcPerfCalculation.MaxVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
+                                case "Avg|Offset Err(u)": calcResult = (1e6 * AdcPerfCalculation.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
+                                case "Std|RMS Noise(u)": calcResult = (1e6 * AdcPerfCalculation.RmsNoise(kvSample.Value, lsb)).ToString("G3"); break;
+                                case "Peak Noise(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoise(kvSample.Value, lsb)).ToString("G3"); break;
+                                case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
+                                default: calcResult = ""; break;
+                            }
+                            lock(reportModeDataTable)
+                            {
+                                DataTableUtil.DataTableAddData(reportModeDataTable, perfName, kvSample.Key, calcResult);
+                            }
+                        });
                 }
             }
             catch (Exception ex)
