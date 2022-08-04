@@ -449,9 +449,9 @@ namespace ADC_CDC_CONTROLLER
                                 case "NoiseFree Res(b)": calcResult = AdcPerfCalculation.NoiseFreeResolution(kvSample.Value, adcBits).ToString("f2"); break;
                                 case "NoiseFree Res Calc(b)": calcResult = AdcPerfCalculation.NoiseFreeResolutionCalc(kvSample.Value, adcBits).ToString("f2"); break;
                                 case "LSB(u)": calcResult = (1e6 * lsb).ToString("G4"); break;
-                                case "Min(u)": calcResult = (1e6 * AdcPerfCalculation.MinVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
-                                case "Max(u)": calcResult = (1e6 * AdcPerfCalculation.MaxVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
-                                case "Avg|Offset Err(u)": calcResult = (1e6 * AdcPerfCalculation.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G3"); break;
+                                case "Min(u)": calcResult = (1e6 * AdcPerfCalculation.MinVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G7"); break;
+                                case "Max(u)": calcResult = (1e6 * AdcPerfCalculation.MaxVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G7"); break;
+                                case "Avg|Offset Err(u)": calcResult = (1e6 * AdcPerfCalculation.OffsetErrorVoltage(kvSample.Value, isBipolar, vRef, gain, adcBits)).ToString("G7"); break;
                                 case "Std|RMS Noise(u)": calcResult = (1e6 * AdcPerfCalculation.RmsNoise(kvSample.Value, lsb)).ToString("G3"); break;
                                 case "Peak Noise(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoise(kvSample.Value, lsb)).ToString("G3"); break;
                                 case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
