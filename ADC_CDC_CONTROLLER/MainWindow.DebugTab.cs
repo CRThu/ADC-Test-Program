@@ -476,8 +476,9 @@ namespace ADC_CDC_CONTROLLER
             else if (command.Contains("<storeFile>") && command.Contains("</storeFile>"))
             {
                 string fileNameStr = MidStrEx(command, "<storeFile>", "</storeFile>");
+
                 // WriteFile
-                string fullPathStr = Path.GetFullPath(taskFileDir + @"\" + fileNameStr);
+                string fullPathStr = Path.GetFullPath(taskFileDir + @"\" + fileNameStr.Replace('/', '-').Replace('\\', '-'));
                 if (!Directory.Exists(Path.GetDirectoryName(fullPathStr)))
                 {
                     var di = Directory.CreateDirectory(Path.GetDirectoryName(fullPathStr));
