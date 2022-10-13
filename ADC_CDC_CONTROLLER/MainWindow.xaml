@@ -224,6 +224,7 @@
                         <CheckBox x:Name="staticTestTabChartModeRotationCheckBox" Content="Rot(X,Y)" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Checked="StaticTestTabChartModeRotationCheckBox_Checked" Unchecked="StaticTestTabChartModeRotationCheckBox_Unchecked"/>
                         <Button x:Name="staticTestTabChartModeCalcResolutionButton" Content="Calc Resolution" HorizontalAlignment="Left" Margin="111,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeCalcResolutionButton_Click"/>
                         <Button x:Name="staticTestTabChartModeStoreCsvButton" Content="Store CSV" HorizontalAlignment="Left" Margin="240,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeStoreCsvButton_Click"/>
+                        <Button x:Name="staticTestTabChartModeCopyTableButton" Content="Copy Table" HorizontalAlignment="Left" Margin="350,352,0,0" VerticalAlignment="Top" Width="102" Click="StaticTestTabChartModeCopyTableButton_Click"/>
                     </Grid>
                     <Grid x:Name="ReportModeGrid" Margin="296,40,9.5,9.5" Visibility="Collapsed">
                         <DataGrid x:Name="staticTestTabReportModeDataGrid" Margin="10,10,10,0" ItemsSource="{Binding}" CanUserAddRows="False" Height="468" VerticalAlignment="Top"/>

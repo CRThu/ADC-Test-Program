@@ -247,6 +247,12 @@ namespace ADC_CDC_CONTROLLER
             DataTableUtil.DatatableToCSV(noiseTestTabConfigViewTextBox.Text.Replace("\r", "").Replace("\n", ""), chartModeDataTable, saveFileDialog.FileName);
         }
 
+        private void StaticTestTabChartModeCopyTableButton_Click(object sender, RoutedEventArgs e)
+        {
+            string csv = DataTableUtil.DatatableToCSV(noiseTestTabConfigViewTextBox.Text.Replace("\r", "").Replace("\n", ""), chartModeDataTable, null, "\t", "\r\n");
+            Clipboard.SetText(csv);
+        }
+
         void SingleModeDataTableUpdate()
         {
             string rowName = "Sample", colName = "Pref";
@@ -457,7 +463,7 @@ namespace ADC_CDC_CONTROLLER
                                 case "Peak Noise Calc(u)": calcResult = (1e6 * AdcPerfCalculation.PeakNoiseCalc(kvSample.Value, lsb)).ToString("G3"); break;
                                 default: calcResult = ""; break;
                             }
-                            lock(vals)
+                            lock (vals)
                             {
                                 vals.Add((perfName, calcResult));
                             }

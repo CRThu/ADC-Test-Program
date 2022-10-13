@@ -66,25 +66,26 @@ namespace ADC_CDC_CONTROLLER
             dr[column] = data;
         }
 
-        public static bool DatatableToCSV(string info, DataTable dt, string pathFile)
+        public static string DatatableToCSV(string info, DataTable dt, string pathFile, string colSplitStr=",", string rowSplitStr = "\r\n")
         {
             string strLine = "";
-            StreamWriter sw;
+            StringBuilder sb;
             try
             {
-                sw = new StreamWriter(pathFile, false, System.Text.Encoding.GetEncoding(-0));
+                sb = new StringBuilder();
 
                 if (!string.IsNullOrEmpty(info))
-                    sw.WriteLine(info);
+                    sb.AppendLine(info);
 
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
                     if (i > 0)
-                        strLine += ",";
+                        strLine += colSplitStr;
                     strLine += dt.Columns[i].ColumnName;
                 }
                 strLine.Remove(strLine.Length - 1);
-                sw.WriteLine(strLine);
+                strLine += rowSplitStr;
+                sb.Append(strLine);
                 strLine = "";
 
                 for (int j = 0; j < dt.Rows.Count; j++)
@@ -94,7 +95,7 @@ namespace ADC_CDC_CONTROLLER
                     for (int k = 0; k < colCount; k++)
                     {
                         if (k > 0 && k < colCount)
-                            strLine += ",";
+                            strLine += colSplitStr;
                         if (dt.Rows[j][k] == null)
                             strLine += "";
                         else
@@ -106,16 +107,20 @@ namespace ADC_CDC_CONTROLLER
                             strLine += cell;
                         }
                     }
-                    sw.WriteLine(strLine);
+                    strLine += rowSplitStr;
+                    sb.Append(strLine);
+                    strLine = "";
                 }
-                sw.Close();
+
+                if (!string.IsNullOrEmpty(pathFile))
+                    File.WriteAllText(pathFile, sb.ToString());
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-                return false;
+                return null;
             }
-            return true;
+            return sb.ToString();
         }
     }
 }
